@@ -66,7 +66,9 @@ object Settings {
       "ch.qos.logback"        % "logback-classic"                  % "1.2.3",
       "net.logstash.logback"  % "logstash-logback-encoder"         % "4.11",
       "com.h2database"        % "h2"                               % "1.4.195",
-      "org.postgresql"        % "postgresql"                       % "9.4-1206-jdbc41",
+      // 9.4-1206 (2015) SCRAM-SHA-256 desteklemiyor; PostgreSQL 14+ varsayılanı o.
+      // Eski sürücüyle "The authentication type 10 is not supported" alınır.
+      "org.postgresql"        % "postgresql"                       % "42.7.3",
       "com.mohiva"            %% "play-silhouette"                 % versions.silhouette,
       "com.mohiva"            %% "play-silhouette-password-bcrypt" % versions.silhouette,
       "com.mohiva"            %% "play-silhouette-persistence"     % versions.silhouette,

@@ -90,7 +90,7 @@ object FiddleEditor {
                 }))
               },
               Icon.play,
-              "Run"
+              "Çalıştır"
             ),
             div(
               cls := "ui basic button",
@@ -102,22 +102,22 @@ object FiddleEditor {
                 }))
               },
               Icon.stop,
-              "Stop/Reload"
+              "Durdur/Yenile"
             ),
             div(cls := "ui basic button", onClick --> props.dispatch(SaveFiddle(reconstructSource(state))))(
               Icon.save,
-              "Save").when(showSave),
+              "Kaydet").when(showSave),
             div(cls := "ui basic button", onClick --> props.dispatch(UpdateFiddle(reconstructSource(state))))(
               Icon.pencilSquare,
-              "Update").when(showUpdate),
+              "Güncelle").when(showUpdate),
             div(cls := "ui basic button", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
               Icon.codeFork,
-              "Fork").when(fiddleHasId)
+              "Çatalla").when(fiddleHasId)
           ),
           div(cls := "right")(
             div(cls := "ui basic button")(
               Icon.book,
-              a(href := "https://docs.kogics.net/ikojo.html", target := "_blank", "Help / Docs")
+              a(href := "https://docs.kogics.net/ikojo.html", target := "_blank", "Yardım / Belgeler")
             ),
             UserLogin(props.loginData)
           )
@@ -157,18 +157,18 @@ object FiddleEditor {
                   .toMap
                 div(cls := "output")(
                   div(id := "output")(
-                    h1("My fiddles"),
+                    h1("Yazılımcıklarım"),
                     if (fiddles.isEmpty) {
-                      p("No fiddles stored")
+                      p("Kayıtlı yazılımcık yok")
                     } else {
                       table(cls := "ui celled table fiddle-list")(
                         thead(
                           tr(
-                            th("Id", width := "10%"),
-                            th("Name"),
-                            th("Versions"),
-                            th("Latest update"),
-                            th("Libs", width := "20%")
+                            th("Kimlik", width := "10%"),
+                            th("Ad"),
+                            th("Sürümler"),
+                            th("Son güncelleme"),
+                            th("Kitaplıklar", width := "20%")
                           )
                         ),
                         tbody(
@@ -183,7 +183,7 @@ object FiddleEditor {
 
                               tr(
                                 td(fLink(fiddle.latestVersion)(fiddle.id)),
-                                td(fLink(fiddle.latestVersion)(if (fiddle.name.isEmpty) "<no name>" else fiddle.name)),
+                                td(fLink(fiddle.latestVersion)(if (fiddle.name.isEmpty) "<adsız>" else fiddle.name)),
                                 td(versions),
                                 td(new js.Date(fiddle.updated).toLocaleString()),
                                 td(fiddle.libraries.flatMap(libMap.get).mkString(", "))

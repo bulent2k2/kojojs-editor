@@ -29,6 +29,7 @@ import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
 import play.api.mvc.CookieHeaderEncoding
 
+import scalafiddle.server.HeaderAuthGitHubProvider
 import scalafiddle.server.Persistence
 import scalafiddle.server.models.services.{UserService, UserServiceImpl}
 import scalafiddle.server.utils.auth.DefaultEnv
@@ -314,7 +315,12 @@ class SilhouetteModule extends AbstractModule with ScalaModule with AkkaGuiceSup
     socialStateHandler: SocialStateHandler,
     configuration: Configuration): GitHubProvider = {
 
-    new GitHubProvider(httpLayer, socialStateHandler, configuration.underlying.as[OAuth2Settings]("silhouette.github"))
+    // HeaderAuthGitHubProvider: Silhouette 5.0.1 jetonu sorgu dizesinde gönderiyor,
+    // GitHub 2021'de bunu kaldırdı. Bkz. HeaderAuthGitHubProvider.scala
+    new HeaderAuthGitHubProvider(
+      httpLayer,
+      socialStateHandler,
+      configuration.underlying.as[OAuth2Settings]("silhouette.github"))
   }
 
   /**
