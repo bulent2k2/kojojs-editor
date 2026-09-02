@@ -39,7 +39,11 @@ object FiddleEditor {
       preCode: List[String] = Nil,
       mainCode: List[String] = Nil,
       postCode: List[String] = Nil,
-      indent: Int = 0
+      indent: Int = 0,
+      // Yazılımcık tablosunun sıralaması. Tamamen istemci tarafında: bütün
+      // liste zaten yüklü, sunucuya gitmeye gerek yok.
+      sortColumn: String = "updated",
+      sortAscending: Boolean = false
   )
 
   case class Backend($ : BackendScope[Props, State]) {
@@ -155,24 +159,63 @@ object FiddleEditor {
                     Library.stringify(lib) -> lib.name
                   }
                   .toMap
+                def libsOf(f: FiddleVersions) = f.libraries.flatMap(libMap.get).mkString(", ")
+                // Türkçe harf sırası (ç ğ ı i ö ş ü) ordinal karşılaştırmada yanlış
+                // çıkıyor -- "İzmir" < "Adana" gibi. localeCompare(_, "tr") doğru sıralıyor.
+                def trCmp(a: String, b: String): Int =
+                  a.asInstanceOf[js.Dynamic].localeCompare(b, "tr").asInstanceOf[Double].toInt
+                val sortedFiddles = {
+                  val artan = state.sortColumn match {
+                    case "id"        => fiddles.sortWith((a, b) => trCmp(a.id, b.id) < 0)
+                    case "name"      => fiddles.sortWith((a, b) => trCmp(a.name, b.name) < 0)
+                    case "versions"  => fiddles.sortBy(_.latestVersion)
+                    case "libraries" => fiddles.sortWith((a, b) => trCmp(libsOf(a), libsOf(b)) < 0)
+                    case _           => fiddles.sortBy(_.updated)
+                  }
+                  if (state.sortAscending) artan else artan.reverse
+                }
+                def sortableTh(col: String, başlık: String, extra: TagMod*) = {
+                  // "sortable" sınıfı imleci ve vurguyu veriyor, "sorted" ise etkin
+                  // sütunun arkaplanını.
+                  //
+                  // Oku Semantic'in "ascending"/"descending" sınıflarıyla DEĞİL elle
+                  // yazıyoruz: onlar oku `content: '\f0d8'` + `font-family: Icons`
+                  // ile çiziyor, o yazıyüzü bu sayfada uygulanmıyor ve ok yerine
+                  // bomboş kutu (□) çıkıyor. Düz Unicode her yerde görünüyor.
+                  val işaret = if (state.sortColumn == col) "sorted" else ""
+                  val ok =
+                    if (state.sortColumn != col) ""
+                    else if (state.sortAscending) " \u25b2"
+                    else " \u25bc"
+                  th(
+                    cls := işaret,
+                    onClick --> $.modState { s =>
+                      if (s.sortColumn == col) s.copy(sortAscending = !s.sortAscending)
+                      // Yeni sütuna geçerken: tarihte yeniden eskiye, metinde a'dan z'ye.
+                      else s.copy(sortColumn = col, sortAscending = col != "updated")
+                    },
+                    extra.toTagMod,
+                    başlık + ok
+                  )
+                }
                 div(cls := "output")(
                   div(id := "output")(
                     h1("Yazılımcıklarım"),
                     if (fiddles.isEmpty) {
                       p("Kayıtlı yazılımcık yok")
                     } else {
-                      table(cls := "ui celled table fiddle-list")(
+                      table(cls := "ui celled sortable table fiddle-list")(
                         thead(
                           tr(
-                            th("Kimlik", width := "10%"),
-                            th("Ad"),
-                            th("Sürümler"),
-                            th("Son güncelleme"),
-                            th("Kitaplıklar", width := "20%")
+                            sortableTh("id", "Kimlik", width := "10%"),
+                            sortableTh("name", "Ad"),
+                            sortableTh("versions", "Sürümler"),
+                            sortableTh("updated", "Son güncelleme"),
+                            sortableTh("libraries", "Kitaplıklar", width := "20%")
                           )
                         ),
                         tbody(
-                          fiddles.toTagMod {
+                          sortedFiddles.toTagMod {
                             fiddle =>
                               def fLink(version: Int)(content: TagMod*) =
                                 a(href := s"/sf/${fiddle.id}/$version")(content: _*)
@@ -186,7 +229,7 @@ object FiddleEditor {
                                 td(fLink(fiddle.latestVersion)(if (fiddle.name.isEmpty) "<adsız>" else fiddle.name)),
                                 td(versions),
                                 td(new js.Date(fiddle.updated).toLocaleString()),
-                                td(fiddle.libraries.flatMap(libMap.get).mkString(", "))
+                                td(libsOf(fiddle))
                               )
                           }
                         )
