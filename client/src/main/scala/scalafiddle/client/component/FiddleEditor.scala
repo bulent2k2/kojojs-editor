@@ -121,7 +121,10 @@ object FiddleEditor {
           div(cls := "right")(
             div(cls := "ui basic button")(
               Icon.book,
-              a(href := "https://docs.kogics.net/ikojo.html", target := "_blank", "Yardım / Belgeler")
+              // Dış docs.kogics.net yerine editörün kendi Türkçe Yardım/Bilgi
+              // sayfası (/yardim). Kitapçık ve dış belgeler o sayfanın içinde.
+              // Yeni sekme: kullanıcının yazdığı kod kaybolmasın.
+              a(href := "/yardim", target := "_blank", "Yardım / Belgeler")
             ),
             UserLogin(props.loginData)
           )

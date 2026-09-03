@@ -187,6 +187,13 @@ class Application @Inject()(
     Ok(views.html.resultframe()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
 
+  // iKoco Yardım/Bilgi sayfası (Türkçe, kendi başına duran belge). no-cache:
+  // resultframe ile aynı ders -- düzeltmeleri bir saatlik önbelleğin ardında
+  // bırakmamak için. Sayfa birkaç KB.
+  def yardim = Action {
+    Ok(views.html.yardim()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+
   val loginProviders = config.get[Seq[String]]("scalafiddle.loginProviders").map(AllLoginProviders.providers)
 
   def autowireApi(path: String) = silhouette.UserAwareAction.async { implicit request =>

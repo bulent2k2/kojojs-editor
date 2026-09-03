@@ -1,0 +1,258 @@
+@()
+@*
+  iKoco Yardım/Bilgi sayfası. Editörün içinde sunulan, kendi başına duran bir
+  belge sayfası. main.min.css'i KULLANMIYOR: o, gövdeye height:100vh + overflow
+  :hidden dayatıyor ve kaydırılan bir sayfayı bozuyor. Bu yüzden CSS burada,
+  bağımsız. Palet Koco'nun kendi çıktı renklerinden (fiddle.Fiddle.colors).
+  Kaynak adları TurkishTurtle.scala ve scala-tr/turkish-keywords.patch'ten
+  DOĞRULANDI -- uydurma komut yok.
+*@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>iKoco — Yardım</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --kirmizi: #E95065;
+            --mavi:    #46BDDF;
+            --yesil:   #52D273;
+            --sari:    #E5C453;
+            --turuncu: #E57255;
+            --metin:   #2d2f33;
+            --soluk:   #6b7078;
+            --cizgi:   #e5e7eb;
+            --zemin:   #f7f7f8;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--metin);
+            background: var(--zemin);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--kirmizi); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code, pre, .kod { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
+
+        .ust-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--cizgi);
+            position: sticky; top: 0; z-index: 10;
+        }
+        .ust-bar img { height: 34px; display: block; }
+        .ust-bar .geri {
+            font-weight: 500; font-size: 14px; color: var(--metin);
+            border: 1px solid var(--cizgi); border-radius: 6px; padding: 7px 14px;
+            background: #fff;
+        }
+        .ust-bar .geri:hover { background: var(--zemin); text-decoration: none; }
+
+        .kapsayici { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+
+        .kahraman {
+            background: linear-gradient(135deg, #fff 0%, #fdf3f4 100%);
+            border: 1px solid var(--cizgi); border-radius: 14px;
+            padding: 32px 32px 28px; margin-bottom: 40px;
+        }
+        .kahraman h1 { margin: 0 0 8px; font-size: 30px; font-weight: 700; }
+        .kahraman h1 .vurgu { color: var(--kirmizi); }
+        .kahraman p { margin: 0; font-size: 17px; color: #404551; max-width: 62ch; }
+
+        section { margin-bottom: 44px; }
+        h2 {
+            font-size: 21px; font-weight: 700; margin: 0 0 4px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        h2 .im { width: 10px; height: 22px; border-radius: 3px; display: inline-block; }
+        section > .alt { color: var(--soluk); margin: 0 0 18px; font-size: 15px; }
+
+        table { width: 100%; border-collapse: collapse; background: #fff;
+                border: 1px solid var(--cizgi); border-radius: 10px; overflow: hidden; }
+        th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--cizgi); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        th { background: #fafbfc; font-weight: 600; font-size: 13px; color: var(--soluk);
+             text-transform: uppercase; letter-spacing: .03em; }
+        td .kw { font-weight: 600; color: var(--kirmizi); }
+        td code { background: var(--zemin); border-radius: 4px; padding: 1px 6px; font-size: 13.5px; }
+
+        .dugmeler { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .dugme-karti { display: flex; gap: 12px; align-items: flex-start;
+            background: #fff; border: 1px solid var(--cizgi); border-radius: 10px; padding: 14px 16px; }
+        .dugme-karti .ad { font-weight: 600; }
+        .dugme-karti .ac { color: var(--soluk); font-size: 14px; }
+
+        pre.kod-blok {
+            background: #2b2d31; color: #e6e6e6; border-radius: 10px;
+            padding: 18px 20px; overflow-x: auto; font-size: 14px; line-height: 1.55; margin: 0;
+        }
+        pre.kod-blok .y { color: #8a8f98; } /* yorum */
+
+        .kitap {
+            display: flex; gap: 22px; align-items: center;
+            background: #fff; border: 1px solid var(--cizgi); border-left: 5px solid var(--turuncu);
+            border-radius: 12px; padding: 22px 24px;
+        }
+        .kitap .simge { font-size: 42px; line-height: 1; }
+        .kitap h3 { margin: 0 0 4px; font-size: 18px; }
+        .kitap p { margin: 0 0 12px; color: var(--soluk); font-size: 14.5px; }
+        .kitap .indir {
+            display: inline-block; background: var(--turuncu); color: #fff; font-weight: 600;
+            padding: 9px 18px; border-radius: 8px; font-size: 14px;
+        }
+        .kitap .indir:hover { filter: brightness(.94); text-decoration: none; }
+
+        .baglantilar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .baglantilar a.kart {
+            display: block; background: #fff; border: 1px solid var(--cizgi);
+            border-radius: 10px; padding: 14px 16px; color: var(--metin);
+        }
+        .baglantilar a.kart:hover { border-color: var(--kirmizi); text-decoration: none; }
+        .baglantilar .ad { font-weight: 600; color: var(--kirmizi); }
+        .baglantilar .ac { color: var(--soluk); font-size: 13.5px; }
+
+        footer { text-align: center; color: var(--soluk); font-size: 13px;
+                 border-top: 1px solid var(--cizgi); padding-top: 24px; }
+
+        @@media (max-width: 640px) {
+            .dugmeler, .baglantilar { grid-template-columns: 1fr; }
+            .kitap { flex-direction: column; align-items: flex-start; }
+            .kahraman { padding: 24px; }
+            .kahraman h1 { font-size: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ust-bar">
+        <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
+        <a href="/" class="geri">← Editöre dön</a>
+    </div>
+
+    <div class="kapsayici">
+
+        <div class="kahraman">
+            <h1><span class="vurgu">Koco</span>'ya hoş geldin</h1>
+            <p>
+                Koco, <a href="http://www.kogics.net/kojo" target="_blank">Kojo</a>'nun Türkçesidir:
+                bir kaplumbağaya Türkçe komutlar vererek şekiller, resimler ve küçük oyunlar
+                çizersin. iKoco ise onu tarayıcıda çalıştırır — kurulum yok. Soldaki editöre
+                yaz, <b>Çalıştır</b>'a bas, sağda ne olduğunu gör.
+            </p>
+        </div>
+
+        <section>
+            <h2><span class="im" style="background:var(--yesil)"></span>İlk programın</h2>
+            <p class="alt">Bir kare çiz. Editöre yapıştırıp Çalıştır'a basman yeterli.</p>
+            <pre class="kod-blok"><span class="y">// kaplumbağa dört kez ilerleyip sağa dönsün</span>
+hızıKur(hızlı)
+kalemRenginiKur(mavi)
+yinele(4) {
+  ileri(100)
+  sağ(90)
+}</pre>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--mavi)"></span>Editörü kullanmak</h2>
+            <p class="alt">Üstteki düğmeler:</p>
+            <div class="dugmeler">
+                <div class="dugme-karti"><div><div class="ad">▶ Çalıştır</div>
+                    <div class="ac">Yazdığın programı derleyip sağ taraftaki tuvalde çalıştırır.</div></div></div>
+                <div class="dugme-karti"><div><div class="ad">■ Durdur/Yenile</div>
+                    <div class="ac">Çalışan bir animasyonu ya da oyunu durdurur, tuvali temizler.</div></div></div>
+                <div class="dugme-karti"><div><div class="ad">Kaydet</div>
+                    <div class="ac">Programına kalıcı bir adres verir; bağlantıyı paylaşabilirsin. (Giriş yapman gerekir.)</div></div></div>
+                <div class="dugme-karti"><div><div class="ad">Güncelle / Çatalla</div>
+                    <div class="ac">Kayıtlı bir programı yeni sürümle güncelle, ya da başkasınınkinden kendine bir kopya çıkar.</div></div></div>
+            </div>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--kirmizi)"></span>Türkçe anahtar kelimeler</h2>
+            <p class="alt">
+                Bunlar kütüphane adı değil, dilin kendi sözcükleri — Koco'nun yamalı derleyicisi
+                bunları tanır. Sağdaki İngilizce karşılıkları da çalışmaya devam eder.
+            </p>
+            <table>
+                <thead><tr><th>Türkçe</th><th>Scala</th><th>Ne işe yarar</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="kw">dez</span></td><td><code>val</code></td><td>Değeri sonradan değişmeyen bir isim tanımlar.</td></tr>
+                    <tr><td><span class="kw">den</span></td><td><code>var</code></td><td>Değeri değişebilen bir isim tanımlar.</td></tr>
+                    <tr><td><span class="kw">tanım</span></td><td><code>def</code></td><td>Bir işlev (fonksiyon) tanımlar.</td></tr>
+                    <tr><td><span class="kw">eğer</span> / <span class="kw">yoksa</span></td><td><code>if</code> / <code>else</code></td><td>Koşula göre dallanır.</td></tr>
+                    <tr><td><span class="kw">için</span></td><td><code>for</code></td><td>Bir dizinin üstünde döner.</td></tr>
+                    <tr><td><span class="kw">eşle</span> / <span class="kw">durum</span></td><td><code>match</code> / <code>case</code></td><td>Bir değeri kalıplara göre eşleştirir.</td></tr>
+                    <tr><td><span class="kw">doğru</span> / <span class="kw">yanlış</span></td><td><code>true</code> / <code>false</code></td><td>Mantıksal değerler.</td></tr>
+                    <tr><td><span class="kw">yeni</span></td><td><code>new</code></td><td>Yeni bir nesne yaratır.</td></tr>
+                    <tr><td><span class="kw">nesne</span> / <span class="kw">sınıf</span> / <span class="kw">özellik</span></td><td><code>object</code> / <code>class</code> / <code>trait</code></td><td>Kendi türlerini tanımlarsın.</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--turuncu)"></span>Sık kullanılan komutlar</h2>
+            <p class="alt">Kaplumbağayı sürmek ve ekrana yazmak için:</p>
+            <table>
+                <thead><tr><th>Komut</th><th>Ne yapar</th></tr></thead>
+                <tbody>
+                    <tr><td><code>ileri(100)</code> · <code>geri(50)</code></td><td>Kaplumbağayı ileri/geri yürütür.</td></tr>
+                    <tr><td><code>sağ(90)</code> · <code>sol(90)</code></td><td>Verilen açı kadar döndürür.</td></tr>
+                    <tr><td><code>yinele(4) { … }</code></td><td>Süslü parantez içindeki komutları n kez tekrarlar.</td></tr>
+                    <tr><td><code>yineleDizinli(72) { i => … }</code></td><td>Aynısı, ama her turda bir sayaç (<code>i</code>) verir.</td></tr>
+                    <tr><td><code>kalemRenginiKur(kırmızı)</code></td><td>Çizgi rengini değiştirir.</td></tr>
+                    <tr><td><code>kalemKalınlığınıKur(2)</code></td><td>Çizgi kalınlığını ayarlar.</td></tr>
+                    <tr><td><code>hızıKur(hızlı)</code></td><td>Çizim hızını ayarlar (<code>yavaş</code>, <code>hızlı</code>, <code>çokHızlı</code>).</td></tr>
+                    <tr><td><code>artalanıKur(siyah)</code></td><td>Tuvalin arka plan rengini boyar.</td></tr>
+                    <tr><td><code>ev()</code> · <code>sil()</code></td><td>Kaplumbağayı başa alır · tuvali temizler.</td></tr>
+                    <tr><td><code>gizle()</code> · <code>göster()</code></td><td>Kaplumbağayı gizler · geri gösterir.</td></tr>
+                    <tr><td><code>yaz("merhaba")</code> · <code>satıryaz("merhaba")</code></td><td>Sağ paneldeki çıktı alanına yazar (<code>satıryaz</code> satırı bitirir).</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--sari)"></span>Koco Kitapçığı</h2>
+            <div class="kitap">
+                <div class="simge">📘</div>
+                <div>
+                    <h3>Programlamaya ve Algoritmalara Keyifli ve İşlevsel Bir Giriş</h3>
+                    <p>Koco ile programlamayı adım adım anlatan Türkçe kitapçık (PDF, GitHub üzerinde).</p>
+                    <a class="indir" href="https://github.com/bulent2k2/cpp_ogreniyoruz/blob/main/kitap%2FProgramlamaya-ve-Algoritmalara-Keyifli-ve-Islevsel-Bir-Giris.pdf" target="_blank">Kitapçığı aç →</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--yesil)"></span>Daha fazlası</h2>
+            <div class="baglantilar">
+                <a class="kart" href="https://github.com/bulent2k2/kojojs-dev/tree/master/ornekler" target="_blank">
+                    <div class="ad">Örnekler →</div>
+                    <div class="ac">Çalışan Koco programları: çiçek, klavye oyunu, kumanda kolu ve daha fazlası.</div>
+                </a>
+                <a class="kart" href="https://docs.kogics.net/ikojo.html" target="_blank">
+                    <div class="ad">Ayrıntılı belgeler →</div>
+                    <div class="ac">Kojo/iKojo'nun genel belgeleri (İngilizce).</div>
+                </a>
+                <a class="kart" href="https://www.kogics.net/kojo-download" target="_blank">
+                    <div class="ad">Masaüstü Kojo →</div>
+                    <div class="ac">Tarayıcı yerine bilgisayarında çalışan tam sürüm.</div>
+                </a>
+                <a class="kart" href="http://www.kogics.net/kojo" target="_blank">
+                    <div class="ad">Kojo hakkında →</div>
+                    <div class="ac">Projenin ana sayfası ve arkasındaki topluluk.</div>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            Koco · Kojo'nun Türkçesi · <a href="/">Editöre dön</a>
+        </footer>
+
+    </div>
+</body>
+</html>
