@@ -1,0 +1,269 @@
+@()
+@* Kojo ile eğlenerek öğren -- ikojo.fly.dev'de sunulan Türkçe ayna sayfa. knownot'taki İngilizce
+   sayfanın karşılığı; örnekler ?zrc= ile tam Türkçe Koco olarak açılıyor. *@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Kojo ile eğlenerek öğren</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/assets/images/favicon.ico">
+<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700&display=swap" rel="stylesheet">
+<style>
+
+        :root {
+            --kirmizi: #E95065;
+            --mavi:    #46BDDF;
+            --yesil:   #52D273;
+            --sari:    #E5C453;
+            --turuncu: #E57255;
+            --metin:   #2d2f33;
+            --soluk:   #6b7078;
+            --cizgi:   #e5e7eb;
+            --zemin:   #f7f7f8;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--metin);
+            background: var(--zemin);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--kirmizi); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code, pre, .kod { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
+
+        .ust-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--cizgi);
+            position: sticky; top: 0; z-index: 10;
+        }
+        .ust-bar img { height: 34px; display: block; }
+        .ust-bar .geri {
+            font-weight: 500; font-size: 14px; color: var(--metin);
+            border: 1px solid var(--cizgi); border-radius: 6px; padding: 7px 14px;
+            background: #fff;
+        }
+        .ust-bar .geri:hover { background: var(--zemin); text-decoration: none; }
+
+        .kapsayici { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+
+        .kahraman {
+            background: linear-gradient(135deg, #fff 0%, #fdf3f4 100%);
+            border: 1px solid var(--cizgi); border-radius: 14px;
+            padding: 32px 32px 28px; margin-bottom: 40px;
+        }
+        .kahraman h1 { margin: 0 0 8px; font-size: 30px; font-weight: 700; }
+        .kahraman h1 .vurgu { color: var(--kirmizi); }
+        .kahraman p { margin: 0; font-size: 17px; color: #404551; max-width: 62ch; }
+
+        section { margin-bottom: 44px; }
+        h2 {
+            font-size: 21px; font-weight: 700; margin: 0 0 4px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        h2 .im { width: 10px; height: 22px; border-radius: 3px; display: inline-block; }
+        section > .alt { color: var(--soluk); margin: 0 0 18px; font-size: 15px; }
+
+        table { width: 100%; border-collapse: collapse; background: #fff;
+                border: 1px solid var(--cizgi); border-radius: 10px; overflow: hidden; }
+        th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--cizgi); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        th { background: #fafbfc; font-weight: 600; font-size: 13px; color: var(--soluk);
+             text-transform: uppercase; letter-spacing: .03em; }
+        td .kw { font-weight: 600; color: var(--kirmizi); }
+        td code { background: var(--zemin); border-radius: 4px; padding: 1px 6px; font-size: 13.5px; }
+
+        .dugmeler { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .dugme-karti { display: flex; gap: 12px; align-items: flex-start;
+            background: #fff; border: 1px solid var(--cizgi); border-radius: 10px; padding: 14px 16px; }
+        .dugme-karti .ad { font-weight: 600; }
+        .dugme-karti .ac { color: var(--soluk); font-size: 14px; }
+
+        pre.kod-blok {
+            background: #2b2d31; color: #e6e6e6; border-radius: 10px;
+            padding: 18px 20px; overflow-x: auto; font-size: 14px; line-height: 1.55; margin: 0;
+        }
+        pre.kod-blok .y { color: #8a8f98; } /* yorum */
+
+        .kitap {
+            display: flex; gap: 22px; align-items: center;
+            background: #fff; border: 1px solid var(--cizgi); border-left: 5px solid var(--turuncu);
+            border-radius: 12px; padding: 22px 24px;
+        }
+        .kitap .simge { font-size: 42px; line-height: 1; }
+        .kitap h3 { margin: 0 0 4px; font-size: 18px; }
+        .kitap p { margin: 0 0 12px; color: var(--soluk); font-size: 14.5px; }
+        .kitap .indir {
+            display: inline-block; background: var(--turuncu); color: #fff; font-weight: 600;
+            padding: 9px 18px; border-radius: 8px; font-size: 14px;
+        }
+        .kitap .indir:hover { filter: brightness(.94); text-decoration: none; }
+
+        .baglantilar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .baglantilar a.kart {
+            display: block; background: #fff; border: 1px solid var(--cizgi);
+            border-radius: 10px; padding: 14px 16px; color: var(--metin);
+        }
+        .baglantilar a.kart:hover { border-color: var(--kirmizi); text-decoration: none; }
+        .baglantilar .ad { font-weight: 600; color: var(--kirmizi); }
+        .baglantilar .ac { color: var(--soluk); font-size: 13.5px; }
+
+        footer { text-align: center; color: var(--soluk); font-size: 13px;
+                 border-top: 1px solid var(--cizgi); padding-top: 24px; }
+
+        @@media (max-width: 640px) {
+            .dugmeler, .baglantilar { grid-template-columns: 1fr; }
+            .kitap { flex-direction: column; align-items: flex-start; }
+            .kahraman { padding: 24px; }
+            .kahraman h1 { font-size: 25px; }
+        }
+    
+        .kartlar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .kartlar a.kart { display: block; background: #fff; border: 1px solid var(--cizgi);
+            border-radius: 10px; padding: 14px 16px; color: var(--metin); }
+        .kartlar a.kart:hover { border-color: var(--kirmizi); text-decoration: none; box-shadow: var(--shadow); }
+        .kartlar .ad { font-weight: 600; }
+        .kartlar .ac { color: var(--soluk); font-size: 13.5px; margin-top: 2px; }
+        .kartlar .ok { color: var(--kirmizi); font-weight: 500; font-size: 13px; float: right; }
+        @@media (max-width: 640px) { .kartlar { grid-template-columns: 1fr; } }
+
+</style>
+</head>
+<body>
+<div class="ust-bar">
+  <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
+  <a href="/yardim" class="geri">Yardım</a>
+</div>
+<div class="kapsayici">
+<div class="kahraman">
+  <h1><span class="vurgu">Kojo</span> ile eğlenerek öğren</h1>
+  <p>Koco (Kojo'nun Türkçesi), programlamayı; matematiği, fiziği ve bilgisayar bilimini görsel ve etkileşimli olarak öğreten bir ortamdır. Aşağıdaki örneklerin her biri doğrudan tarayıcında açılır — <b>Çalıştır</b>'a bas, kodu değiştir, dene. Kurulum yok.</p>
+</div>
+<section>
+  <h2><span class="im" style="background:var(--kirmizi)"></span>Çizim ve renkler</h2>
+  <p class="alt">Kaplumbağa grafikleriyle ilk adımlar.</p>
+  <div class="kartlar">
+  <a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_52TPW_bMBCGd_6KQ9DBKhT5A3AHAwGKpmnRukNhG-1YnC22oUWRAkk7kYP8loyZtWez_L9KUrLlrwBFDcGE7p57770jxNJMKgO_WRxzGn2qjkwxYbggrErqGXKc62iuCXlvTxRCGjRMiujr-ObeMROZfaNLylsXYwdXOhcBkdM5nRnYC8IDAfurpRM5l9HD-I7GTN9OFspwGoI9k8NXfw4t-1MqHn9JMx7CDyssVe9jCN_ZzCwUfTwRjqV041xLLlX06yQ9ziiNz8RHNKNormWaooj1GUDnwuB99GHBuGFCb_OczZiBJXJPeauDqmBnHa5A0LvDUVqBF3B101qxxrYNaqK2sIUOjRm_pcOYXk7ORI3aRW243YY31c2MDSpD7PsY8xhTXhYJdC57_T6gQl0WA-iAWb-k65fcXqP2ELQUFYlmqyAERzZ5mWESkZiuatLLXUG33_HBpCxUWharsrBBpzFcqJZVCKHjn6Yo8HxON0-Mwx7c8R3PwikuGRyx3e624JjWqKwLOPbxmrhmOd4eiVdPD96e-nbi62fMbMG7DjEoyiKFGJmifnUDGNn_wGZHVLM0qjK7qiCayhytnIeDKEFOU1fBWcsbCcj6ma1a9iKrymavQbgL-gmDyODmqSyETW-emhbW-h7qVvcaCW3ohc1Evuqsawc2ziufB9Zx_Ww39FmxOjx0oHBbcwX9IwOXbrEnfv-h85TmuDrsnMh88b99m8lJQP6wFaf-w2y-oBsRk0fyFyXnpyBTBQAA" target="_blank">
+  <div class="ad">Ana renkler <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Saydamlıkla üst üste binen renkli daireler.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_41SsW7bMBDd9RVE0EFCZMVNliBAgaJpiqbuUERGMxZnk41p0aRAUo7lIN-SMbN3b9KH9SjRtgR7qADhdO_evXtHkS9ypS35yykVLPnWhlxzaYUMeFs0UxAwN8ncBMFnjCClsmC5ksmP9G7lOGOV_2RLJsKz1JFbnbMoUJM5m1rSAclLQPDx0pmaq-QlfWaUm9m40FawmGDM-mkTR8h9VFrQ-0UuYvIbhZW-_BqTX3xqC81ej4SpUm6dWyWUTv4cldOcMXoCf2A5A3urFguQ1JwgmFJaWCVfCi4sl2ZXF3zKLVmCaFiN1Zu2YW-dfCKSPfdXCaNGwPVNvKKn7QZ4hrewI_WN2eaU-phZjk-gVu9RhC8uyIf2z6QWtA0oW5NiXUhRZOji6tIRKMyATKptWW0zUgLmJKu21btLKZMsyECwxQhEvZH41m8Y682o0KFXioJZvVm3UPWusu-YITEKcCLeDE_WYOwTE-yBySxycw0vYeYHTlgJ63aasxgaJdJmjI4JCOu_I_Qc2gLP0gMCdL1JVolV99LG5LhUtqXIq0L9tpettqanO-jOHHSGBiWX6Du8Gg6j5n4354FrPHHJm81wo-6G4cfrYRST_02d7DlxwV0EsAIOSh3HZEAODl1H1---obMVNnSP7ryb4SAumOaHX_jauy13kiLyDyzfbKk_BAAA" target="_blank">
+  <div class="ad">Rastgele karelerle boyama <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Rastgele renk ve konumlarla algoritmik resim.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_31RTW_TQBC9768YVRxsZLltkDhUQiBKkaAcUBzBEW3joUy83rVm16mdKL-lx577Gxr-F-OPlIZG-DLr997OmzdLZeU4wE_Kc4Ppx6FUTDYYq2gg_VwbvfDpwiv1Tqq21gUdyNn0c3bRdJqZq77gEk10lHXioc9RrNzVAucBnoCwViDf2LpwC5eusxvMyf-a1RwMJiC12P_t66Vovzs2-aeyMgl8k8aOJx8S-ErzUDNunjXOnevinDvjOP3xjM4qxPwAPsUKdTh3Zalt7g8IfGuDbtL3NZlA1u94Q3MKsNSmV_Wjng0XHkeHN2DxZj9KFPcNuntXY8dRtjMYFeMIO9H-YKHf0j7ml7MDaOBHVODjY3gxvEwWNAcl_2io8gYZck2MLcE1WjQGf98GYuIzoIKg1by9f7jTlekO4EzNKscVRNwkwG0sEaLXJwm8Ook7D24E4LbXeS3p-tPb_gqeCjdFT2XaW-9aDOTkX7IVsonVwx2tIjxNRNE7hFo2iNDBJRZAcrCyKxmesTCkCmHLKdprsnRZc1TqJcVqtb2XBFHn5vX2VjZNkpyizmEEWpL0GInLGkZS4m3-QzdP6AGawEs47OGG9__7DBc2Vxv1B8iXFleYAwAA" target="_blank">
+  <div class="ad">Basit şekiller <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Elipsler ve kaplumbağayla çokgen çizmenin yolları.</div>
+</a>
+  </div>
+</section>
+<section>
+  <h2><span class="im" style="background:var(--yesil)"></span>Özyineleme ve doğa</h2>
+  <p class="alt">Kendini çağıran işlevlerle ağaçlar, yapraklar.</p>
+  <div class="kartlar">
+  <a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_22STW7bMBCF9zzFIOhCKmRZduM0NZCiyE_R1F0UsdGiq4Kx2IYWRQrUyEkT-CxeZu0zRLlXRqLkWogNDMZ8_OZxOJRMM2MR_sg4ViL87FJmpUalmXSb-ZwrvsjDRc7YJ8pca4McpdHh1-nFXcXMTPZNLIXyDqYV7HwOfGauF2KOsCPCAwP6NdaJWZjwYXorYpnfzAqLSgRAOeku6zwh9qexKr5MMxXADzI2dngewHc5x8KK1Svj2JjqOmdGGRv-frU9zYSI9-hXIhMcz0yach3ne4D8n0Z-F54WUqHUebuv5FwiLLmqqbrVsSvYtg4noMVt9yqeXxtUddeNY4O1BzRE00ILdRvDekpdLV_O9qhotyrJ_T68cS8zRW6RIdflJgVervnTo1fcF1oVyRgmIpfWH8OptDKFEyoU5VpYaAn4CId-87YJVyKdcFVuNEW5plxuJoXdsn145_8nr4T-K7WsACt0sgOGaC41BpAWqHhyXp_oDUcj6EFr9ZasWmwwHPnNpJSwsnVxUk43olq36N6OTKLwmEyHfjWOiox5IoErbEjnYJR3uN-gB4PI1Rq1t7Q-PNptrrfT3YrdlJt7N6OnR5N8oRVNzmekZYp7vWFEtVjQJyJ_8aSaK39eY7mxXhSOAur-KIDeKKJ_PmtaO3YNVeIRxXuKD1UQPogiiIUWnde_0DFbsRfHCRBiDwQAAA==" target="_blank">
+  <div class="ad">Bilgisayarın çizdiği ağaç <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Özyinelemeli dallanmayla bir ağaç.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_31UTW_bSAy961cQQYGVFq7iJvU2a7RokX5t6y5Q1EELnxa0h20mGnGM0citHeS3-JizLznlJuV_lSPJQb0JakggxCEfHx851vncOg9ftVKG0jetmTvN3nCk28NihgbPivSsiKIXYpHZevTacvp-_PpHiDmx8w-0IBPvjUNwi7OXRHZ6RjMPvzjhPAL5ddCZPbPp-fg7KV2cnpTOG-qB2Gz3s7Ejif1inVHv8rnpwWcBtu7gVQ8-6pkvHV3cAVbWhnZeWmNd-t-d4_GcSN3j_0RzQv_S5jmyKu4JKJbs8Ud6XGrjNRfbc6Nn2sMCTRPVUB22CbfU4Rkwfd9tJU4agJA37RC7sG2BLqKjsA3aJeYblXZ9xeLkHq93t15x7-_Dg3YyY4_ORx653uSg0MQ8hBEV2iVDONZO58JKG3I65iSkTbGQdlV1vYKpdiEDluTJGb0FwXqN1eV9OGEJMstl_pkm1RVX18dkDNVrmuAqbtAznJsynwYIwWK4WZeAnOk2DRYEyyZRHjhFX2-cQQFVtAJHnEmNYEalizn19h37HuSlN5i9CmVcfDAYwENg-BMOk23Ao4NBU3skaHm9WdWbHkzoZq1l3f7FhQ6k0VD-ifibZh3AQ5EwnQYUYoanz-BxAucBprpaLTWTJBBrBo9TZFClK_NyKFN0qFCUE8Wa6TTIIzTSrLz1Wmy9CSX66aCdfzMT2IeDhmRhGfbEtQdYhKQGzMES5w6zFCbBingwJV5RrpfWiQDPBSjck6XNCrzDcthN7I96Axmx0qCrS82KGHRQXrStLjFQc_VGAMvV75kHsk9-4d7wxhylJs_odmtibTIo6Cs5RfCtulooSqSQbtELKSjTamG6jeqnRzI4lgF2WohfoVBE47uYNtea-PFuakh61O8UNHeTLv6_mW9l4yfVdWZou5hLJX9XRkTZWUWhLpFyH644uohOm_UJIlSXNvtHvkSaJPKlXHM9wSxohTfrsLdhwD3op3_14OFhX7bwqJ9EHdu_W6YDcT-R96gv8xXNpIO-rLo8TDt3-DUrKf4Tk6Rx09UFAAA=" target="_blank">
+  <div class="ad">Ağaç (konum saklamalı) <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Aynı ağaç, konumu belleğe alıp geri yükleyerek.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_31TTW-bQBC98ytGUQ9sSwi2Y6mNlKjKR9XEPVQmao_VxkzTtZdda1kSbCvn_gwfe_alp97MD-uwYCfUVpFgYObNm5k3i0in2lj4LpJEYvihNlMjlJXKE3UwG3HJx1k4zjzvPVmulLbcCq3Cm_iqqDC3evoJH1D6B3EFrnkOmKfvxjiy8MIJCw_oaqgneqzDRfyIich-3ObGSgyA7KT96eyAsF-1kcl1OpUBfCFibbqXAXwWI5sbfNohTrSuxrnQUpvw2044niIme_xDnCK3FzpNuUqyPYBspiwvwvNcSCtUtolLMRIWHrh0KNfqSZ2wbR1OQeFjexSfOYIq765hbGCbAg2iaWEDajdmnUptX_Zwu8drzdZL7qMjeFVvJrbcWM9yVa5SwHJpkMpom_vFCQwwE4adwLkwIqXuKIwG_ALOoMPcSidcYjrgslwpussl2XI1yA1hjqATwRsCbmBDVPdCiSpqUE0qGwWQ5lbyyaWj9rtRBIdQwGvosdDqa2UDOI5YRSEkGuEX1WvGy6XfiaLqvdUx5UXhsYNoWZH9D1GRvOvvR7zdIhzgvin99K9OQ8xSQcKQJYEWLaZ-xODJuxdzibTJEVeSzlW5Min_WK7mW6FIH1oA_SjN90aabr8fgHt0-pUCCc7BuDKntY3Xf2yucp_6W_-2SAKjb3M6T7HjNpKbchUWREIj7QZmtKAeo9Dzbp5r944prXmwLai1Z7_L4PCsnjyccctn659iTiS7pVAJFrxsk9bec9ktHT3mrX-Jue-mY61DeqUSEv8vLywpkLYEAAA=" target="_blank">
+  <div class="ad">Eğreltiotu <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Özyinelemeyle gerçekçi bir eğreltiotu yaprağı.</div>
+</a>
+  </div>
+</section>
+<section>
+  <h2><span class="im" style="background:var(--mavi)"></span>Matematik ve fizik</h2>
+  <p class="alt">Sayıların ve hareketin görselleştirilmesi.</p>
+  <div class="kartlar">
+  <a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_61XzW7jNhC--ykGiwKVurLiOD-7TZBFkWQLtGmLIg5a9LSgJW7CSCIFivZaDvZZfMy1vuTkm-z36pCUbCm289M2MKKYmplvvpnhzIQlqZAKPrMwjKn_o32kknEV8xazL7OAxOQ282-zVusHfBLOhSKKCe7_3Ps40jJXIv2FDmnsvOlpYWvnjdsS_VsaKKgdwl0L8Kc0HYlb4d_1vtCQZTdXA6li6gE-o-ZX87xA2T-FjMOfkjT24A80LGT33IPfWaAGkn5dMxwKoemciVhI_9Pa615Kabjh_JKmlKgzkSSEh9kGgSznioz80wGLFeNZ9T5mAVMwJLGRMq4eWYWl63ACnH5pUnFcY0Dr9UuLpVgFUEqULlRCTceUiVLzLBtebThVcnmKxzs78I3NTE8RqVr4_XQQU67glGREEg7dTrd7DIrG9LPgQCM8i4mcTzmBQU4CEsFiQiMWhxTCYjamHLVDptX2WtdsHFN0P6RjcGTfAxm4SM7p-h0P9juuho-KWXFfzCJQIh1wyLXt4p6k8ykM0SRhkmY0hrx4kMWMX9OMcdYQa6kBBo_9RSJ0KiaLiZpPpbPrAX72DjxovzsoPQhOSYylE5yJDH_3GDfOJGTIPEBlmcyn4_nUg5wuJiy2Sn1UQaniQUcgoU5bBpbGd9AXObmk_JpZw_ooIii06eyCxNq7-XQ-mU-dfRfaH-ASuSS-YYjBsXBLmg3MLppZ4dZAriXbAtHxD9ZBgjIQNMooNxY8MH93TSRqhm0I_EzEgwhtvXddr46b0qRPXWstoTLCx4v8TYRc82rXN-J9Uw3maGcVBWuctYp7NnaWAFg9bXTKoGiEFZ-Vca2BiCi6V0kaBKyfYpahdQhZRHOr-xigvd9g8IT93XelZMeatw6HlMM1Le6prlRFSpTHIFWY2rv7TSrdTTRKpC0wNTLbuLSfRKiitGRSdzyktSv3slRnLCc37hqMBbAuWhKeuWPeqvS9FZSrG9JV2RiW7lBgY-w1i0kxS4oZkOIeCx8_2G2r7Hr1gDySr2TwSB4ZaqP5340C7mgf11ONOXCPwbiuNVwbllfr5kvd0RWJWPpKZKNTYv8L_bzUVwRDlsANkTSiykmP4DcRKeIewSmTLEGjd7oKDiHQDZ_jJMA-n-OcwpgBnGtLVZY8E0DPhMIrSXmlcy6wxQTnvvPJzxgOOz3L_p9KSv0RvIVKK_VzaGtdtG_SqX82mUfB7V252cFxTjwH2zF8NuChWIPKM1BmGG249A1aNtuvZKWb96MmjAPPfaqRaUrrWIaR9adqRf8NsdbTENEWZ62kGmVULzG39dVU_5jghoYedlq2REMc4Wa_1FNphC90cKzQDg6Bji7njXtMph3PdAMJWU7RgG5Iflg8cN0ifjVdKmbOoWmh5oJpSyKtRh824KHUiwnuQIffLiZEoguSBnojesBekwtZEVxGc2Tbnh8JPkieSN7e05VSbQ_IsFufb2t4NbCR4YFpHL0ctXkV1lGrzou4VUdZIer02jy8PYHdY6DzCZXglPnDPO130BvcV1Z5TEg-n54PZDiQjs63IdPHUBYzpducb27Qkt17vREc1jufpDzSSyEudPhfifENl4v4mmCe4eQD-L7_Ru-g5SLoPoegAbqdjj6rCkPfv--3Yl6UEdmGqiPqNjbwjzxEpv8AeS15YJMNAAA=" target="_blank">
+  <div class="ad">Birim çember <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Dönen bir noktadan sinüs ve kosinüs dalgaları.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_6VUQW_TMBS-51c8ISQaFNwsYQKBJgHbkGAgobaAOE1u7A23jh05btd22m_pcedeOHFr9r94dtLSdpt2WCTH9vP3vve-95yIvNDGwplgTHLysZ4KI5SVKhD1YZlRSQclGZRB8A5nqpS21AqtyOfu8cRherr4wsdctp50HbjmeRIGuj_gmYUNI1wGgE9DPdQDTS67F5yJ8ndvZKzkEeA83N76-QSxP7WR7FNeyAh-ILE2yVEE30RmR4Zf3SJmWjs5h1pqQ05vHXcLztkd9g4vOLWHOs-pYuUdgHKqLJ2QDyMhrVDl6lyKTFgYU-lRPtU3tcM6dTgAxS-2pbRCT-D8-g1jA1sFaBBNCivQdmLWV2nbVo57d1itWVvR3G7D07ozXUuNDXDf0efcwHtltSq5eiYU9I6PUIga3cxzWlYLxagCXgoluRKSCQJJey-CtJ3AuegL0IYqSU21AMYVJwHjM29DWa2XEeyHLirj1VzczK0wooApEiEWltdUVgu0Vgvj3ejyGmkOICUxtIGr72e0mleLlqMjpxi0XiShR7dMEUGWRWCy0AVLIngdR5DEzfEEHaY4JngwTTzkhYOvBm4aZIaoDFFZ6lE5HYsIhphVXi1m1SKCXJsaWuwhoIPVyAmjwvBWAs_BFCHp66kTg1QhGVLJ8w5XQyn83tIbVKFyp7XJqmFLHmJLdtiSXbZaW82WPsSW7rClO2zFHnGNz8kkwtya9TQMzsVM8lb4Fu8dXlzxi2JtsOd151oxeRWBf2FFsW8JiTeWYbC8FjOkdpQ40jDI3IVRDH39_wGjsuUfxZZ_zVduhnyGqTUdRwH-TmAT0T92XwbmdQ86-Y-O66ogOq1VjE5G5l55AD7FzdK5svlSnbjKKRxDV8GY7D_Q3q0Ye-sYjwuy2_V18ttCHhfk1mVIN4KkG0Gutn4kx4qh5R_HkfBgWgYAAA==" target="_blank">
+  <div class="ad">Faz uzayı <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Roger Antonsen&#x27;in TED konuşmasından esinli oranlar dansı.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_21RTW_TQBC9-1eMIpDW4LhuSpCoCAJKQRAOKIlAnNAkXpqN17vWepPaqfpbeuzZF069xfwvxh8JiRpL1uy8ffPmzayIE20s_BZhKLn_sQmJEcpK5YjmMp2hxEXqL1LHeUsRldIWrdDK_zK-zCrORCdf-YpL1hlX5Ean4zp6uuAzC3sg3DhAXysd6YX2b8bXPBTpfLI0VnIPKEaHaR2HxP2hjQw_x4n04DsJa9P74ME3MbNLw28fCYdaV-NcaKmN_-vR9TjhPDyCj3jC0V7oOEYVpkcIaa4sZv77pZBWqHR7L8VMWFihrFm11fOmYGcdBqD49eEozK0Fqrppq9jStg1aRmthSzo0ZustHWLpanIEtWaHEnxyAk-alxlbNNaxqMoihkRLoXTMsnMY8lQYlyx1Az84hWeQ1X8XAr9fn57DqyBw7JImED8xKgsl8e-dLQvDiOIR78yDl4EHL4LAdeZlsS6L4dIwMoOuE_I1oEFZFhH16JESWoms22LezsoWcV1HbO6FApbB6y68a1A_wqQ67Ghk65R67meBC7y844Y8P6UUBgMIqtUqHVnM8ZOwLPvfL6NG1GfNpjrHEVdXgqUix7kL3TcwoqXEfojCcNbfETcP-ebBxpz1_L5Lu9n8sVxyysnIWbBXmCPtgHWmtCeJ6qosNvcd1z14jksVOrfOP-egGfGgAwAA" target="_blank">
+  <div class="ad">Parabol çizmek <span class="ok">Çalıştır →</span></div>
+  <div class="ac">İkinci derece bir denklemin grafiği.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_21VzVLjRhC-6ym6VFBIBIT_SVHrbHZZQiXksBVTm1tSgzXAMKMZ72jEIrvYax7DR86-7GlvFu-Vbo0MNouqbGm6-_v6XxLZxFgHlyJNFU9-87eJFdopHQivzMdMsZs8ucmD4Fe8M62NY04YnfwxOrkjm3Mz-ZPfchWFIzL2PGEcmIsbPnawJoRZAHg11NLcmGQ2-sJTkV-fF9Ypvgd4l5vH-n6Gtn8bq9Lfs4nag09IbGznwx58FGNXWH7_A3FqDKVzbJSxyb8_qEcTztNX5H_xCWfu2GQZ02n-ikFeasfukveFUE7ofKVXYiwc3DJVW9WhHnnAU-gwBM2_bKYSxTUB4S4axsZs5aCxaEJYGW0G5uoqbcry2_NXpM4-SVF8cABbvjMjx6wL8PxeWJCsmleLtFpAyi-xeXbMUOYUw5pUCw2Pc_aIBtZVizEa5UYX4yJJkiDlU5DtIzjjOdIMoZ20-H6P3LSSdpZB1G79g-csRjqFTPgjTzpljU_0ARdIjorS2GLqGTvPjN1Wi-i62Y4S0gdlEdNGMR0wmqvlN5lyxbXHdj0IL4ylS9h35Q4DrAWjfKCYMokwCV87h2hCPJlH9hCJ8F0YtPDv56RP4NPld80f5zv8GRhVC6qG9MTtXO-tWSEslXAlUm5jT9sn2t6KtkNP3UEf_7FOKy9cQ8kklbqsFgobMYWvPVj5IVm18GwDYiN0J-nzATL0NvFUDZayI9JDJlRp9Ks8h8QzIB5eM1wIJTTS8FvLtdCQIxl2vFocQb9VEzH7GtE1x5FRnFp1gm3kMsIxkx3Y_wXC01VnkM_hmuUi3CNtt9a-K_2p19jWFfSifi36aM2dwI4dc1zAwjbggQfr1JqM4xyd-oQxXq8_rPUndRqZmKLr0SqVMIgDRxOdwfJBTK_E8j8uMfCc4WDbkk2jcBhSY1pxsCbb3BDJlg8gqYR-QTJq1hW3XJKZCNehl2G0fDASlt-mXMWwNWvTvO3iytxvt5P2JW7Iy714wRA2a4Lzy0iJfbK4jrwEStpCufwuc65yod9u4qJP3EeoM-racwIag9eILKaFVkU1L_DlA0YV9m2MDM91we6iKU1J2z_WqCEudqce2fCZMazJvEU9FnpVnBHDUcHWEC4QSK4hqicG3uw_jQ5-Yti1o7W2iTMj_jlBhKW6xPX3o8TBVPyDqea2OGO0HXL5wCCS8MZzxM1n5qXTn_CFVCt4NccJjV7qt6EDQ7SJm-QOhtDxRLDrH-krs97OrdkqaJ9GfA9bL1mbM1AC6HRrVpPfbyedq4xKfL9e5PVX8olOUfk_e-JlCaQHAAA=" target="_blank">
+  <div class="ad">Kağıt katlama <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Bir kağıdı kaç kez katlayınca Ay&#x27;a, Güneş&#x27;e ulaşırız?</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_3VSzW7UMBC-5ylGFYdEbFNAqIeFItQfEJRD1V3BEU1j0_XGsSPH2cbb7rP02HMuvEDT92KcZANRlxzi8cw333yeGZHl2lj4JRiTPP7UHbkRykoViC5YJChxWcTLIgg-0olKaYtWaBV_nZ1VHjPX-Te-4jLcm3lwx7MXBfpqyRML_zjhNgD6eupUL3V8O7vhTBSLeWms5BOgMx1f2_OcsD-0kexLlssJfCdibd6cTuBCJLY0fPOMmGntn3OipTbxz2fhWc452-G_5DlHe6KzDBUrdgAKpyxW8XEppBWq2MalSISFFcoW1UqddgmDdDgCxW_GTwmjlsDnXfWMPWxboEf0EragsTDbdmnsK1bzHV5rBi-5Dw7gRTeZmUVjA7ofC4mGaciwwKKpFUNYoOEpt1OwOoecq4QbDilXaAhKEITHBzQ5WQmCe_ytgPHmXjzdW2GE8aThyQLt54s5CNoBh-umlllTE6CpozhgXEFFr37VWm6wmHe-9SIdWnSwaOp1F_CYQx9gIuVDYO0FHmtXUvT1YVAI6u47uBZryamJ9D7aQ9XU56UJCy88Cqy_Z8C0vC4lnqIwPKymcM4LYSbgBqvnHe6Gq3QKl_SPqJZf6r463S4JksWs5erzovhKO5RNHfrEKLb4dE_dalsQVlTIj_jxQax9grfpCDbBX86xQEoYJE1oUCsRBQkqehxratPKqeAlZVVkudZyHWmcalVmpe_AtixNihsIK3h_RGtEezgjZUTTjjYmnqGpd3dE--EI9nfB9rewqBvbflu8J3e7yd2Y3P2H3I3IXUvugs1ofc8UI88fA-n8RNAEAAA=" target="_blank">
+  <div class="ad">Bilardo masası <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Kenarlardan seken bir top (ChatGPT ile yazılmıştı).</div>
+</a>
+  </div>
+</section>
+<section>
+  <h2><span class="im" style="background:var(--sari)"></span>Olasılık ve sayılar</h2>
+  <p class="alt">Şans, sayma ve mantık.</p>
+  <div class="kartlar">
+  <a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_21RTWvbQBC9768YTA9aUBS3tD0ECiUfhTY9lMg09FTG2okz9n6I1UqJHPJbcuzZv6HK_-pKlkNNrMswb957-2bEpnQ-wA0rpSn7si2lZxu0FbwdVgVqXFbZshLic6xorQsY2NnsW35x33NmrvxODelkkvfkrc9ECjdfUhHgPxAeBMRvtF65pcse8jtSXN3Oah80pRDrar8d6mXkXjuv1VdT6hR-RmPn352n8IOLUHt6fGWsnOvXOXPa-ez3q3FeEqkD-BWVhOHMGYNWVQcIVWsD3menNevAttrNNRccoEE9sIaoJ1vBS3T4BJbu9ldJ5GDQ6-aj40jbPTAyxgg70n6wMFxpH6ua2QE0-Bc0wsfH8Gb7Z_KAPojYz7DRCK61aHAF_PcPW1ij1-i7DaBCTVENGODkSIoFrzXFgFGnaA1JXEPCbRTFtnvi5ydDLVmYsx8A8tCQZ5_1goC22xhIFN1I4IpgQZoKWgWCFstuo7GIAXoptZrMyI85MjFKY6x4K49V6KXJ2xQ-StHiutucura29WXtk_dTKVYxtLkiu2DLPWawYSkwaEyOPkxTmI6q5JzXSTRNe2eZDdgvLJMJTKTcu9aFVeJR_AObuBqpPwMAAA==" target="_blank">
+  <div class="ad">Adil zar <span class="ok">Çalıştır →</span></div>
+  <div class="ac">İki zarı adaletle atmak.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_51VzW4bNxC-6ymmCwHeTeW15dyEGm0apWirBA0qI0WQFMXIZFN6uaRAcp2sDZ_zGD76Wt1z0-a9OiR3Ja-s9BBdZjmc-eabP0qUS20c_C0Ykzz_KYqlEcpJNRDx0p6jxAubX9jB4AeSqJR26IRW-a_zZx-8zZlePueXXKbJ3BtHnCQb6MUFP3dwTwnXA6BfC13oC51fz99zJuw_Z5Vxko-AZNE_Bjkj2z-0keyXcilH8IqAtTmZjuClOHeV4TcPgJnWPp2nWmqT__Xger7knO3R_86XHN1TXZaomN1jYGvl8EP-YyWkE8p291KcCweXKINVoDqJDhvqcAqKv--nkmYBwPstWsTWrAvQWrQUOqM-MReq1NfZy7M9Wmc2WlIfHcEwdmbu0LgBnV9o5Wr4GaU8aFYKkufcHVh4gQUHhClHmYCuK1VNBg5VsyoBDS6QOBu07h2XfCquBOMqfWJQNqsiL3DpP9LxCB5nOaPbmmc-8vrT-g7otlkxVLAQNHdCERyjuAzBEt8I3kWyfH0nyq8JVWhVFT5EjBeQuBkwfhUVEg3BztafSu6dT7y_92OiueUGRCGinfIl2TAsPB9qnekIlr52k4jzZo51s_qTYDcRDttaHXaZbModkKQPIqkUncO2LIDru20YsppA828hJKG35T-9hxmzFbJodUIx7p2albHEGq88jIGyWX3fQTLe3IrPt1vYkEq-oFZ77PEWti1J4FgjvAuVtPxLsIqX1CgjZvrzLU1pGjWhNrZZTSB8UbzHx8fHGUn_QPi2aFmVshqTJhWUgyIB3x3Cnk73ETPgLT-ZwSV9jLOQRQ_25Kth2zrtQnf9ryuaBokprf6MW2GyVlK8GguampTBIxj7VI-8yI_J2aKjutV4lSa_SaRgnkr6oF_ZaQLfbkN0BTraYZo7PdXVQvIs-yJ2m4W437e98Cf_C38TFgi7IQwn_3rFqQvHcmf-_ezHi5LTM-YHLeyp4jmRbFavcZkmyQgSqhfQivnPnP5KtnnY5EmY-CGCqkoMjduznPlbNbS7FnW7-hR5FzTu4fA6tjktt6OfQdI5EytdUEuShxua3PgdJSttJjCM2fVCtMBxVQlz1vZXbTpA1VXfbEJMtz3qm_SZJ6-58m8gPcoKS6S1D2O9_ujhaeXI7ABhgTbJeu_9M8Wof_8B3RbZ-wEIAAA=" target="_blank">
+  <div class="ad">Monty Hall <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Kapıyı değiştirmeli miyim? Ünlü olasılık bulmacası.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_21UzW7UMBC-5ylGAURCQ9pupR4WCggo4qcgxFYghBCaboxw17Ej22k3W_XMY-yRK7lza3gvxk5Sst2NdmN75pvP8xueF0pb-M6zTLD0RbsUmksrZMBbpZmiwFOTnpogeEIrSqksWq5k-npyOHeYY1UcsTMmonDiwC1PGAfq5JRNLQyEcBEAPR31TJ2q9GJyzjJufhyX2gqWAK2z1aNf3xD2k9Iie5UXIoGPRKz06HkC7_nUlppdrhFnSrlwnimhdPptTT0pGMs2yD-wgqF9pvIcZWY2AEwlLc7TpyUXlkvT6wWfcgtnKDzKuzpuDa5dhwOQ7Hw1lCj2BM7upGPsYP0FHaJzoQetOmZ9llZl5ux4g9TqaymJt7fhdluZiUVtAzqjQSFQNzW85WbG5XO-4BIiRnvArKkrgTCxmmG-fYSL6ogbGwOn0p6UIsjYoicYD-2_TLBq6q8U2QhujVdUqcEKRVPn0V4CozhlgkWO4m1Tx4FFSRrozpEcgyeKiYg1S6YhkvCQrKBCSRx_l1CpmUFvcPUTdUFi1JEkgwPw19F-yDoAzXvyMdzw2TXtk0HfW-RCsylJO6YKNWUmn5KLPUsC2O1c0AlkjnKN-R0X69ch3KP_I5gD-7u8npms1GX-P842_DncISjFtgMHj1bcAKpk4n9A-fa3x5t4bjw3WJz5Fuwm6wSZapa6hA328-sLCe7GckgYB5eBQdvUusJFdKMCu3s7O3FacUk9kDPDFymBmvozFlHodHev_khfNbj61Rs19RjCBEL_SsM4HtA7o93WIG_qxwTa2oKLvnP6pnIg3x9tSDGEh2fMhl0nhS9dWXQIlyvMzW8xg9F-S258mSV9xvRj-uxZlvMFdXH8AH40NQXwptQRzR6SwCjh5CQsBEb3bUmDP2lq6iLtg0nnDoTNkqbeBx9145SiiEb7ceoTywaJARfzcJIPZUZJ_gfKr-bb2wUAAA==" target="_blank">
+  <div class="ad">Asal sayılar <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Miskin dizinle (Stream) asalları elemek.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_5VWTW_bRhC961eMhQAWC4WOlAIBjLipnaTIR79QGykKFChW4tpac7kUlkvFlKG_0WN99DW-5KQb5f_VN7ukLNkGigYBaC1338y8efOWKpvm1tGpShIt4x_CY2qVcdp0VHhZjIUW50V8XnQ63-MpjMmdcCo38Yfjtxe85ySf_ihnUve6x7w54HSjTj46l2NHG4t02SH8a6DT_DyPL48_y0QVk5PSOi37hGe6_dM_P2Lv77nVyftsqvv0CcC5Hb7p069q7EorFw-Akzzncl7nOrfxXw9eH0-lTB5Z_01OpXCv8ywTJike2VBUxomL-KhU2ilTtO-1GitHM6H9Lp_qfjiwTp0OyMjP26X0Ig_A50YNYrOtDdDsaFJoN20n5jxL22vF7OSRVWfXq1je26MnoTPHTljXwe8jZclQIarVTbG6MfhPpyJ19VdbSa3I7JBCHysxX93o1Y2lmaTBbiINmV1JPUOJmCgdkauXWUDRwjJIfS3sdHWTrW4SHIs72GDpBLUe8ybO5KikRK6upFVhbTcRBumcvTcO0PW1nCmrplRJozgeAJHA7ZUDXMcJZJptZNoz-wEl2vdRPDDn95KGEQ2oytNCoNBvts7QUxpEnMtZvayvdb0kJ1OUwTF8HVTIWSbnlKlCmVcPww4344bcEbyn6mtl8KCXT-nQct5pnIop_9Eb9MlEEXi0pKJY3V5p2bugg--a472LKIo9eZ0zNce7qHMfYdin4bMonkg7AkOrLz7YJYoDSMgd7eoV3Sdo3gE9udysOFp0I1p0Gno23gxeRODqWeRHtsk_gHERb9S852XVRdem4CjJV1e2BG9fbb00Wb2scrvT7a_3TGQhpk7QRHjOIBdpZSJpJFCwgCRWV15tELgWI6WhwsBxizF4sWvUthZTiQ1apV6Pxothhw6zEISFKKj-asZNkNUNUopbuKC6Hgj2WkXSG2pF17NCaZIukxWDW2H7JICMzM4UNgrbyHoktQZ5isKwWN3om9Vc1cs5lNpvY34QM7Hn3RBCt1pWsAwNuRtFThQMyWUIC7IssepVg59SWmrttRZISlme9TLF4LsMpyjlFFlDiWpLLLoNBGZlvR_Tip8jtId_hXHzKTBJ6T7EgUPxT8p8ErqUC4rjdklchKW2mJ8lD2FTNeVIW6RoHjKaiNM1lzA2-4reoR9MdwJCJNsX96Q0gs6klmOmbx7f4VaFpFQxVpHb0pThAtn7mI9zWEILkoGV-joHNYhdraVW_83gdyoJwvPMkp-tmcrUHKy4lk7Bla_Dv4Fi6uXtVWtFrLmgDyxzNxT44thhJDBw_rXfDvwU5tQ0q9E0QsAqkZFNoSfUDl2vRf0Lop_gbKJ8a1inUG7QZoV54SlnJd0PgXbtnub5LutRUqIq6UcmUWZdCM_BvWPc6CZvtjXOvVXCRNjTJu8MffSK1zyN2MNNMjJ16m56DrEDA0ZHQEfvS5uU63e3_6gsUZSb0vR5LhWd-MldE_q_3T1AwyMvN-3M_8XetWjMnI3q7n139QWnWWc7f5ofgh7AE6YJ9xsEJhKoEyVM0B9fqWfCuxZfuI8b4s7BltdjKdoMyXen1z_bM0s_YIX0Nva9Y6-HxDdk2sqRU1KVWtfvXYvO1EjF1DDLjKEKMG8kV5PrpFxdlUHIfCqLfdhN62_IGPpOPB_E6PVsJp3iif-v2-n5oLmemgtp2F5Ii3th2OdFxf40F_z1xHZp_Yze2Wajvw0TYne5D-TNRd354KYht6P3fAhY10jsW9ReubWCvTl7H76PfOhN3Hn-_Piq4FX-TsKYCAtWANgz8gxfuad703yu8IyC1bbBRWXD98_DAPxmLHzuCMSVinnwCStMoQruOOEhcUn8gdz79xFCxdsWn7IoEoBANe23V7Y2l7S0d6l5wn1NaAB_fwRS-FKFe3ltLLY-_d6aBCv_As_26GkMDAAA" target="_blank">
+  <div class="ad">Faktöriyeller <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Faktöriyeller ne kadar hızlı büyür; ve Int&#x27;in sınırları.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_8VYT3PTRhS_-1M8NC6RGkfgtFwczJQQmKFA6dSZdhhgmHW0STaSVp7VKlgK-R69-ci1ufTQ8c3OF-kn6dtdaS3ZThsGSDlgafft7_3ev9V7YfEoERIOWRBE1H9ifkaCcRnxFjOb6QGJyEnqn6St1g_4SzhPJJEs4f6Pg8djJbOfjJ7TUxq5zkAJGxzHayXDE3ogobYIZy3AfyV0mJwk_tngPQ1YeryfCRnRDuBv2HzVv89Q9rdERMHTeBR14FcETsT2Xgd-ZgcyE_R8BThIEmXOoyRKhP9uZXswojRYs_4LHVEiHyVxTHiQrhFIcy7J2N_NWCQZT6v9iB0wCack0lKaas8csNShD5y-b5riehpAnRuWiKVYpaCUKClUQk1iUnupuZae7q9ZlcKu4vKdO9A2kRlIImRr9qfgNIyoe68D257aHmaQknx-ERExvwCX93En7ONeQOcTdjmRTLAR5JSzgHKYfSTR_AJX5xeidcQKRPJaLUn4_CKGQxJKVJBjovAeDBSq14NddvSUS7QZ8ahADXBfqe5CnoQpAQ7fNg7CFnS9CjHMTk-pdIclWgfo1bgUcbsL3CHiVsfxnIFFezn6PuVUGRMCqqERCyFgBYOcQEDgSGQj4wt0iw_7NBREEEABDqdU0CGL0COFgnILIoDImIRwxIbMKxGOkU1KZx9ZzGBIeUFFygqMoCTlWXBHSYhCAU0lTZk57Fc2p-haYtSiq60nMSprbC8t5LjrLQOw6D8Ol44Lm46rrWKYeC1MdWDlT0RtREu57jp66ziKONypZ0C4jHctR9R0w6bhpX0S0EIHoy4C73Rh8A2TBGo7pnhkC_NAG8-3wo1cZYDeySlGioc7MGQ8iVXB5LNpgUsafBguQ-uq0qIhkYvasmVia_AKiwSLm9WCHkqJqricFK7zbDaNMX0hifD-IhxdV0TEJLUmTJExK_w3_GXFE4P3AFMFT6QZ9x2vDKm6qpUFSqoHj44xmfuw8ffvf23gRslVFUZEBRuokEXk9U9v3XHagz1VDvjSgbz25rlompxNQyDi6G4PYiKP_ZciwPP8SO33YP6HcpK1bpz6w-Ry8iKDDx8QqnzxwK4jk0ZWqg1yOcHY9Pv6gH7xlnkquTDLRTafZIqjfalsVwT9SC7wOjW0hflk9nF-ESJeTIKA2nCtBg6fVFh6oKPz2nhE77xFJ0mdxKX1HZP_mNLlQi3o5uupghImcSYfBspQvNqM8dU5Dxz96JTGOCr9MKybm1bUaERBWz9WWOep41lNBpW8IgNTJlcoi0isfMItjikOzrhjoTAEr8geeRmhuzAzLZZlI1fYmBXUUCxgaLiWhm8PVcuqrJATZHEmUuSH7ppjAGNEC4jn14ghoA6hXlkU06HTPmPnHrRrX4W2-SykjLN20zftMx1kTM08O0cuUYafdfGGI2S7aXobTXiSiHg2jXoIWMXSL91eq2Z82814pLLDUReXVqCymVNfa8_JIAndpfz2fPwy4w0yxl7igaoWxJpfvCIjzz65zpnTQUz137njrSjWVFRTZe_7B3AXbt8GdfF_79lU5IZTFz34rLT-ctJMcOtmzVtJPtQxC_2QjNSDi3cx90qzLK4KSle_WQpY1N1KNXY0-A3lWPNwf6uE9ioym31z67hjb2dRpQzVYCWWxYhKc8J1u7J4QvE19uwgmc2KzZdQHCTzichuXO3CXkPghq29ttLz5V4DA7_9b4Hfgbz-Ys7lcKsP4zVk0RGeX90cN5IfDX6fw-gLJc6n--sG0uo6TvoqaVblVflVt035C-aO7Qc8t0_Fohur-pWxcl2urkftxEI9Fdqd1w1BsRqPBg8kgJq99W5RO_9jQjfYfybDr5Pgn-3dm07_a7r0y5ZDa1EStU5A9TbYXKjxtmoGOSkbItVzwBG29WpAMiaF_e86sF3Oul0cXoVuJRZjYx_7CGznuX5a7jtS5_lsKg9RW7eECMgxTuuzaa4GB0TzYU-tqDYmx8EGGx0UHGF3hxVZQFtNK1phvbRr1uypGQQOTfOFfkDx2RTn5EhZJUjYq7e-ojaNVmOmHhutRLZmXrW7B2Ix-609fpA1R1O72WhBU_HNvVT1k72rGtEqLuoOq1QBuGWLuWSC56zTkX2yDtWUr-rAeWUd_sE1bFA9tLmH19jQcON6Fdknq2iaYAPh2ea3nph455sRB_ECM1jo2iOYknoP0xOziUZwOaH5LZOKsIsU9lBiFzVQLmEXZ0jMM24z9bzxZ7jHPMCVfwDWPmoqmBUAAA==" target="_blank">
+  <div class="ad">Sayma ve olasılık <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Dizi/grup, tekrarlı/tekrarsız: dört formülle sayma.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_41Uy04bMRTdz1dcRimZaZNBRGITlaqBpFILQlUTUbGqnNiAMx478ngCCeRXmiVbsmHFLsN_9c4rDxikRoo8vo9zzr3XNg9GShu45JQK5n3LlpHm0ghp8cwZDoggw9Abhpb1FVcipTLEcCW9H93ObRLTU6NTNmbCsbtJcIZju5bqD9nAwIYR7izAXw7tq6Hy7ro3jPLwuhdpI1gNcPW3t-l6grG_lRb0ezASNThHYKUb7Rr85AMTaTZ7A0yVSso5VkJp788bd3fEGC2x_2IjRsyxCgIiaVgSEE6kIbfeUcSF4TIs_IIPuIExEWlUKrWZJaykwyFIdrNdiuOmAEleP0fMwwqCPCKXUARtCzNpl7Zt4bhXYjV6ZUXz3h5Ussl0DdHGwr1PNGUvcx5AT8kJ9JUSjEjgL3PBAsE0h-VTPNdMBswHHhocnud5SWarCV3la2JYCKgQ2xcvNMBRE-LHZCuIxlyxfA7wT5fP6Dt-nQKUxXMuKNcJ4okaqColsJPQE80MX-lpd-K_8eNprosDXz5wCX4kBJHxQiCzFRKDy4RMnZ0JsseLlzl8AjulSOpYGTNOD0_sRgpVWGW0lZCb1uEocXd3Jem8s62muQHn5LkYXtC6KXa9XsByvB6FL14gWlVgb5Eq4FPKcPAyApIUFi-mOfn9_Qb5RaugLyPG0P8mvmhVBcHhxbgNkA0n8IbdJG0OgEw0WT7giV0z2oc2fITGgWtlzg0xNrZozDKtJQcrm2E1kyUiHwzpCxVG1aa9AqNsCgaP0PIZSdt86hTKa3k5rpXBOP19-FzPY9304SkcjdcO2JB_aVf6-x8OwkRopd9Ivg6_QOUO4ZJZN2a2-37GhLzOSUaU5yRPVF7FrKQ3XSVB4R0hPpy1ztrgnHfq-Sl38UHAKwFXyyfNBA82-lFW7Dulvidb4k3dkr3jFMW6M7tsjNdsFOJVjPCxoHipqQoNCt9Zx17xqWDpw7V-YTqSYt3_ANmjaAhzBgAA" target="_blank">
+  <div class="ad">Boolean işlemleri <span class="ok">Çalıştır →</span></div>
+  <div class="ac">VE, VEYA, DEĞİL ve NAND; doğruluk tablosu.</div>
+</a>
+  </div>
+</section>
+<section>
+  <h2><span class="im" style="background:var(--turuncu)"></span>Algoritmalar ve oyunlar</h2>
+  <p class="alt">Daha ileri: veri yapıları, oyunlar, yapay yaşam.</p>
+  <div class="kartlar">
+  <a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_61WS2_jNhC--1cMghSQtjJjp8ihbhw03WyBbbqLIk5bFEVR0BGTMJJIlaISMbv-K81xr_Ulp9zs_K8OKUp-7m4PDRxLnMc376F5lkul4ZLHccrI9_UjV1zoVHR4zSwuaEpvCnJTdDrf4pMKITXVXAryw-hVZWXOZf4ju2VpsDOywjXOTtiR4xt2oWGJCO86gH8eOpE3krwb3bGYF9fnpdIpiwCfyerRPU9R9lep0vh1lqcR_ILAUu2fRPATv9ClYpMN4FhKG85LmUpF_txgj3LG4i30M5Yzql_KLKMiLrYIFEZoWpHvSp5qLoqGn_ILruGWpk7KuTqoFVrXYQiC3a2GEoQOwOqNPaIXawx4Ce9CI7TqmHZZWqUVt-dbqFq1VCTv7cFuXZmRpkp34lKVGRTzqZhPL-Fk9qj0FRPB3QBG1MynEVz7t9BVMmb3INHdsTT0jIkrHihaoEbK8JSE0D2CM1bwjMQ8iVswRLEhzT7w-0DaN03RXAYJij4_8CyYPY5nT2r2NGg9CAdwilyFtgzV1BzPPsynSYr_ZEOLrEmE8ALQPvu00prEkltrcOiCy8CxonicP8yngSSJFGVGqgjaV_gS7pZA1uA_AWIWIAZBMFWTtbKsa1KfnAjG_g2rA4r9VXLFAgqHWKBtaZaDdagQhq5X2PyBKUCXKByhMrx_jz6NLRANoUd6TsjIpKDAxM-X1AcwRg-w6Eib_6N4wS1AhCo2AuwUwQqBrWGLeIKlb7ur3-tFcNALo0XDHSAFycuk_yZ1UAuFzmBQyPQUHUj1KUYGgS5xzEYuiyqlaj4lFdHytdARbLJMzWqQMEaEmj0VHqtbY3cdeC3DBBJwFGoBp4HJqOWcIp5qcV8JJpi64SjcZwfYpG1hmkSFWH9cnaKzUbliYFP4exP2H0vz0dSuIGP5_PCmdAXzxbLUpDSqnD-UBKHsQrYDfARWnD5jGRejIUOYhJiEPKXox5LtFqINxDppTYtzK51hLJiG-n0Rq-cNwWWGCapcq4xkSqpGqlVDMZeyVuw41cQswFDLrck6UWuxED9AMCFcxFxdWVaQ9yPI90Mr4XOU93FOD5FIqhDyvk9Svg-TxtDC1c8acyMvyd2q0QqNVitGqz4cOVLVGKyWDLpA_5fITB2Z-Uhki-x-PjLjIrteNWrQqFkxamxklmQag8YatLOhM1qhof1eD48CbISW5A71FDz_zbOYuyayx84FFdhUMY6ju2m8CVQcQs-utwU_szvspFS4JIPwGyyZRqKh98Hlju3L4a79_qJH-pcQ7DZtWJ9fwG7bcY4S7iCCu5hmjxpTkrHAd2jU9KC9ThKKrPrCy-gt_8hF10JHbfeHOFN2E0MXh95foAFiG7cyeuQrBLd7BFveLjY8adhzqYrAc-2C2WTb_c7RcYEzDoddWKyQ-heXNZSjjbaoLVW7sXc9MYS3MtE0qBB0H200l3ng1yS2QR-XrVlnmyV2_WOlNVOeYlVyNxsLQzabueuqJZoJl68evxqPVrqjCWYbfncLfncL_qS9t7Z1HfLxsnKXAf-NJqiaIoJtKCzO17YG9gs_2CZX_B5jD1d-Rb0SMer_C9Ajh6VXCwAA" target="_blank">
+  <div class="ad">Dikdörtgen paketleme <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Açgözlü bir algoritmayla dikdörtgenleri sıkıştırma.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_4VWTW_bRhC981dMjRYlY5m21KYHuQnqJA7QOgUCy2gQFEWxEtfymsslsVwqWgU-52f46Gt18ck3Mv-rM8svS1HTADF3Z9-8eTsfa4skS7WBSxFFkoev60-mhTJSeaI-zGdMsus8vM497xf8MqVSw4xIVfjb5HRJmIs0e8MXXPp7EwLXPHuBl06v-czAIyN89AD_NdRxep2GHycfeCTyq4tCG8kHgN94c-u-Z4h9l2oZ_ZpkcgB_IHGqR68G8FbMTKH5zRfEUZrSdV6mMtXh318cTzLOox32c55xZl6mScJUlO8A5FYZtgxfFEIaofL2XIqZMLBg0qGc1HHt0EmHZ6D4h82r-IEjIL9pw9jA2gANopHQgjaFGZelTVu-uNhhNbqzovnwEL6tKzMxTBsP97-zhQCVxgaLpqs1mGodS2ardQZ5-aDLh1hyyzWPIWY6YZ9v6QzKu_J-FcJZtdZJtV6hBU8RB1EaFwoOnoPlSnQuFOidiEWGpWffRywWsPdWMsW0MHYPUluoQjGImGUKKUO4YAnwWGNJyHrFQFiBMOWOv_EMT8RKckxVxFdwOsEU_ngMtD6hNRqe0A-MejIZO2lKKMAbojvMxVQ4v3OG2OERwco7sYpEdSuQFwMKzSXHuQBLOSnvWFatvajQRQJ5tUaSSzjjqN5XwzG8Kh-q2_IhGYAa9bvA9X7EFXCMQvxzgfBwibBhaAns1qPQBt6NZ0ha0uKWcowBcqEHYPvl8qq3tssAyetAK5AU6N6g9IQjBfkGVIpzBCZhS30FB-AOaYEIdJbu0DWeRC0kOqbrYUcg5fvyXnH7p7vwX5TyjTy09_XJa9kJpJ3tNLYK1YZC1BBgoaapZedcobYEe_GRYlcH_5yRLidQ0arJ1FwYf97Hm3fBxvBCaJE0eQFY4mq-PAZLX-tMKoxTVSTFWaGRg5yJmJ4UFV5SH-N8dL0v1AzfMfATBCYo-NnzDf_GfOziJE2cxB53GcT--YTa222AcW5c-2UIPNFM4sD5RwPs1CDMUxkxdcaMZH6T9ja_mPnA9xcDEE7CAsb7fe7R_SgIvEdF-3_itp6Bj_f2ecdcZ40E0o0EHOIk1bNl3f473HcQQ83Nq1uuwbfwMw3dAQyx4MCdwnpKMl8EA8CfsI-HmAGwaZwzxDiixn-54Y_MO_1PJ48IDKe6BZ5muZljV73nWvLPt0agT9DOFI2_K0HfLbZbSa52TFL-9T6Nu2fvcbeKOCrvNepQPrI66q5zc1rlTeGnyN6JOnCP1Q9PB9CvRkeBN607kV-077GaMWrDWg3WaeedoXtJdh2PYbuptqYlC6-4nqKh-gdlK98oimRUSNPm5OGb-QR-wv8-BiB-rNdR-BTL89XjgO7_XxPRP39bCL4Yb74-W3L5Ylsv3-rgISIND-ndbXq4t9geNmqMow7WW3oYFrSpXFzex-WDHxeLBTf4po7oTR1i4QLs0NZqyWqdNehD0XBilg4dG-ap8Q2auNvHDUlNgIJ4mIv2jwja9r9b8K77SD-gK-4j0QBqarI4Eh3Uw3Kz8YfAqYrQ8i82nbaDGgoAAA==" target="_blank">
+  <div class="ad">Çöz beni <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Mavi noktaları sürükleyip çizgileri çözme oyunu.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_71XT2_bNhS_-1OwwQ5i5qqy0hVZgA2b627YsmJDHHQbhqGgLCZhJFEGRbWRC5_3MXzstb701JvV77VHipIoWQYaoFuQRhXf7_34_unxkSXLVEh0xcIwpu4P1WMpGJcxH7FKmC1ITG4z9zYbjb6DJ-E8lUSylLs_z5_dKcxluvyFvqKxczRX4IrnCI_S4JYuJLIW0ZsRgh9DHaW3qftm_pqGLLu5zIWM6RjBM-q-6uc5YH9PRRz-lCzjMXoBxKnwZ2P0G1vIXND1HnGYpsqdp2mcCvflnni-pDQcWL-gS0rk0zRJCA-zAUBWcEnu3GnOYsl4VstjtmASvSKxRmlTzyqFxnT0DeL0ddcVB2sCpRcYRgOrNzAIY0IN6homdZS6a9mry4FVKZpVWH70CH1RZWYuiZAjSRO2iilsGdIVWgRgiszBtnm55eVWxESU2xEAIaHwfp4LJ2MFucGjgkQAicnHjQRcQgqQkiWRhimmHKgmnjfKNNMVuiQ3kjjB3Rk6pxkTYxQU5r9YF4nSiignAvR8zywAjQ_viu0h8tFxhTDC3Vu2umbnJFaGlNtyU24BewpSqYxNkLHbwWdoygRLQFqVY0RimlxQfs040z6RIiRJFfYgLUhCbGHlsJKpXZNr5dnQ3o-Qr1FExsQB2FhhK8WCcQpRfoyNAZCdmArmtI41UIQyUm6cr73qVZX5unVp95aIpfbzAkKXGLrG0da7jmkmdQNG48F4kJA4vueN0cRVfz33Kw_j1jedhHGVi2qZp5EkBfmRSeOSgVgvln4HMswyrG8FIv0fQjDxtfOnT9TfJ49xzwXId8d8sntbbgsy273njslelsbOyRNvXBUyKPS8CNKPG7_1pPVCg9oih2Lp-Xt_D6saLN_FkaR8nnLwbwwGwa5Q0N-a2mucO0ZQv15dkr38auEJPOClLdP7bFGFRBENbGGYe5D6S1BRESoSVVC-F4IUbno1Y8lfOkB_OydgHDbItMj5LBd5kvewc9WybCxH0KoE5D1iu3_qryxMy43IjTxgUjJYLIiK7MdNm8fr3ftMUuHvt5omf26UcrBCpSi4U90PN3KnAR3KlGfCeNeG8TCoaEFWtMAiXW2NRK92rEJfwgYm9EEBb4Wd4sZarYh7PFdE0CmBCKq6WxAww3k5Ri-xbQtCtNxA0pwHOpJtM2xNLShnF8ZcA-5npa9WKfKl7soa0RPzpeWl5bULabBfC9xTbGvHucNOgdXJtMfdWVh33oo0yshha9P_0M7JfewcqPsH_bWOQv35Nds1aevAdLU0IrxP4Wasnofqn4isCE_IjHIq9VxiC3vlE1BB4B8dArcerkcHzRYdkwfC6I1sjt5ZnO0-yJw7MNHoXqLwHQoLSdSQ5BQWUrcix8J7asuxzTDZW_HVCu5MA0tBVpMDfN4e32SPzx_g8w_w-Z_A59l8JpkviHhebh1eu3-GyncRi5seqXqrhoa69qz2Wn0tNzSkV41N0JzU7z1apcVd5wy7GUnoMzhDKZeZo3eoy8dUWa2F0TWMaupUb0-DwwfeQBO2tzeF8Jm2t5jrUjhI_Em0-4T-QcIa25vLoBqm6vN0kuz6DP1JVjrh3UNRJXUJ8t5MA_FU8Kni0E3wtBlA-uNZQAGKbS21nz2L2Aef3sQN2YrNWESL2e7DivKYOcqGcSMFyRROyDiPnEXgwj0gh9kTrjC4PamfUxHRVUjtM7CeCpowrvc-gKZB9QNhJ6X5TiYYW2E8-rWJ9IMjU_T6XBnU9bu6f_R07dGz3zz3k6RKI85t1z7vbGI82O-70HhxvXenG9iduNFXwHYo2EtH3dpNSKbGb-ScPsRH9mi51jdXqe6pqgTNvfMYnYyiXDR31MAcd-ZCC5Wi5ib1VIsPW31cXRBAUBiAKakuQlkQuO0AOVp3runPeAgr_wLxkOwVuBEAAA==" target="_blank">
+  <div class="ad">XOX <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Fareyle oynanan üç taş oyunu.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_6VVzW7bRhC-6ykGQY0sHYoW5dotFNtoGrtImh4Ky21RBIWxEtfOSuQusVzRoh0_i4--VpecfBPzXp0hVz-UDORQQ_BoZ2e-nd9PMkm1sXAloygWwS-1SI1UNlYtWV9mQx7zURaMslbrJ5RcKW25lVoFv_bPpmRzodPfRC5i9qJPxjXOC6-lByMxtLCmhLsW4J-DHuuRDu76NyKS2aeLibGx8AHluHms5Ae0_UubOHqfpLEPfyKwNt1TH36XQzsx4n4LONKa0nmrY22Cy63rfipE9Iz-XKSC27c6SbiKsmcMskJZPg1-nsjYSpUt7mM5lBZyHldWVai92mEZOhyDEjfNVJhXAZDfwCE6s8UDzsKFsDBqBmarKjV1WX7xjNaapRbVe3vwXd2ZvuXGtq7lbSzwwUjcwpCrmKuEvytnt-UMgzok87AddoAbnpWz19CBSGRCSZg_yluZQjQxE9NCq7N-D15G8ydVcFXO1EsYC8UNDHQxqbDP-ogXdn98DXR6QydU7eI_8rbzpwQ-zZ-GRsTCIPqXeP4EA_71IeYW_RXk6PDG8LicjVnHRwAvyHQccfWB25izv-dflCg-9nlRzv5hnsfY1IfCg-MTmELvFXQ8eqYGVNflbP7oEilwRCt1OSu0mdwG0Ncq4mApjQS1MJCxVBhBZY_RUTQDiSsjIRPzxx4BX6VCWR8iKT5xE_nAh9ooH65jGQnjwyDWw3HoZNcHbGfRooxchiz3awivVb8L9kbj9SnWWDHKN_R8INnxViZYp2NgISmh1yOXxVVqdCpijJUM0Ku7aaBx-g4bD3Toga6Tiwe7ToYEUct26NXDkmic9qreiDOe5LmwkoUhtEGo8l8jM0nmQv1xxcuHcsZCBG0OmOcRbGD1e1X32CJSp1UbReXMVNwhygfMg1nYoSfh-JjSrUnFiEwmNC99udgqGst3izliuVu1_zc7mVaGj-UpjnpCnSo8gr1fxbaxN0dYNFhlkRAuOuOqVEFaeIWb0Lpf9KIJ34NGOD7IqSszBlTlTcUfTzAdPNe2Vf-qT1h9Ousfz7lM0VxOgTa13sGiVuzQCtYmtlmn_WaZOliYDIdcVpWpO5BhMt9y8WG05uGCoaem6CtxXkIXD-kK1I1I54wzPDNXZoZeR9T9z5-Bvp8QhdSnYu2mWNx4yFaFHmcccjInrkG0wnr1VNxXXfRWbcyZnHo0YNi-qsDMeg7gbjWGeL_vQeguOjgHy05uDN9GK6l_Ek0UMAlH7Y2JbMaxCIMQGXIoPxfqWrKE53i1i_Ro8YlEMETaq4qwC0jS7ZpSD3x6YWdb70H7BM5paYKISyPYwYpNlky0NYBpr6aJj6zS-G4aKR-MOW00PG8sT3CNvwdDIiKVyK8PjBXBZYgtwGj2iJMWHQkuu0stMc4yqIoTt3kwdDQVbtBTl-TS2ZHxt90P3PnQyR9W5zW4itK3KXMNrIph34F-7_QNcK_xA3ymIpyd_wBR_VPlkgkAAA==" target="_blank">
+  <div class="ad">Yaşam Oyunu <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Conway&#x27;in hücresel özdevinimi — yapay yaşam.</div>
+</a>
+<a class="kart" href="https://ikojo.fly.dev/?zrc=H4sIAGrfmWoC_5VWTXPbNhC981egmh7IhmIk2enBaTIdx-6Xm2nH8rSTUwYS4RgmAGpA0DaV8bk_Q8dcq0tOvon5X30ASImU3c5UY5kgdvdh9-1iV1wucm3IJU9TwZIf_GOhuTJCBdwLizkV9LpIrosg-B5PqlRuqOG5Sn6Znt5ZnYt88Su7YSIcTK2yxxlEQT67ZnNDOpvkY0DwaaCz_DpPPk5vWcqLq4tSG8FigmfWf3XPM-j-mWuR_iwXIiZ_ADjXk5OY_M7nptTs_hFwmuc2nDe5yHXy_pF4umAsfWL_nC0YNW9yKalKiycUikoZepccl1wYropWLvicG3JDhdNyrh55g63r5BVR7LYfShg5AGs3axAbtfaARqNxoVXqO2YcS_294ubiiV2jt7vYfv6cfO0zMzVUmwDvP9XrpajXMXwXtIoJMxkX7MuKS8FjYlhGMo43wbEoLUfUapYkr0pVBilbutV086BZwRHKwcieUlDFK_aS8MIwXTBFUlavgGO4djaKXbJCMCUZTMbJC2uTMsUkE0wTqmlRr8kHNucZNEKPFjlLs3mQp5mm6i00XpE0r1e6tOYGppe5ElQTvvnE1Usy2zxUm4eMMKtu_aYLagIgq3p9SX6D264-LWpBrxQ7Z-qDDQHPDG4kVBjoQgNwy6nVCHd6UWM5yysXNV4NBbB0fBxbFyQPNaCOHCCUsnqtJeiu1xHeYEgdklOKyDfwTzDZ3Rq-hmnBZZJSrlkIi_bUUI9joif4HuB7aPHC7rlRTP7H6xZ1PouJdGCmRIlOHVUalNoCeTGKLM8SZc4UWJ7lX1airFdla30bk6uY3MWkchDzWcIUaghPeF66xZ3778LQ4yTLVSnLs1KHt-Q5mZAhkYBol05p0lEaeq1nj7UOOlqjfeHh0-eM2qi1vYEnfLnPqbUtEhStYOH7xNbAjqnKUrL5RBcwPRw1m5bTeYmdLrmS3rha8cK-nxViOUTit2gdRX-eQ1bkyl5SUP6KnFp3stBdcT22FfJu81mxanIcDg8SYA4nySiKvXzSk08SxDYcJ4et-KAnHvWFh31sSBrKWgquLW1NSzhDRwh7UWBybCPAGmGniPkOAYfoBLjjSMV35CoiPiNVnhUU6yHWXT48R5N9juYU91ylqM1mwiBRV0zPuOb13_byk48EbL12MkgTQ7-s6nXY8BjqKGpEjTMa3lK9qNdWrcr129Jf9TNb6bivrTrZpuIZKlxbjpwekjRFWnRMOkfsnbFN7N5BuoNudc5oNcOIFClvRoGfdWAxrxQ1rhH5KFPWgCI1ycTdzjTPSiUpSUsQhr6OvxonBR6l06G6pxyRYzAnkU_Pps3cW6YztkzZO4p-FQ42f8Fr2w6TQUwKXlHc9IOR92-XDUmren1SaptrL2uCts1O-nanuK1-meu-guvVJhwnY7-PNq1pRad5Fu6GRdQ4SDrzJGzZ-7cubT8z5F9Q0yH0vrlqzeRS_MfNZzusws5mTAbHMKQasamvEHhlB6OwIK4_8lMMS2WnpffjPmgI7nq3I7epg-4Ei3bzDPaNdeusZAW9PiIuAzAfVGinthvYMpA082OOICmZoHAOHB-Rqc0AlL8d7WXVzSoHfLJ5qFfST-vdEHJ96j8mjnPm3F753ZTas6lcqTjFtjhcf7VCN1YdMF_yE56xCm4smRLcG5zHWzlkx260ZOEYrWzf6yjoF2jo8F23dgCXVLOKXThWwIWaUzSDsJlKviN4xYK3v8YeFVOn-MZop9uqsxlwPxw6ZXQffOBLjIgoaPM28ItHKYp6v8BOVQrbfwALcs_vkwsAAA==" target="_blank">
+  <div class="ad">Arcade oyunu <span class="ok">Çalıştır →</span></div>
+  <div class="ac">Kumanda koluyla oynanan tek kişilik kaçış oyunu.</div>
+</a>
+  </div>
+</section>
+<footer>
+  
+  Koco · Kojo'nun Türkçesi · <a href="/">Düzenleme penceresine dön</a> · <a href="/kojo-ile-ogren">Kojo ile öğren</a> · <a href="/benzetim">Benzetim savı</a>
+</footer>
+</div>
+</body>
+</html>

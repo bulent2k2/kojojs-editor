@@ -194,6 +194,13 @@ class Application @Inject()(
     Ok(views.html.yardim()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
 
+  def kojoIleOgren = Action {
+    Ok(views.html.kojoOgren()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+  def benzetim = Action {
+    Ok(views.html.benzetim()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+
   val loginProviders = config.get[Seq[String]]("scalafiddle.loginProviders").map(AllLoginProviders.providers)
 
   def autowireApi(path: String) = silhouette.UserAwareAction.async { implicit request =>
