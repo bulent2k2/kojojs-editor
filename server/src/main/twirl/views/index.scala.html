@@ -22,7 +22,9 @@
         }
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ext-static_highlight.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/mode-scala.js"></script>
+        @* Türkçe anahtar kelimeli Ace Scala modu (Faz 5, bkz. kojojs-dev/oneri-scala-2.13.md):
+           cdnjs'teki stok mode-scala.js yerine yerel yamalı kopya (modül adı ace/mode/scala kaldı) *@
+        <script src=@routes.Assets.versioned("javascript/mode-scala.js")></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/theme-eclipse.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ext-language_tools.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/theme-tomorrow_night_eighties.js"></script>
