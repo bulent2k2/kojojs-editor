@@ -269,11 +269,13 @@ object FiddleEditor {
         footer(
           div(cls := "right")(
             div(cls := "ui blue basic label")(
-              "Powered by ",
+              "Kaynak: ",
               a(href := "http://www.kogics.net/kojo", target := "_blank", color := "black", "Kojo"),
-              " and ",
+              " ve ",
               a(href := "https://github.com/scalafiddle", target := "_blank", color := "black", "ScalaFiddle")
             ),
+            // "Hosted at Lund University" bilerek \u0130ngilizce/oldu\u011fu gibi b\u0131rak\u0131ld\u0131
+            // (tarihsel te\u015fekk\u00fcr -- ScalaFiddle Lund'da bar\u0131nd\u0131r\u0131l\u0131yordu).
             div(cls := "ui orange basic label")(
               "Hosted at ",
               a(href := "http://lth.se/programmera", target := "_blank", color := "black", "Lund University")
@@ -281,13 +283,19 @@ object FiddleEditor {
             div(cls := "")(
               "\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0"
             ),
+            // ikojo.in yaln\u0131z http \u00fczerinde yay\u0131nda (https yok); \u00fcst d\u00fczey
+            // gezinme ba\u011flant\u0131s\u0131 oldu\u011fu i\u00e7in kar\u0131\u015f\u0131k i\u00e7erik engeline tak\u0131lmaz.
+            div(cls := "ui teal basic button")(
+              Icon.globe,
+              a(href := "http://ikojo.in", target := "_blank", "\u0130ngilizce iKojo")
+            ),
             div(cls := "ui teal basic button")(
               Icon.download,
-              a(href := "https://www.kogics.net/kojo-download", target := "_blank", "Download Desktop Kojo")
+              a(href := "https://sites.google.com/view/koco-surum", target := "_blank", "Masa\u00fcst\u00fc Koco")
             ),
             div(cls := "ui teal basic button")(
               Icon.compass,
-              a(href := "https://docs.kogics.net/contribute-code.html", target := "_blank", "Contribute Code")
+              a(href := "https://docs.kogics.net/contribute-code.html", target := "_blank", "Katk\u0131da bulun")
             )
           )
         )
