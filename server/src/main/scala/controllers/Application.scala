@@ -179,7 +179,12 @@ class Application @Inject()(
   }
 
   def resultFrame = Action { request =>
-    Ok(views.html.resultframe()).withHeaders(CACHE_CONTROL -> "max-age=3600")
+    // no-cache, max-age=3600 DEĞİL: bu sayfa yalnızca bir kabuk değil, derlenmiş
+    // yazılımcığı eval eden çalıştırıcı betiğini de İÇİNDE taşıyor. Bir saatlik
+    // önbellekle her dağıtımdan sonra bir saat boyunca ESKİ çalıştırıcı koşuyor;
+    // "ScalaFiddle is not defined" düzeltmesi (2026-09-03) tam olarak böyle
+    // görünmez kaldı. Belge birkaç KB, her seferinde doğrulamanın maliyeti yok.
+    Ok(views.html.resultframe()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
 
   val loginProviders = config.get[Seq[String]]("scalafiddle.loginProviders").map(AllLoginProviders.providers)
