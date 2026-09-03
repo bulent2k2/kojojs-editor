@@ -33,8 +33,14 @@
                                 break;
                             case "code":
                                 try {
-                                    eval(msg.data);
-                                    eval("var sf = ScalaFiddle;if(typeof sf === 'function') { if(typeof sf().main === 'function') sf().main() } else if(typeof sf.main === 'function') sf.main()");
+                                    // TEK eval, iki degil. Scala.js 1.x disa aktarimlari
+                                    // `let Fiddle,ScalaFiddle;` diye bildiriyor (0.6 `var`
+                                    // kullaniyordu). let/const bildirimleri dogrudan eval'in
+                                    // KENDI kapsaminda kalir, disari sizmaz -- ayri bir ikinci
+                                    // eval "ScalaFiddle is not defined" ile patliyordu. Program
+                                    // zaten eval'in sonunda calisiyor (ScalaFiddle = ...$();),
+                                    // asagisi yalnizca main() TANIMLIYSA onu cagirmak icin.
+                                    eval(msg.data + "\n;if (typeof ScalaFiddle !== 'undefined') { var sf = ScalaFiddle; if (typeof sf === 'function') { if (typeof sf().main === 'function') sf().main() } else if (sf && typeof sf.main === 'function') sf.main() }");
                                 } catch (ex) {
                                     result.insertAdjacentHTML('beforeend', '<pre class="error">ERROR: ' + ex.message + '</pre>')
                                 } finally {
