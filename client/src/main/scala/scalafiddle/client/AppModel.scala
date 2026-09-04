@@ -13,19 +13,19 @@ sealed trait CompilerStatus {
 
 object CompilerStatus {
   case object Result extends CompilerStatus {
-    val show = "RESULT"
+    val show = "SONUÇ"
   }
   case object Compiling extends CompilerStatus {
-    val show = "COMPILING"
+    val show = "DERLENİYOR"
   }
   case object Compiled extends CompilerStatus {
-    val show = "COMPILED"
+    val show = "DERLENDİ"
   }
   case object Running extends CompilerStatus {
-    val show = "RUNNING"
+    val show = "ÇALIŞIYOR"
   }
   case object Error extends CompilerStatus {
-    val show = "ERROR"
+    val show = "HATA"
   }
 }
 

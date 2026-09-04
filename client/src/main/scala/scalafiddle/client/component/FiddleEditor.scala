@@ -55,6 +55,17 @@ object FiddleEditor {
     var pendingMessages: List[js.Object] = Nil
     var prevFrame                        = ""
 
+    // "Ev" düğmesi: tuvali başlangıç görünümüne döndürür (merkez + zoom 1).
+    // Runtime (resultframe iframe, aynı-köken) kocoResetView global'ini koyar;
+    // henüz bir program çalışmadıysa tanımsızdır, o zaman sessizce hiçbir şey yapmaz.
+    def resetCanvasView: Callback = Callback {
+      val frame = resultFrame
+      if (frame != null && frame.contentWindow != null) {
+        val w = frame.contentWindow.asInstanceOf[js.Dynamic]
+        if (!js.isUndefined(w.kocoResetView)) w.kocoResetView()
+      }
+    }
+
     def render(props: Props, state: State) = {
       import japgolly.scalajs.react.vdom.all._
 
@@ -139,7 +150,14 @@ object FiddleEditor {
               case data: CompilerData =>
                 def allowFullScreen = VdomAttr("allowFullScreen")
                 div(cls := "output")(
-                  div(cls := "label", state.status.show),
+                  div(cls := "label")(
+                    span(state.status.show),
+                    span(
+                      cls := "reset-view",
+                      VdomAttr("title") := "Tuvali ortala ve yakınlaştırmayı sıfırla",
+                      onClick --> resetCanvasView
+                    )("⌂")
+                  ),
                   iframe.ref(resultRef = _)(
                     id := "resultframe",
                     onLoad ==> frameLoaded,
