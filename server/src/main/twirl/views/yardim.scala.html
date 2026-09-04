@@ -106,6 +106,8 @@
             padding: 9px 18px; border-radius: 8px; font-size: 14px;
         }
         .kitap .indir:hover { filter: brightness(.94); text-decoration: none; }
+        .kitap .dosyalar { display: flex; gap: 10px; flex-wrap: wrap; }
+        .kitap .indir.ikincil { background: #fff; color: var(--turuncu); border: 1.5px solid var(--turuncu); }
 
         .baglantilar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .baglantilar a.kart {
@@ -221,8 +223,12 @@ yinele(4) {
                 <div class="simge">📘</div>
                 <div>
                     <h3>Programlamaya ve Algoritmalara Keyifli ve İşlevsel Bir Giriş</h3>
-                    <p>Koco ile programlamayı adım adım anlatan Türkçe kitapçık (PDF, GitHub üzerinde).</p>
-                    <a class="indir" href="https://github.com/bulent2k2/cpp_ogreniyoruz/blob/main/kitap%2FProgramlamaya-ve-Algoritmalara-Keyifli-ve-Islevsel-Bir-Giris.pdf" target="_blank">Kitapçığı aç →</a>
+                    <p>Koco ile programlamayı adım adım anlatan Türkçe kitapçık. Tarayıcıda bölüm bölüm okuyabilir, basmak için PDF'ini ya da telefon ve tablet için EPUB'unu indirebilirsin.</p>
+                    <div class="dosyalar">
+                        <a class="indir" href="https://claude.ai/code/artifact/ce43da09-9f13-46ae-bb18-57ba0bda0702" target="_blank">Kitapçığı aç →</a>
+                        <a class="indir ikincil" href="https://github.com/bulent2k2/cpp_ogreniyoruz/blob/main/kitap/Programlamaya-ve-Algoritmalara-Keyifli-ve-Islevsel-Bir-Giris.pdf" target="_blank">PDF</a>
+                        <a class="indir ikincil" href="https://github.com/bulent2k2/cpp_ogreniyoruz/raw/main/kitap/Programlamaya-ve-Algoritmalara-Keyifli-ve-Islevsel-Bir-Giris.epub">EPUB</a>
+                    </div>
                 </div>
             </div>
         </section>
