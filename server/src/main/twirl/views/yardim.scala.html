@@ -85,6 +85,9 @@
         .dugme-karti { display: flex; gap: 12px; align-items: flex-start;
             background: #fff; border: 1px solid var(--cizgi); border-radius: 10px; padding: 14px 16px; }
         .dugme-karti .ad { font-weight: 600; }
+        /* Editördeki düğme simgelerinin satır içi SVG eşleri; renk metinden gelir. */
+        .dugme-karti .si { width: 1em; height: 1em; vertical-align: -.12em; margin-right: 4px; fill: currentColor; }
+        .dugme-karti .si.cizgi { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
         .dugme-karti .ac { color: var(--soluk); font-size: 14px; }
 
         pre.kod-blok {
@@ -163,13 +166,13 @@ yinele(4) {
             <h2><span class="im" style="background:var(--mavi)"></span>Kod editörünün, yani metin düzenleyicisinin, kullanılışı</h2>
             <p class="alt">Programını yazdığın soldaki bölüme <b>düzenleme penceresi</b> diyeceğiz. Üstteki düğmeler:</p>
             <div class="dugmeler">
-                <div class="dugme-karti"><div><div class="ad">▶ Çalıştır</div>
+                <div class="dugme-karti"><div><div class="ad"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 1.8v12.4L14 8z"/></svg> Çalıştır</div>
                     <div class="ac">Yazdığın programı derleyip sağ taraftaki tuvalde çalıştırır.</div></div></div>
-                <div class="dugme-karti"><div><div class="ad">■ Durdur/Yenile</div>
+                <div class="dugme-karti"><div><div class="ad"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="1"/></svg> Durdur/Yenile</div>
                     <div class="ac">Çalışan bir animasyonu ya da oyunu durdurur, tuvali temizler.</div></div></div>
-                <div class="dugme-karti"><div><div class="ad">Kaydet</div>
+                <div class="dugme-karti"><div><div class="ad"><svg class="si cizgi" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h8.5l2.5 2.5v8.5h-11z"/><path d="M5 2.5v3.5h5V2.5"/><path d="M4.5 13.5V9h7v4.5"/></svg> Kaydet</div>
                     <div class="ac">Programına kalıcı bir adres verir; bağlantıyı paylaşabilirsin. (Giriş yapman gerekir.)</div></div></div>
-                <div class="dugme-karti"><div><div class="ad">Güncelle / Çatalla</div>
+                <div class="dugme-karti"><div><div class="ad"><svg class="si cizgi" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8.5v5h-11v-11h5"/><path d="M12.6 1.9l1.5 1.5-6.6 6.6-2.3.8.8-2.3z"/></svg> Güncelle / <svg class="si cizgi" viewBox="0 0 16 16" aria-hidden="true"><circle cx="4" cy="3" r="1.5"/><circle cx="12" cy="3" r="1.5"/><circle cx="8" cy="13" r="1.5"/><path d="M4 4.5v1.8c0 1.2.9 1.7 2 1.7h4c1.1 0 2-.5 2-1.7V4.5M8 8v3.5"/></svg> Çatalla</div>
                     <div class="ac">Kayıtlı bir programı yeni sürümle güncelle, ya da başkasınınkinden kendine bir kopya çıkar.</div></div></div>
             </div>
         </section>
