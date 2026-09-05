@@ -3,6 +3,7 @@ package controllers
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.net.{URL, URLDecoder, URLEncoder}
 import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
 import java.util.zip.GZIPInputStream
 import javax.inject.{Inject, Named}
 
@@ -11,6 +12,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.mohiva.play.silhouette.api.{LogoutEvent, Silhouette}
 import kamon.Kamon
+import koco.OrnekYukleyici
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger, Mode}
 import slick.basic.DatabaseConfig
@@ -51,6 +53,7 @@ class Application @Inject()(
 
   val indexCounter  = Kamon.metrics.counter("index-load")
   val fiddleCounter = Kamon.metrics.counter("fiddle-load")
+  val ornekCounter  = Kamon.metrics.counter("ornek-load")
 
   private def libSource = {
     if (libUri.startsWith("file:")) {
@@ -71,6 +74,11 @@ class Application @Inject()(
   actorSystem.scheduler.schedule(config.get[Int]("scalafiddle.refreshLibraries").seconds,
                                  config.get[Int]("scalafiddle.refreshLibraries").seconds)(librarian.refresh())
   val defaultSource = config.get[String]("scalafiddle.defaultSource")
+  // /ornek/<yol> rotasının kökü (application.conf koco.ornekler.dir; KOCO_ORNEKLER onu geçersiz kılar)
+  val ornekKok      = Paths.get(config.get[String]("koco.ornekler.dir")).toAbsolutePath.normalize
+  // yanlış yapılandırma aksi hâlde görünmez: her /ornek/... sessizce 404 olur
+  if (Files.isDirectory(ornekKok)) log.info(s"Örnek dizini: $ornekKok")
+  else log.warn(s"Örnek dizini yok: $ornekKok -- /ornek/<yol> 404 dönecek (koco.ornekler.dir / KOCO_ORNEKLER)")
 
   if (env.mode != Mode.Prod)
     createTables()
@@ -89,7 +97,16 @@ class Application @Inject()(
 
     val source = request.getQueryString("zrc").flatMap(decodeSource) orElse request.getQueryString("source")
 
-    loadFiddle(fiddleId, version.toInt, source).map {
+    editorSayfasi(fiddleId, version.toInt, source)
+  }
+
+  // Editör sayfasını üretir; index ile /ornek aynı yoldan geçsin diye ayrıldı.
+  // `source` TAM ScalaFiddle kaynağıdır (defaultSource gibi `object ScalaFiddle { ... }` sarmalı,
+  // $FiddleStart/$FiddleEnd işaretli): istemci (FiddleEditor.extractCode) sarmalayıcıyı bu
+  // işaretlere göre gizler ve derlemeye gönderirken geri ekler. Salt gövde verilirse
+  // derlenmez -- gövdeyi OrnekYukleyici.sar ile sarmalayın.
+  private def editorSayfasi(fiddleId: String, version: Int, source: Option[String]): Future[Result] = {
+    loadFiddle(fiddleId, version, source).map {
       case Success(fd) =>
         val fdJson = write(fd)
         // no-cache: resultFrame'deki not; burada eski HTML eski digest'li varlıkları
@@ -105,6 +122,21 @@ class Application @Inject()(
     val result = Redirect(routes.Application.index("", "0"))
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
     silhouette.env.authenticatorService.discard(request.authenticator, result)
+  }
+
+  // /ornek/<yol>: kojojs-dev/ornekler altındaki bir betiği (ör. /ornek/01-ilk-adimlar.kojo,
+  // /ornek/masaustu/src/main/resources/samples/tr/fern.kojo) `#yükle` satırları genişletilmiş
+  // hâliyle, kaydedilmemiş yeni bir yazılımcık olarak editöre yükler. Yol denetimi, içe alma
+  // ve sarmalama koco.OrnekYukleyici'de; buradan yalnız 404 ya da index'in sayfası çıkar.
+  def ornek(yol: String) = Action.async { _ =>
+    OrnekYukleyici.genislet(ornekKok, yol) match {
+      case Right(govde) =>
+        ornekCounter.increment()
+        editorSayfasi("", 0, Some(OrnekYukleyici.sar(defaultSource, govde)))
+      case Left(neden) =>
+        log.debug(s"Örnek yüklenemedi: $yol -- $neden")
+        Future.successful(NotFound(s"Örnek bulunamadı: /ornek/$yol"))
+    }
   }
 
   def rawFiddle(fiddleId: String, version: String) = Action.async { implicit request =>

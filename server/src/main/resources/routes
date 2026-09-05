@@ -12,6 +12,7 @@ GET     /raw/:id/$version<\d+>            controllers.Application.rawFiddle(id, 
 GET     /html/:id/$version<\d+>           controllers.Application.htmlFiddle(id, version)
 GET     /htmlscript/:id/$version<\d+>     controllers.Application.htmlScript(id, version)
 GET     /resultframe                      controllers.Application.resultFrame
+GET     /ornek/*yol                       controllers.Application.ornek(yol)
 GET     /yardim                           controllers.Application.yardim
 GET     /kojo-ile-ogren                   controllers.Application.kojoIleOgren
 GET     /benzetim                         controllers.Application.benzetim
