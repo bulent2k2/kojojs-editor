@@ -94,7 +94,7 @@ class Application @Inject()(
         val fdJson = write(fd)
         // no-cache: resultFrame'deki not; burada eski HTML eski digest'li varlıkları
         // (Assets.versioned) isteyip 404 alıyordu.
-        Ok(views.html.index("Kojo Fiddle", fdJson, if (fiddleId.nonEmpty) Some(s"$fiddleId/$version") else None))
+        Ok(views.html.index("iKoco", fdJson, if (fiddleId.nonEmpty) Some(s"$fiddleId/$version") else None))
           .withHeaders(CACHE_CONTROL -> "no-cache")
       case Failure(ex) =>
         NotFound
