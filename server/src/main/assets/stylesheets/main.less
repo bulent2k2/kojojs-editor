@@ -2,6 +2,7 @@
 @import "lib/font-awesome/less/font-awesome.less";
 
 @mobile: ~"(max-width: 1280px)";
+@dar: ~"(max-width: 700px)"; // telefon: üst şeritte yalnız simgeler
 
 html,
 body,
@@ -45,6 +46,11 @@ body {
     box-shadow: 0 0 5px rgba(66, 66, 86, .2);
     z-index: 999;
 
+    @media @dar {
+      min-width: 0;
+      padding: 5px 2px;
+    }
+
     > .left {
       display: flex;
       flex-wrap: nowrap;
@@ -53,6 +59,9 @@ body {
 
       > .logo {
         margin: 0 10px;
+        @media @dar {
+          margin: 0 4px;
+        }
         > * > img {
           height: 40px;
         }
@@ -246,6 +255,47 @@ img.author {
   border-radius: 50%;
   vertical-align: middle;
   margin-right: 10px;
+}
+
+/* Dar ekran (telefon): üst şeritteki düğme yazıları, kullanıcı adı ve
+   "Çıkış yap" gizlenir; simgeler ve avatar kalır. Çıkış, avatar menüsündeki
+   .yalniz-dar ögesine taşınır (geniş ekranda o öge gizli). */
+.full-screen > header .ui.vertical.menu .item.yalniz-dar {
+  display: none;
+}
+@media @dar {
+  .full-screen > header {
+    .cikis {
+      display: none;
+    }
+    /* Düğme yazısı yalnız görsel olarak gizlenir (sr-only kalıbı): ekran
+       okuyucu "Çalıştır", "Kaydet" vb. adı okumaya devam eder; `title` fare
+       ipucudur, erişilebilirlik etiketinin yerini tutmaz. */
+    .etiket {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .ui.button {
+      padding-left: .9em;
+      padding-right: .9em;
+    }
+    .ui.button:not(.icon) > .icon:not(.button) {
+      margin: 0;
+    }
+    .ui.vertical.menu .item.yalniz-dar {
+      display: block;
+    }
+    img.author {
+      margin-right: 0;
+    }
+  }
 }
 
 /* Override Semantic defaults */
