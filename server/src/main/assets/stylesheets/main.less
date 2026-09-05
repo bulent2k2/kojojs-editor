@@ -265,8 +265,22 @@ img.author {
 }
 @media @dar {
   .full-screen > header {
-    .etiket, .cikis {
+    .cikis {
       display: none;
+    }
+    /* Düğme yazısı yalnız görsel olarak gizlenir (sr-only kalıbı): ekran
+       okuyucu "Çalıştır", "Kaydet" vb. adı okumaya devam eder; `title` fare
+       ipucudur, erişilebilirlik etiketinin yerini tutmaz. */
+    .etiket {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
     .ui.button {
       padding-left: .9em;
