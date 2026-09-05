@@ -95,8 +95,11 @@ object FiddleEditor {
                 img(src := "/assets/images/scalafiddle-logo.png", alt := "ScalaFiddle")
               )
             ),
+            // Düğme yazıları span.etiket içinde: dar ekranda (telefon) CSS onları
+            // gizleyip yalnız simgeleri bırakıyor; title ipucu o durumda ad veriyor.
             div(
               cls := "ui basic button",
+              VdomAttr("title") := "Çalıştır",
               onClick --> {
                 Callback.future(beginCompilation().map(_ => {
                   buildFullSource.flatMap { source =>
@@ -105,10 +108,11 @@ object FiddleEditor {
                 }))
               },
               Icon.play,
-              "Çalıştır"
+              span(cls := "etiket")("Çalıştır")
             ),
             div(
               cls := "ui basic button",
+              VdomAttr("title") := "Durdur/Yenile",
               onClick --> {
                 Callback.future(beginCompilation().map(_ => {
                   buildStopReloadSource.flatMap { source =>
@@ -117,25 +121,27 @@ object FiddleEditor {
                 }))
               },
               Icon.stop,
-              "Durdur/Yenile"
+              span(cls := "etiket")("Durdur/Yenile")
             ),
-            div(cls := "ui basic button", onClick --> props.dispatch(SaveFiddle(reconstructSource(state))))(
+            div(cls := "ui basic button", VdomAttr("title") := "Kaydet", onClick --> props.dispatch(SaveFiddle(reconstructSource(state))))(
               Icon.save,
-              "Kaydet").when(showSave),
-            div(cls := "ui basic button", onClick --> props.dispatch(UpdateFiddle(reconstructSource(state))))(
+              span(cls := "etiket")("Kaydet")).when(showSave),
+            div(cls := "ui basic button", VdomAttr("title") := "Güncelle", onClick --> props.dispatch(UpdateFiddle(reconstructSource(state))))(
               Icon.pencilSquare,
-              "Güncelle").when(showUpdate),
-            div(cls := "ui basic button", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
+              span(cls := "etiket")("Güncelle")).when(showUpdate),
+            div(cls := "ui basic button", VdomAttr("title") := "Çatalla", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
               Icon.codeFork,
-              "Çatalla").when(fiddleHasId)
+              span(cls := "etiket")("Çatalla")).when(fiddleHasId)
           ),
           div(cls := "right")(
-            div(cls := "ui basic button")(
+            // Dış docs.kogics.net yerine editörün kendi Türkçe Yardım/Bilgi
+            // sayfası (/yardim). Kitapçık ve dış belgeler o sayfanın içinde.
+            // Yeni sekme: kullanıcının yazdığı kod kaybolmasın.
+            // Bağlantı düğmenin kendisi: dar ekranda yazı gizliyken simgeye
+            // dokunmak da sayfayı açsın.
+            a(cls := "ui basic button", href := "/yardim", target := "_blank", VdomAttr("title") := "Yardım / Belgeler")(
               Icon.book,
-              // Dış docs.kogics.net yerine editörün kendi Türkçe Yardım/Bilgi
-              // sayfası (/yardim). Kitapçık ve dış belgeler o sayfanın içinde.
-              // Yeni sekme: kullanıcının yazdığı kod kaybolmasın.
-              a(href := "/yardim", target := "_blank", "Yardım / Belgeler")
+              span(cls := "etiket")("Yardım / Belgeler")
             ),
             UserLogin(props.loginData)
           )

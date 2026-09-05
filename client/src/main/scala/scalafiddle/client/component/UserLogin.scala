@@ -18,13 +18,19 @@ object UserLogin {
       val loginData = props.loginData()
       loginData.userInfo match {
         case Ready(userInfo) if userInfo.loggedIn =>
+          // Avatar menü tetikleyicisinin içinde: dar ekranda ad (span.etiket) ve
+          // "Çıkış yap" düğmesi (.cikis) gizlenince avatara dokunmak menüyü açıyor;
+          // çıkış o menüdeki .yalniz-dar ögesinden yapılıyor.
           div(cls := "userinfo")(
-            img(cls := "author", src := userInfo.avatarUrl.getOrElse("/assets/images/anon.png")),
-            Dropdown("top right pointing", div(cls := "username", userInfo.name))(closeCB =>
+            Dropdown("top right pointing", div(cls := "username")(
+              img(cls := "author", src := userInfo.avatarUrl.getOrElse("/assets/images/anon.png")),
+              span(cls := "etiket")(userInfo.name)
+            ))(closeCB =>
               div(cls := "ui vertical menu", display.block)(
-                a(cls := "item", onClick --> { Callback(AppCircuit.dispatch(LoadUserFiddles)) >> closeCB() })("Yazılımcıklarım")
+                a(cls := "item", onClick --> { Callback(AppCircuit.dispatch(LoadUserFiddles)) >> closeCB() })("Yazılımcıklarım"),
+                a(cls := "item yalniz-dar", href := "/signout")("Çıkış yap")
             )),
-            a(href := "/signout", div(cls := "ui basic button", "Çıkış yap"))
+            a(cls := "cikis", href := "/signout", div(cls := "ui basic button", "Çıkış yap"))
           )
         case Ready(userInfo) if !userInfo.loggedIn =>
           loginData.loginProviders match {
