@@ -203,6 +203,23 @@ class Application @Inject()(
     Ok(views.html.benzetim()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
 
+  // Koco kılavuzu (Devre 5): masaüstü Koco'nun iki Türkçe öykü betiğinden üretilen
+  // sayfalar. yardimSkala/yardimKomutlar şablonları ÜRETİLMİŞTİR -- kaynak
+  // kojojs-dev/kilavuz/*.md, üretim: python3 kilavuz/uret.py --twirl <bu dizin>.
+  // no-cache: yardim ile aynı gerekçe.
+  def yardimSkala = Action {
+    Ok(views.html.yardimSkala()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+  def yardimKomutlar = Action {
+    Ok(views.html.yardimKomutlar()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+  def yardimSozluk = Action {
+    Ok(views.html.yardimSozluk()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+  def yardimFarklar = Action {
+    Ok(views.html.yardimFarklar()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
+
   val loginProviders = config.get[Seq[String]]("scalafiddle.loginProviders").map(AllLoginProviders.providers)
 
   def autowireApi(path: String) = silhouette.UserAwareAction.async { implicit request =>
