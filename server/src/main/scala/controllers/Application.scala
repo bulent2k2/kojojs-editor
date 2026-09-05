@@ -3,7 +3,7 @@ package controllers
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.net.{URL, URLDecoder, URLEncoder}
 import java.nio.charset.StandardCharsets
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
 import java.util.zip.GZIPInputStream
 import javax.inject.{Inject, Named}
 
@@ -76,6 +76,9 @@ class Application @Inject()(
   val defaultSource = config.get[String]("scalafiddle.defaultSource")
   // /ornek/<yol> rotasının kökü (application.conf koco.ornekler.dir; KOCO_ORNEKLER onu geçersiz kılar)
   val ornekKok      = Paths.get(config.get[String]("koco.ornekler.dir")).toAbsolutePath.normalize
+  // yanlış yapılandırma aksi hâlde görünmez: her /ornek/... sessizce 404 olur
+  if (Files.isDirectory(ornekKok)) log.info(s"Örnek dizini: $ornekKok")
+  else log.warn(s"Örnek dizini yok: $ornekKok -- /ornek/<yol> 404 dönecek (koco.ornekler.dir / KOCO_ORNEKLER)")
 
   if (env.mode != Mode.Prod)
     createTables()
@@ -132,7 +135,7 @@ class Application @Inject()(
         editorSayfasi("", 0, Some(OrnekYukleyici.sar(defaultSource, govde)))
       case Left(neden) =>
         log.debug(s"Örnek yüklenemedi: $yol -- $neden")
-        Future.successful(NotFound)
+        Future.successful(NotFound(s"Örnek bulunamadı: /ornek/$yol"))
     }
   }
 
