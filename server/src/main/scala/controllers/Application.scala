@@ -92,13 +92,8 @@ class Application @Inject()(
     loadFiddle(fiddleId, version.toInt, source).map {
       case Success(fd) =>
         val fdJson = write(fd)
-        // no-cache, max-age=3600 DEĞİL (resultframe ile aynı ders): bu sayfa
-        // istemci JS'ini ve CSS'i digest'li Assets.versioned adresleriyle çağırıyor.
-        // Bir saatlik önbellekle, dağıtımdan sonraki bir saat boyunca dönen
-        // ziyaretçilerin tarayıcısı ESKİ HTML'i gösterip eski digest'li dosyaları
-        // istiyor; Play digest uyuşmazlığında 404 verdiği için editör boş ya da
-        // stilsiz açılıyordu. Belge birkaç KB; ağır varlıklar digest'le zaten
-        // agresif önbellekte kalıyor.
+        // no-cache: resultFrame'deki not; burada eski HTML eski digest'li varlıkları
+        // (Assets.versioned) isteyip 404 alıyordu.
         Ok(views.html.index("Kojo Fiddle", fdJson, if (fiddleId.nonEmpty) Some(s"$fiddleId/$version") else None))
           .withHeaders(CACHE_CONTROL -> "no-cache")
       case Failure(ex) =>
