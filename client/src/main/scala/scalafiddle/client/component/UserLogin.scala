@@ -27,7 +27,7 @@ object UserLogin {
               span(cls := "etiket")(userInfo.name)
             ))(closeCB =>
               div(cls := "ui vertical menu", display.block)(
-                a(cls := "item", onClick --> { Callback(AppCircuit.dispatch(LoadUserFiddles)) >> closeCB() })("Yazılımcıklarım"),
+                a(cls := "item", onClick --> { Callback(AppCircuit.dispatch(LoadUserFiddles)) >> closeCB() })("Betiklerim"),
                 a(cls := "item yalniz-dar", href := "/signout")("Çıkış yap")
             )),
             a(cls := "cikis", href := "/signout", div(cls := "ui basic button", "Çıkış yap"))

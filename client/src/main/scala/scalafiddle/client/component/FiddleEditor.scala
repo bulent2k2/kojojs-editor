@@ -40,7 +40,7 @@ object FiddleEditor {
       mainCode: List[String] = Nil,
       postCode: List[String] = Nil,
       indent: Int = 0,
-      // Yazılımcık tablosunun sıralaması. Tamamen istemci tarafında: bütün
+      // Betik tablosunun sıralaması. Tamamen istemci tarafında: bütün
       // liste zaten yüklü, sunucuya gitmeye gerek yok.
       sortColumn: String = "updated",
       sortAscending: Boolean = false
@@ -227,9 +227,9 @@ object FiddleEditor {
                 }
                 div(cls := "output")(
                   div(id := "output")(
-                    h1("Yazılımcıklarım"),
+                    h1("Betiklerim"),
                     if (fiddles.isEmpty) {
-                      p("Kayıtlı yazılımcık yok")
+                      p("Kayıtlı betik yok")
                     } else {
                       table(cls := "ui celled sortable table fiddle-list")(
                         thead(
