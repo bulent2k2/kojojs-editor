@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koco Sözlüğü</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F5F7F4;
+  --surface: #FFFFFF;
+  --ink: #20281F;
+  --muted: #5C6B5E;
+  --line: #DDE4DC;
+  --accent: #237A46;
+  --accent-ink: #FFFFFF;
+  --tr-tag: #B23A31;
+  --code-bg: #EDF2EC;
+  --chip-bg: #E7EDE6;
+  --shadow: 0 1px 3px rgba(32, 40, 31, 0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151A16;
+    --surface: #1C231D;
+    --ink: #E6EBE4;
+    --muted: #97A697;
+    --line: #2C362D;
+    --accent: #52C081;
+    --accent-ink: #10160F;
+    --tr-tag: #E0705F;
+    --code-bg: #232C24;
+    --chip-bg: #232C24;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151A16;
+  --surface: #1C231D;
+  --ink: #E6EBE4;
+  --muted: #97A697;
+  --line: #2C362D;
+  --accent: #52C081;
+  --accent-ink: #10160F;
+  --tr-tag: #E0705F;
+  --code-bg: #232C24;
+  --chip-bg: #232C24;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.wrap { max-width: 1020px; margin: 0 auto; padding: 0 20px 80px; }
+header.masthead { padding: 44px 0 20px; }
+.eyebrow {
+  font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; margin-bottom: 10px;
+}
+.eyebrow a { color: var(--accent); text-decoration: none; }
+.eyebrow a:hover { text-decoration: underline; }
+h1 {
+  font-family: "Bitter", Georgia, serif;
+  font-size: clamp(34px, 6vw, 52px);
+  font-weight: 700; margin: 0 0 10px; line-height: 1.1;
+  text-wrap: balance;
+}
+h1 .tick { color: var(--accent); }
+.subtitle { color: var(--muted); max-width: 62ch; margin: 0 0 18px; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; }
+.stat {
+  font-size: 12.5px; font-weight: 600; color: var(--muted);
+  background: var(--chip-bg); border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px 11px;
+  font-variant-numeric: tabular-nums;
+}
+.stat b { color: var(--ink); font-weight: 600; }
+
+.toolbar {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--bg);
+  padding: 12px 0 10px;
+  border-bottom: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.toolrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+input[type="search"] {
+  flex: 1 1 260px;
+  font: inherit; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 14px;
+  box-shadow: var(--shadow);
+}
+input[type="search"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+input[type="search"]::placeholder { color: var(--muted); }
+.dir {
+  display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  background: var(--surface); box-shadow: var(--shadow); flex: 0 0 auto;
+}
+.dir button {
+  font: inherit; font-size: 13.5px; font-weight: 600;
+  border: 0; background: transparent; color: var(--muted);
+  padding: 8px 14px; cursor: pointer;
+}
+.dir button.on { background: var(--accent); color: var(--accent-ink); }
+.dir button:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.chips { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.chips button {
+  font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap;
+  color: var(--muted); background: var(--chip-bg);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 13px; cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.chips button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chips button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+section.cat { margin-top: 34px; }
+.cathead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.cathead h2 {
+  font-family: "Bitter", Georgia, serif;
+  font-size: 21px; font-weight: 600; margin: 0;
+}
+.cathead .en-label { color: var(--muted); font-size: 13.5px; }
+.cathead .n { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; margin-left: auto; }
+.catnote { color: var(--muted); font-size: 13.5px; margin: 2px 0 10px; max-width: 75ch; }
+.tablewrap {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 10px; box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+table { border-collapse: collapse; width: 100%; }
+td {
+  padding: 7px 14px; border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+tr:first-child td { border-top: 0; }
+td.term {
+  font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  font-size: 13.5px; white-space: nowrap; width: 1%;
+}
+td.term .alt { color: var(--muted); }
+td.arrow { color: var(--line); width: 1%; padding-left: 0; padding-right: 0; user-select: none; }
+td.note { color: var(--muted); font-size: 13px; }
+.tag {
+  display: inline-block; font-family: "IBM Plex Sans", sans-serif;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+  vertical-align: 2px; margin-right: 7px;
+}
+.tag.tr { color: var(--tr-tag); }
+.tag.en { color: var(--accent); }
+.hl { background: color-mix(in srgb, var(--accent) 22%, transparent); border-radius: 3px; }
+#empty { display: none; color: var(--muted); text-align: center; padding: 60px 0; }
+footer {
+  margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 13px;
+}
+footer code { font-family: "IBM Plex Mono", monospace; font-size: 12px; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .chips button, .dir button { transition: background 0.15s, color 0.15s; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="masthead">
+  <div class="eyebrow"><a href="https://claude.ai/code/artifact/10a6030f-b400-43b0-928c-14d6b925058d">◂ Kojo Sözlükleri</a> &middot; bulent2k2/kojo &middot; Koco &middot; Türkçe</div>
+  <h1>Koco Sözlüğü <span class="tick">·</span> The Koco Dictionary</h1>
+  <p class="subtitle">Kojo'nun Türkçe programlama sözlüğü — anahtar sözcükler, türler, değerler ve komutlar, iki yönlü.
+  The complete Turkish&nbsp;&harr;&nbsp;English vocabulary of Koco, extracted from the patched compiler, <span style="font-family:'IBM Plex Mono',monospace;font-size:0.9em">dict.scala</span>, the TurkishAPI, and the level-2 properties.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="toolbar">
+  <div class="toolrow">
+    <input type="search" id="q" placeholder="Ara / Search — ileri, forward, dez, val, Kesir, Double…" aria-label="Search the dictionary">
+    <div class="dir" role="group" aria-label="Direction">
+      <button id="dir-en" class="on">EN &rarr; TR</button>
+      <button id="dir-tr">TR &rarr; EN</button>
+    </div>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<div id="cats"></div>
+<div id="empty">Sonuç yok / no matches.</div>
+
+<footer>
+  Sources, from the repo at the time of writing: the Turkish-keyword patched compiler (<code>scala-tr/</code>),
+  <code>lite/i18n/tr/dict.scala</code>, <code>lite/i18n/trInit.scala</code>, <code>lite/i18n/tr/*.scala</code>
+  (renk, matematik, resim, arayüz), <code>l10n-level2/level2_tr.properties</code>, and the parallel
+  English/Turkish sample programs under <code>samples/</code> and <code>samples/tr/</code> (identifier pairs
+  aligned across the two versions of each sample and hand-verified).
+  The 43 Scala keywords are live in the patched compiler; the Java and Scala&nbsp;3 soft-keyword translations are
+  reference vocabulary from <code>dict.scala</code>, not active syntax. Where the API accepts more than one Turkish
+  name, the alternate is shown in grey after the primary.
+</footer>
+</div>
+
+<script>
+// [english, turkish, note] — note may be ""
+const CATS = [
+{ key:"kw", tr:"Anahtar Sözcükler", en:"Scala keywords", note:"Derleyicinin tanıdığı sözcükler — the words the patched compiler accepts alongside their English forms.", rows:[
+["val","dez","değişmez değer — immutable value"],
+["var","den","değişken değer — mutable variable"],
+["def","tanım",""],
+["if","eğer",""],
+["else","yoksa",""],
+["while","yineleDoğruKaldıkça",""],
+["for","için",""],
+["yield","ver",""],
+["match","eşle",""],
+["case","durum",""],
+["class","sınıf",""],
+["object","nesne",""],
+["trait","özellik",""],
+["extends","yayar",""],
+["with","birlikte",""],
+["new","yeni",""],
+["this","bu",""],
+["super","üst",""],
+["override","baskın",""],
+["abstract","soyut",""],
+["final","son",""],
+["sealed","damgalı",""],
+["implicit","örtük",""],
+["lazy","miskin",""],
+["private","gizli",""],
+["protected","koru",""],
+["package","deste",""],
+["import","getir",""],
+["return","geriDön",""],
+["try","dene",""],
+["catch","yakala",""],
+["finally","sonunda",""],
+["throw","bildir",""],
+["do","yap",""],
+["type","tür",""],
+["true","doğru","literal"],
+["false","yanlış","literal"],
+["null","yok","literal"],
+["enum","sayılı","Scala 3"],
+["export","götür","Scala 3"],
+["given","verilen","Scala 3"],
+["then","yoksa","Scala 3"],
+["forSome","bazı","eskitilmiş / deprecated"],
+]},
+{ key:"type", tr:"Türler", en:"Types", note:"", rows:[
+["ComposableTransformer","Dönüştürücü","öteleme/renk... birleştirici; * ile zincir, -> ile uygula"],
+["Int","Sayı",""],
+["Double","Kesir",""],
+["Boolean","İkil","alt: Seçim"],
+["String","Yazı",""],
+["Char","Harf",""],
+["Byte","Lokma",""],
+["Short","Kısa",""],
+["Long","Uzun",""],
+["Float","UfakKesir",""],
+["BigInt","İriSayı",""],
+["BigDecimal","İriKesir",""],
+["StringBuilder","EsnekYazı",""],
+["Unit","Birim",""],
+["Any","Her",""],
+["AnyVal","HerDeğer",""],
+["AnyRef","HerGönder",""],
+["Object","Nesne",""],
+["Nothing","Hiç",""],
+["Null","Yok",""],
+["Option","Belki",""],
+["Some","Biri",""],
+["None","Hiçbiri",""],
+["Range","Aralık",""],
+["Seq","Dizi",""],
+["collection.Seq","Diz",""],
+["List","Dizin",""],
+["Array","Dizim","alt: Dizik"],
+["ArrayBuffer","EsnekDizim","alt: EsnekDizik"],
+["ListBuffer","EsnekDizin",""],
+["IndexedSeq","SıralıDizi",""],
+["Vector","Yöney",""],
+["Set","Küme",""],
+["Map","Eşlek","immutable / değişmez"],
+["mutable.Map","Eşlem","mutable / değişir"],
+["LazyList","MiskinDizin",""],
+["Queue","Kuyruk",""],
+["PriorityQueue","ÖncelikSırası",""],
+["Stack","Yığın",""],
+["Iterator","Yineleyici",""],
+["Iterable","Yinelenebilir",""],
+["IterableOnce","YinelenebilirBirKere",""],
+["BuildFrom","Yapıcıdan",""],
+["Tuple","Sıralama",""],
+["Function1","İşlev1",""],
+["Function2","İşlev2",""],
+["Function3","İşlev3",""],
+["PartialFunction","Bölümselİşlev",""],
+["Exception","KuralDışı",""],
+["RuntimeException","ÇalışmaSırasıKuralDışı",""],
+["Future","Gelecek",""],
+["java.util.concurrent.Future","JGelecek",""],
+["ExecutionContext","İşletimBağlamı",""],
+["Vector[Int]","Sayılar",""],
+["Color","Renk",""],
+["Paint","Boya",""],
+["Font","Yazıyüzü",""],
+["Speed","Hız",""],
+["Point","Nokta",""],
+["Rectangle","Dikdörtgen",""],
+["Triangle2D","Üçgen",""],
+["Vector2D","Yöney2B",""],
+["Picture","Resim",""],
+["Turtle","Kaplumbağa",""],
+["Image","İmge",""],
+["BufferedImage","Bellekteİmge",""],
+["ImageOp","İmgeİşlemi",""],
+["BufferedImageOp","Bellekteİmgeİşlemi",""],
+["Shape","Biçim",""],
+["GeneralPath","GeoYol",""],
+["VertexShape","GeoNokta",""],
+["Graphics2D","Grafik2B",""],
+["UnitLen","UzunlukBirimi",""],
+["Animation","Canlandırma",""],
+["SpriteSheet","BirSayfaKostüm",""],
+["TileWorld","ÇiniDünyası",""],
+["TileXY","ÇiniXY",""],
+["KMp3","Mp3Çalar",""],
+["URL","BKK","Bilgisayar Kaynak Konumlayıcı"],
+["Calendar","Takvim",""],
+["Date","Tarih",""],
+["TimeZone","SaatDilimi",""],
+["Now","BuAn",""],
+["AffineTransform","BenzerDönüşüm",""],
+["PBounds","PSınırlar",""],
+["PActivity","PEtkinlik",""],
+]},
+{ key:"val", tr:"Değerler ve Değişmezler", en:"Values & constants", note:"", rows:[
+["darkBlue","koyuMavi",""],
+["darkGreen","koyuYeşil",""],
+["darkRed","koyuKırmızı",""],
+["darkOrange","koyuTuruncu",""],
+["darkCyan","koyuCamgöbeği",""],
+["darkMagenta","koyuMor",""],
+["blue","mavi",""],
+["red","kırmızı",""],
+["yellow","sarı",""],
+["green","yeşil",""],
+["purple","mor",""],
+["pink","pembe",""],
+["brown","kahverengi",""],
+["black","siyah",""],
+["white","beyaz",""],
+["gray","gri",""],
+["darkGray","koyuGri",""],
+["lightGray","açıkGri",""],
+["orange","turuncu",""],
+["magenta","morumsu",""],
+["cyan","camgöbeği",""],
+["noColor","renksiz",""],
+["slow","yavaş","hız / speed"],
+["medium","orta","hız / speed"],
+["fast","hızlı","hız / speed"],
+["superFast","çokHızlı","hız / speed"],
+["Pixel","noktaSayısı","uzunluk birimi / unit"],
+["Cm","santim","uzunluk birimi / unit"],
+["Inch","inç","uzunluk birimi / unit"],
+["PlainFont","Yazıyüzü.sade",""],
+["ItalicFont","Yazıyüzü.vurgulu",""],
+["BoldFont","Yazıyüzü.kalın",""],
+["Color(r, g, b, a)","Renk(kırmızı, yeşil, mavi, saydam)","alt: RenkKYM"],
+["ColorHSB(h, s, b)","RenkADA(arıRenk, doygunluk, aydınlık)","alt: RenkArıRenkDoygunlukAydınlık"],
+["cm.rgb","kym","kırmızı-yeşil-mavi"],
+["cm.rgba","kyms","… + saydamlık"],
+["cm.hsl","ada","arıRenk-doygunluk-açıklık"],
+["TexturePaint","DokumaBoya",""],
+["linearGradient","doğrusalDeğişim",""],
+["linearMultipleGradient","doğrusalÇokluDeğişim",""],
+["radialGradient","merkezdenDışarıDoğruDeğişim",""],
+["radialMultipleGradient","merkezdenDışarıDoğruÇokluDeğişim",""],
+]},
+{ key:"turtle", tr:"Kaplumbağa Komutları", en:"Turtle commands", note:"", rows:[
+["forward","ileri",""],
+["back","geri",""],
+["right","sağ",""],
+["left","sol",""],
+["turn","dön",""],
+["jumpTo","atla","çizgi çizmeden git"],
+["moveTo","ilerle",""],
+["lineTo","noktayaGit",""],
+["hop","zıpla",""],
+["home","ev",""],
+["towards","noktayaDön",""],
+["setHeading","açıyaDön",""],
+["heading","doğrultu",""],
+["east","doğu",""],
+["west","batı",""],
+["north","kuzey",""],
+["south","güney",""],
+["circle","daire",""],
+["arc","yay",""],
+["dot","nokta",""],
+["—","kare","Türkçeye özel / TR-only: square"],
+["—","üçgen","Türkçeye özel / TR-only: triangle"],
+["write","yazı","alt: tuvaleYaz"],
+["setPenFontSize","yazıBoyunuKur",""],
+["setPenFont","yazıYüzünüKur",""],
+["penDown","kalemiİndir",""],
+["penUp","kalemiKaldır",""],
+["isPenDown","kalemİnikMi",""],
+["setPenColor","kalemRenginiKur",""],
+["setFillColor","boyamaRenginiKur",""],
+["setPenThickness","kalemKalınlığınıKur",""],
+["saveStyle","biçimleriBelleğeYaz",""],
+["restoreStyle","biçimleriGeriYükle",""],
+["savePosHe","konumVeYönüBelleğeYaz",""],
+["restorePosHe","konumVeYönüGeriYükle",""],
+["setPosition","konumuKur",""],
+["changePosition","konumuDeğiştir",""],
+["position","konum",""],
+["setSpeed","hızıKur",""],
+["setAnimationDelay","canlandırmaHızınıKur",""],
+["animationDelay","canlandırmaHızı",""],
+["beamsOn","ışınlarıAç",""],
+["beamsOff","ışınlarıKapat",""],
+["visible","görünür","alt: göster"],
+["invisible","görünmez","alt: gizle"],
+["setCostume","giysiKur",""],
+["setCostumes","giysileriKur",""],
+["nextCostume","birsonrakiGiysi",""],
+["scaleCostume","giysiyiBüyült",""],
+["distanceTo","uzaklık",""],
+["towards(turtle)","çevir",""],
+["act","davran",""],
+["react","tepkiVer","alt: canlan"],
+["newTurtle","yeniKaplumbağa",""],
+["turtle0","kaplumbağa",""],
+]},
+{ key:"canvas", tr:"Tuval ve Genel Komutlar", en:"Canvas & program commands", note:"", rows:[
+["onMousePress","fareBasılınca","fareye basılınca (tıklamadan önce)"],
+["setup","kur","yükleme bitince bir kez çalışır"],
+["currentTime/1000","buSaniye","şu anın saniyesi (zaman ölçümü)"],
+["clear","sil",""],
+["cleari","silVeSakla","alt: silipSakla"],
+["clearStepDrawing","çizimiSil",""],
+["clearOutput","çıktıyıSil",""],
+["clearWithUL","silVeÇizimBiriminiKur",""],
+["setBackground","artalanıKur",""],
+["setBackgroundV","artalanıKurDik",""],
+["setBackgroundH","artalanıKurYatay",""],
+["repeat","yinele",""],
+["repeati","yineleDizinli",""],
+["repeatWhile","yineleDoğruysa",""],
+["repeatUntil","yineleOlanaKadar",""],
+["repeatFor","yineleKere","alt: yineleİçin"],
+["repeatFor(a to b)","yineleİlktenSona",""],
+["println","satıryaz",""],
+["print","yaz",""],
+["readln","satıroku",""],
+["readInt","sayıOku",""],
+["readDouble","kesirOku",""],
+["random","rastgele",""],
+["randomDouble","rastgeleKesir",""],
+["randomInt","rastgeleSayı",""],
+["randomLong","rastgeleUzun",""],
+["randomBoolean","rastgeleSeçim","alt: rastgeleİkil"],
+["randomColor","rastgeleRenk",""],
+["randomTransparentColor","rastgeleŞeffafRenk",""],
+["randomFrom","rastgeleDiziden",""],
+["randomNormalDouble","rastgeleDoğalKesir","alt: rastgeleÇanEğrisinden"],
+["shuffle","rastgeleKarıştır",""],
+["initRandomGenerator","rastgeleTohumunuKur",""],
+["pause","durakla",""],
+["pauseMillis","duraklaMiliSaniye",""],
+["assert","belirt",""],
+["require","gerekli",""],
+["breakpoint","burdaDur","alt: buradaDur"],
+["homeDir","evDizini",""],
+["currentDir","buDizin",""],
+["installDir","kurulumDizini",""],
+["availableFontNames","yazıyüzleri",""],
+["Font(name, size)","yazıyüzü",""],
+["textExtent","yazıÇerçevesi",""],
+["triangulate","üçgenDöşeme",""],
+["zoom","yaklaş",""],
+["zoomXY","yaklaşXY",""],
+["resetPanAndZoom","yaklaşmayıSil",""],
+["disablePanAndZoom","yaklaşmayaİzinVerme","alt: tuvaliSabitle"],
+["scroll","tuvaliKaydır",""],
+["viewRotate","tuvaliDöndür",""],
+["canvasBounds","tuvalAlanı","eni, boyu, x, y…"],
+["isKeyPressed","tuşaBasılıMı",""],
+["onKeyPress","tuşaBasınca",""],
+["onKeyRelease","tuşuBırakınca",""],
+["onMouseClick","fareyeTıklayınca",""],
+["onMouseDrag","fareyiSürükleyince",""],
+["onMouseMove","fareKımıldayınca",""],
+["mousePosition","fareKonumu",""],
+["gridOn","gridiGöster","alt: ızgarayıGöster"],
+["gridOff","gridiGizle","alt: ızgarayıGizle"],
+["axesOn","eksenleriGöster",""],
+["axesOff","eksenleriGizle",""],
+["showProtractor","açıÖlçeriGöster",""],
+["hideProtractor","açıÖlçeriGizle",""],
+["showScale","cetveliGöster",""],
+["exportImage","çizimiKaydet",""],
+["exportImageH","çizimiKaydetBoy",""],
+["exportImageW","çizimiKaydetEn",""],
+["exportThumbnail","çizimiPulBoyundaKaydet",""],
+["animate","canlandır",""],
+["animateWithState","canlandırEvreyle",""],
+["animateWithRedraw","canlandırYenidenÇizerek",""],
+["animateWithCanvasDraw","canlandırTuvalÇizimle",""],
+["stopAnimation","durdur",""],
+["stopAnimationActivity","canlandırmayıDurdur",""],
+["onAnimationStart","canlandırmaBaşlayınca",""],
+["onAnimationStop","canlandırmaBitince",""],
+["timer","yineleSayaçla",""],
+["run(animation)","oynat",""],
+["runInBackground","artalandaOynat",""],
+["animSeq","canlandırmaDizisi",""],
+["animPar","canlandırmaEşzamanlı",""],
+["Transition","Geçiş",""],
+["reversed","tersten","canlandırma / animation"],
+["repeatedForever","sonsuzYinelenme","canlandırma / animation"],
+["frameDeltaTime","ikiÇizimArasıSüre",""],
+["setRefreshRate","ekranTazelemeHızınıKur",""],
+["showFps","ekranTazelemeHızınıGöster",""],
+["interpret","yorumla",""],
+["schedule","sırayaSok",""],
+["showGameTime","oyunSüresiniGöster",""],
+["showGameTimeCountdown","oyunSüresiniGeriyeSayarakGöster",""],
+["activateCanvas","tuvaliEtkinleştir",""],
+["activateEditor","yazılımcıkDüzenleyicisiniEtkinleştir",""],
+["setOutputBackground","çıktıArtalanınıKur",""],
+["setOutputTextColor","çıktıYazıRenginiKur",""],
+["setOutputTextFontSize","çıktıYazıYüzüBoyunuKur",""],
+["setDrawingCanvasAspectRatio","tuvalBoyutOranınıKur",""],
+["setDrawingCanvasSize","tuvalBoyutlarınıKur",""],
+["timeit","zamanTut","alt: süreTut"],
+["originTopLeft","başlangıçNoktasıÜstSolKöşeOlsun",""],
+["originBottomLeft","başlangıçNoktasıAltSolKöşeOlsun",""],
+["toggleFullScreenCanvas","tümEkran","alt: tümEkranTuval"],
+["toggleFullScreenOutput","tümEkranÇıktı",""],
+["switchToDefaultPerspective","kojoVarsayılanBakışaçısınıKur",""],
+["switchToDefault2Perspective","kojoVarsayılanİkinciBakışaçısınıKur",""],
+["switchToScriptEditingPerspective","kojoYazılımcıkBakışaçısınıKur",""],
+["switchToWorksheetPerspective","kojoÇalışmaSayfalıBakışaçısınıKur",""],
+["switchToStoryViewingPerspective","kojoÖyküBakışaçısınıKur",""],
+["switchToHistoryBrowsingPerspective","kojoGeçmişBakışaçısınıKur",""],
+["switchToOutputStoryViewingPerspective","kojoÇıktılıÖyküBakışaçısınıKur",""],
+["version","sürüm",""],
+["joystick","kumandaKolu",""],
+["playNote","notaÇal",""],
+["setNoteInstrument","notaÇalgısınıKur",""],
+["playMp3","müzikMp3üÇal",""],
+["playMp3Sound","sesMp3üÇal",""],
+["playMp3Loop","müzikMp3üÇalDöngülü",""],
+["isMp3Playing","müzikMp3üÇalıyorMu",""],
+["isMusicPlaying","müzikÇalıyorMu",""],
+["stopMp3","müzikMp3üKapat",""],
+["stopMp3Loop","müzikMp3DöngüsünüKapat",""],
+["stopMusic","müziğiKapat","alt: müziğiDurdur"],
+["newMp3Player","yeniMp3Çalar",""],
+["preloadImage","resimİndir",""],
+["preloadMp3","müzikİndir",""],
+]},
+{ key:"pic", tr:"Resimler", en:"Pictures", note:"Resim yapıcıları ve dönüşümleri — picture constructors and transforms.", rows:[
+["fadeIn","belirgin","saydamlığı artırır (fade/fadeOut: soluk)"],
+["Picture.textu","Resim.renkliYazı","renkli metin (Resim.yazı renksiz)"],
+["erasePictures","resimleriSil","tüm çizilen resimleri sil"],
+["draw","çiz",""],
+["drawAndHide","çizVeSakla",""],
+["drawCentered","çizMerkezde",""],
+["drawStage","çizSahne",""],
+["drawCenteredMessage","çizMerkezdeYazı",""],
+["center","merkezeTaşı",""],
+["rot","döndür",""],
+["rotp","döndürMerkezli",""],
+["scale","büyüt",""],
+["scale(x, y)","büyütXY",""],
+["trans","götür",""],
+["offset","kaydır",""],
+["opac","saydamlık",""],
+["hue","ton",""],
+["sat","parlaklık",""],
+["brit","aydınlık",""],
+["flipX","yansıtX",""],
+["flipY","yansıtY",""],
+["flip","yansıt",""],
+["axes","eksenler",""],
+["fillColor","boyaRengi",""],
+["penColor","kalemRengi",""],
+["penWidth","kalemBoyu",""],
+["spin","çevir",""],
+["fade","soluk",""],
+["blur","bulanık",""],
+["ApplyFilter","filtre",""],
+["noise","gürültü",""],
+["weave","örgü",""],
+["lights","ışıklar",""],
+["PointLight","NoktaIşık",""],
+["SpotLight","SahneIşığı",""],
+["someEffect","birEfekt",""],
+["preDrawTransform","çizimÖncesiİşlev",""],
+["postDrawTransform","çizimSonrasıİşlev",""],
+["bouncePicOffStage","sahneKenarındanYansıtma",""],
+["bouncePicOffPic","engeldenYansıtma",""],
+["Picture.circle","Resim.daire",""],
+["Picture.ellipse","Resim.elips",""],
+["Picture.ellipseInRect","Resim.elipsDikdörtgenİçinde",""],
+["Picture.rect","Resim.dikdörtgen",""],
+["Picture.arc","Resim.yay",""],
+["Picture.hline","Resim.yatay",""],
+["Picture.vline","Resim.dikey",""],
+["Picture.text","Resim.yazı",""],
+["Picture.image","Resim.imge",""],
+["Picture.hgap","Resim.yatayBoşluk",""],
+["Picture.vgap","Resim.dikeyBoşluk",""],
+["Picture.fromCanvas","Resim.tuvalden",""],
+["stageBorder","Resim.tuvalSınırları","alt: Resim.tuval"],
+["picStack","Resim.dizi",""],
+["picCol","Resim.diziDikey",""],
+["picRow","Resim.diziYatay",""],
+["picStackCentered","Resim.diziDüzenli",""],
+["picColCentered","Resim.diziDikeyDüzenli",""],
+["picRowCentered","Resim.diziYatayDüzenli",""],
+["image(w, h)","imge",""],
+["getImagePixel","imgeNoktası",""],
+["setImagePixel","imgeNoktasınıKur",""],
+]},
+{ key:"math", tr:"Matematik", en:"Math", note:"", rows:[
+["bölünüyorMu","bölünüyorMu","bölünüyorMu(sayı, bölen): İkil — sayı % bölen == 0"],
+["math.Pi","piSayısı",""],
+["math.E","eSayısı",""],
+["square","karesi",""],
+["sqrt","karekökü",""],
+["pow","kuvveti","alt: gücü"],
+["exp","eüssü",""],
+["log10","onlukTabandaLogu",""],
+["log","doğalLogu","alt: logaritması"],
+["log base t","logTabanlı",""],
+["log2","log2tabanlı",""],
+["toRadians","radyana",""],
+["toDegrees","dereceye",""],
+["sin","sinüs",""],
+["cos","kosinüs",""],
+["tan","tanjant",""],
+["asin","sinüsünAçısı",""],
+["acos","kosinüsünAçısı",""],
+["atan","tanjantınAçısı",""],
+["floor","taban",""],
+["ceil","tavan",""],
+["rint","yakını",""],
+["round","yakın",""],
+["round(n, digits)","yuvarla",""],
+["signum","işareti",""],
+["toInt","sayıya",""],
+["abs","mutlakDeğer",""],
+["max","enİrisi",""],
+["min","enUfağı",""],
+["math.random","rasgele","rastgele(x) ile karışmasın"],
+]},
+{ key:"coll", tr:"Diziler ve Yazılar", en:"Collections & strings", note:"Dizi, dizin ve yazı yöntemleri — the shared method vocabulary on collections and strings.", rows:[
+["push","koy","Yığın'a it (alt: it)"],
+["pop","al","Yığın'dan çek (alt: çek)"],
+["dequeue","baştanAl","Kuyruk'tan çıkar (alt: çıkar)"],
+["Stack/Queue.size","tane","öge sayısı (alt: boyu)"],
+["getOrElse","alYoksa","Eşlem/Belki: yoksa varsayılanı ver"],
+["Map += pair","eşEkle","Eşlem'e çift ekle"],
+["head","başı",""],
+["tail","kuyruğu",""],
+["last","sonu",""],
+["init","önü",""],
+["length","boyu",""],
+["isEmpty","boşMu",""],
+["toList","dizine",""],
+["filter","ele",""],
+["filterNot","eleDeğilse",""],
+["withFilter","elekle",""],
+["map","işle",""],
+["flatMap","düzİşle",""],
+["foreach","herbiriİçin",""],
+["forall","hepsiİçinDoğruMu",""],
+["exists","varMı",""],
+["count","say",""],
+["contains","içeriyorMu",""],
+["containsSlice","içeriyorMuDilim",""],
+["indexOf","sırası",""],
+["lastIndexOf","sırasıSondan",""],
+["sorted","sıralı",""],
+["sortBy","sırala",""],
+["sortWith","sırayaSok",""],
+["reduce","indirge",""],
+["fold","katla",""],
+["foldLeft","soldanKatla",""],
+["foldRight","sağdanKatla",""],
+["distinct","yinelemesiz",""],
+["distinctBy","yinelemesizİşlevle",""],
+["take","al",""],
+["takeRight","alSağdan",""],
+["takeWhile","alDoğruKaldıkça",""],
+["drop","düşür",""],
+["dropRight","düşürSağdan",""],
+["dropWhile","düşürDoğruKaldıkça",""],
+["slice","dilim",""],
+["zip","ikile",""],
+["zipWithIndex","ikileSırayla",""],
+["reverse","tersi",""],
+["mkString","yazıYap",""],
+["split","böl",""],
+["trim","kısalt",""],
+["replace","değiştir",""],
+["replaceAll","değiştirHepsini",""],
+["replaceFirst","değiştirİlkini",""],
+["toString","yazıya",""],
+["toUpperCase","büyükHarfe",""],
+["toLowerCase","küçükHarfe",""],
+["startsWith","başındaMı",""],
+["endsWith","sonundaMı",""],
+["charAt","harf",""],
+["substring","parçası",""],
+["isDigit","sayıMı",""],
+["equals","eşitMi",""],
+["eq","aynıMı",""],
+["equalsIgnoreCase","eşitMiKüçükHarfBüyükHarfAyrımıYapmadan",""],
+["compareTo","kıyasla",""],
+["1 to 4","Aralık.kapalı(1, 4)","son sayı dahil"],
+["1 until 4","Aralık(1, 4)","son sayı hariç"],
+["by","adım","1 to 100 by 8"],
+["Vector.empty","Yöney.boş",""],
+["Set.empty","Küme.boş",""],
+["Seq.tabulate","Dizi.doldur",""],
+["LazyList.from","MiskinDizin.sayalım",""],
+["Character.isDigit","Harf.sayıMı",""],
+["Character.isLetter","Harf.harfMi",""],
+["Range.head","Aralık.başı",""],
+["Range.last","Aralık.sonu",""],
+["Range.size","Aralık.uzunluğu",""],
+["Range.toList","Aralık.dizin",""],
+["Range.foreach","Aralık.herÖgeİçin",""],
+["Range.toString","Aralık.yazı",""],
+["Char.toString","Harf.yazıya",""],
+["Char.box","Harf.kutuyaKoy",""],
+["Char.unbox","Harf.kutudanÇıkar",""],
+["Char.char2int","Harf.sayıya",""],
+["Char.char2long","Harf.uzuna",""],
+["Char.char2double","Harf.kesire",""],
+["Char.char2float","Harf.ufakkesire",""],
+]},
+{ key:"ui", tr:"Arayüz", en:"UI widgets", note:"ay = java.awt + javax.swing — the Turkish window-toolkit namespace.", rows:[
+["JComponent","ay.Parça",""],
+["JSeparator","ay.BölmeÇizgisi",""],
+["RowPanel","ay.Satır","alt: ay.Sıra"],
+["ColPanel","ay.Sütun",""],
+["TextField","ay.Yazıgirdisi",""],
+["TextArea","ay.Yazıalanı",""],
+["Label","ay.Tanıt",""],
+["Button","ay.Düğme",""],
+["ToggleButton","ay.Açkapa",""],
+["DropDown","ay.Salındıraç",""],
+["Slider","ay.Kaydıraç",""],
+["BorderFactory.createLineBorder","ay.çerçeveci.çizgiKenar",""],
+["BorderFactory.createEmptyBorder","ay.çerçeveci.boşKenar",""],
+["takeFocus","girdiOdağıOl",""],
+["addKeyListener","girdiDinleyiciEkle",""],
+["foreground","önalan",""],
+["background","artalan",""],
+]},
+{ key:"sample", tr:"Örneklerden", en:"From the samples", note:"Türkçe örneklerdeki değişken, işlev ve sınıf adları — İngilizce örneklerdeki karşılıklarıyla hizalanıp elle doğrulandı. Sonda: örnek yorumlarında en sık geçen sözcükler. Identifier pairs aligned between the English and Turkish versions of the same sample, hand-verified; comment vocabulary at the end.", rows:[
+["t1, t2, t3 …","k1, k2, k3 …","turtle / kaplumbağa kısaltması"],
+["cb (canvasBounds)","ta (tuvalAlanı)",""],
+["pic","resim",""],
+["drawing","çizim",""],
+["lines","çizgiler",""],
+["square","kare",""],
+["angle","açı",""],
+["angle0","ilkAçı",""],
+["size","büyüklük",""],
+["len","boy",""],
+["baseLen / tileSide","kenarUzunluğu",""],
+["stepx","yatayAdım",""],
+["stepy","dikeyAdım",""],
+["spiral","sarmal",""],
+["numTurns / loops","dönüşSayısı",""],
+["vec","yöney",""],
+["state","evre",""],
+["updateState","evreyiGüncelle",""],
+["drawState","evreyiGöster",""],
+["nextState","evir",""],
+["scaleFactor","büyütmeOranı",""],
+["anim","canlandırma",""],
+["car","araba",""],
+["ball","top",""],
+["lastBall","birÖncekiTop",""],
+["target","hedef",""],
+["paddle","raket","collidium'da: sapan"],
+["wall","duvar",""],
+["wallTexture","duvarBoyası",""],
+["ground","yer",""],
+["skier","kayakçı",""],
+["tree","ağaç",""],
+["stem","gövde",""],
+["flame","alev",""],
+["lamp","lamba",""],
+["card","kart",""],
+["tile","taş",""],
+["tileType","taşTürü",""],
+["bar","çubuk",""],
+["barGraph","çubukGrafiği",""],
+["eye","göz",""],
+["face","yüz",""],
+["mouth","ağız",""],
+["nose","burun",""],
+["hair","saç",""],
+["body","beden",""],
+["legs","ayaklar",""],
+["gravity","yerçekimi",""],
+["velocity","hız",""],
+["acceleration","ivme",""],
+["lifespan","yaşamSüresi",""],
+["particles","parçacıklar",""],
+["dead","ölüMü",""],
+["explode","patla",""],
+["randomExplosionVector","rastgelePatlamaYöneyi",""],
+["arrow","ok",""],
+["updateArrow","okuÇevir",""],
+["updateCos","kosinüsüGüncelle",""],
+["updateSin","sinüsüGüncelle",""],
+["xProj / yProj","izDüşümüX / izDüşümüY",""],
+["toCm","santimeÇevir",""],
+["score","skor",""],
+["gameTime","oyunSüresi",""],
+["remaining (delta)","kalanSüre",""],
+["timeLabel","sayaç",""],
+["corrects","doğrular",""],
+["wrongs","yanlışlar",""],
+["manageGameTime","süreyiYönet",""],
+["drawMessage","çizMesaj",""],
+["msg","mesaj",""],
+["info","bilgi",""],
+["ui","araYüz",""],
+["clr","renk",""],
+["canvas","tuval","yorumlarda / in comments"],
+["command","komut","yorumlarda"],
+["example, sample","örnek","yorumlarda"],
+["game","oyun","yorumlarda"],
+["edge, side","kenar","yorumlarda"],
+["before, first","önce","yorumlarda"],
+["after, later","sonra","yorumlarda"],
+["again","tekrar","yorumlarda"],
+["times","kere","yorumlarda"],
+["vertical","dikey","yorumlarda"],
+["horizontal","yatay","yorumlarda"],
+["small","küçük","yorumlarda"],
+["big","büyük","yorumlarda"],
+["same","aynı","yorumlarda"],
+["different","değişik","yorumlarda"],
+["approximately","yaklaşık","yorumlarda"],
+["second(s)","saniye","yorumlarda"],
+["minute(s)","dakika","yorumlarda"],
+["prime (number)","asal","yorumlarda"],
+["update","güncelle","yorumlarda"],
+["load","yükle","yorumlarda"],
+["run","çalıştır","yorumlarda"],
+["bounced","sekti","yorumlarda"],
+["let's draw","çizelim","yorumlarda"],
+["let's see","bakalım","yorumlarda"],
+["that is, i.e.","yani","yorumlarda"],
+["guide, tutorial","kılavuz","yorumlarda"],
+]},
+{ key:"term", tr:"Terimler", en:"Programming terms", note:"dict.scala'daki kavram çevirileri — belgelerde ve yardım metinlerinde kullanılan terimler. Concept translations from dict.scala used in docs and help texts; not identifiers.", rows:[
+["method","yöntem",""],
+["element","öge",""],
+["cursor","imleç",""],
+["script","betik","alt: yazılımcık"],
+["thread","iş parçacığı",""],
+["exception","kuraldışı",""],
+["handler","işleyici",""],
+["compiler","derleyici",""],
+["compile","derleme",""],
+["compile-time","derlemeSırası",""],
+["runtime","çalışmaSırası",""],
+["execution","işletim",""],
+["application","uygulanış",""],
+["context","bağlam",""],
+["context menu","bağlamsal menü",""],
+["mutable","değişir",""],
+["immutable","değişmez",""],
+["iterate","yinele",""],
+["iteration","yineleme",""],
+["recurse","özyinele",""],
+["recursive","özyineli",""],
+["recursion","özyineleme",""],
+["operation","işlem",""],
+["operand","işlenen",""],
+["unary","biril",""],
+["binary","ikil",""],
+["ternary","üçül",""],
+["pointer","gösterge",""],
+["reference","gönderge",""],
+["generic","genel",""],
+["group","öbek","groupBy: öbekle, grouped: öbekli"],
+["hash","kıyma","hashCode: kıymaKodu, HashMap: KıymaEşlek, HashSet: KıymaKüme"],
+["nil","boş",""],
+["frame","çizim",""],
+["refresh (rate)","ekran tazeleme",""],
+["buffered","bellekte / bellekli",""],
+["bootstrap","önyükleme",""],
+["regular expression","düzenli deyiş",""],
+["companion","eşlik",""],
+["companion object","eş nesne",""],
+["prompt","istem",""],
+["API","upa","uygulama programlama arabirimi"],
+["polynomial","çok terimli",""],
+["transition","geçiş",""],
+["transform","dönüştürmek",""],
+["transformation","dönüşüm",""],
+["transformer","dönüştürücü",""],
+["composable","birleşebilen",""],
+["breakpoint","duruşnoktası",""],
+["uniform","birörnek",""],
+["resource","kaynak",""],
+["locator","konumlayıcı",""],
+["wrap","sar / sargı",""],
+["Wrapper","Sarıcı",""],
+["UserCode","KullanıcınınYazılımı",""],
+["brace","kıvrık parantez",""],
+["double quotes","çift tırnak işareti",""],
+["trace","izlem",""],
+["margin","kenarPayı",""],
+["alignment","düzen",""],
+["horizontalAlignment","yatayDüzen",""],
+["verticalAlignment","dikeyDüzen",""],
+["hue","arıRenk",""],
+["saturation","doygunluk",""],
+["lightness","açıklık",""],
+["initialize","başlat / ilklendir",""],
+["set (verb / noun)","kur / küme",""],
+["Kojo","Koco",""],
+["Scala","Skala",""],
+["tutorial","kılavuz",""],
+["cheat sheet","kılavuzcuk",""],
+]},
+{ key:"ref", tr:"Java ve Scala 3 (başvuru)", en:"Java & Scala 3 soft keywords (reference)", note:"dict.scala'daki başvuru çevirileri — reference translations only; not active syntax in the patched compiler.", rows:[
+["boolean","ikil",""],
+["break","çık",""],
+["byte","lokma",""],
+["char","harf",""],
+["const","değişmez",""],
+["continue","devam",""],
+["default","varsayılı",""],
+["double","kesir",""],
+["float","ufakkesir",""],
+["goto","git",""],
+["implements","tanımlar",""],
+["instanceof","bireyi",""],
+["int","sayı",""],
+["interface","arabirim","alt: arayüz"],
+["long","uzun",""],
+["native","yerli",""],
+["public","açık",""],
+["short","kısa",""],
+["static","durgun",""],
+["strictfp","kesinkesir",""],
+["switch","makas",""],
+["synchronized","anuyumlu",""],
+["throws","atar",""],
+["transient","geçici",""],
+["void","türsüz",""],
+["volatile","uçucu",""],
+["as","olsun","Scala 3 soft"],
+["derives","türet","Scala 3 soft"],
+["end","bitir","Scala 3 soft"],
+["extension","genişleme","Scala 3 soft"],
+["infix","arada","Scala 3 soft"],
+["inline","satırarası","Scala 3 soft"],
+["opaque","örtük","Scala 3 soft"],
+["open","açık","Scala 3 soft"],
+["transparent","saydam","Scala 3 soft"],
+["using","kullanım","Scala 3 soft"],
+]},
+];
+
+// diacritic folding so "cizim" finds "çizim" and "dogru" finds "doğru"
+const FOLD = { "ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","Ç":"c","Ğ":"g","İ":"i","I":"i","Ö":"o","Ş":"s","Ü":"u" };
+function fold(s) {
+  return s.replace(/[çğıöşüÇĞİIÖŞÜ]/g, ch => FOLD[ch]).toLowerCase();
+}
+function trSort(a, b) { return a.localeCompare(b, "tr"); }
+
+let dir = "en";      // "en" = EN->TR, "tr" = TR->EN
+let activeCat = "all";
+let query = "";
+
+const $cats = document.getElementById("cats");
+const $chips = document.getElementById("chips");
+const $stats = document.getElementById("stats");
+const $empty = document.getElementById("empty");
+
+function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function render() {
+  const q = fold(query.trim());
+  let total = 0;
+  let html = "";
+  for (const cat of CATS) {
+    if (activeCat !== "all" && activeCat !== cat.key) continue;
+    let rows = cat.rows.filter(r => !q || fold(r[0]).includes(q) || fold(r[1]).includes(q) || fold(r[2]).includes(q));
+    if (rows.length === 0) continue;
+    rows = rows.slice().sort((a, b) => dir === "en" ? trSort(a[0], b[0]) : trSort(a[1], b[1]));
+    total += rows.length;
+    const first = dir === "en" ? 0 : 1, second = dir === "en" ? 1 : 0;
+    const tagA = dir === "en" ? "en" : "tr", tagB = dir === "en" ? "tr" : "en";
+    html += `<section class="cat">
+      <div class="cathead"><h2>${esc(cat.tr)}</h2><span class="en-label">${esc(cat.en)}</span><span class="n">${rows.length}</span></div>`;
+    if (cat.note) html += `<p class="catnote">${esc(cat.note)}</p>`;
+    html += `<div class="tablewrap"><table>`;
+    for (const r of rows) {
+      html += `<tr>
+        <td class="term"><span class="tag ${tagA}">${tagA.toUpperCase()}</span>${esc(r[first])}</td>
+        <td class="arrow">&rarr;</td>
+        <td class="term"><span class="tag ${tagB}">${tagB.toUpperCase()}</span>${esc(r[second])}</td>
+        <td class="note">${esc(r[2])}</td>
+      </tr>`;
+    }
+    html += `</table></div></section>`;
+  }
+  $cats.innerHTML = html;
+  $empty.style.display = total === 0 ? "block" : "none";
+}
+
+function renderChips() {
+  const totalAll = CATS.reduce((n, c) => n + c.rows.length, 0);
+  let html = `<button data-k="all" class="${activeCat === "all" ? "on" : ""}">Hepsi &middot; ${totalAll}</button>`;
+  for (const c of CATS) {
+    html += `<button data-k="${c.key}" class="${activeCat === c.key ? "on" : ""}">${esc(c.tr)} &middot; ${c.rows.length}</button>`;
+  }
+  $chips.innerHTML = html;
+}
+
+function renderStats() {
+  const totalAll = CATS.reduce((n, c) => n + c.rows.length, 0);
+  $stats.innerHTML =
+    `<span class="stat"><b>${totalAll}</b> girdi / entries</span>` +
+    `<span class="stat"><b>${CATS[0].rows.length}</b> anahtar sözcük / keywords</span>` +
+    `<span class="stat"><b>${CATS[1].rows.length}</b> tür / types</span>` +
+    `<span class="stat">iki yönlü / bidirectional</span>`;
+}
+
+document.getElementById("q").addEventListener("input", e => { query = e.target.value; render(); });
+document.getElementById("dir-en").addEventListener("click", () => {
+  dir = "en";
+  document.getElementById("dir-en").classList.add("on");
+  document.getElementById("dir-tr").classList.remove("on");
+  render();
+});
+document.getElementById("dir-tr").addEventListener("click", () => {
+  dir = "tr";
+  document.getElementById("dir-tr").classList.add("on");
+  document.getElementById("dir-en").classList.remove("on");
+  render();
+});
+$chips.addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  activeCat = b.dataset.k;
+  renderChips();
+  render();
+});
+
+renderStats();
+renderChips();
+render();
+</script>
+</body>
+</html>

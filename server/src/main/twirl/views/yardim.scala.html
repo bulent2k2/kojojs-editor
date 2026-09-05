@@ -52,6 +52,11 @@
             background: #fff;
         }
         .ust-bar .geri:hover { background: var(--zemin); text-decoration: none; }
+        /* Yardım sayfaları arası gezinti şeridi (Devre 5: /yardim/skala, komutlar, sozluk, farklar) */
+        .gezinti { display: flex; gap: 4px; flex-wrap: wrap; }
+        .gezinti a { font-size: 14px; font-weight: 500; color: var(--metin); padding: 6px 12px; border-radius: 6px; }
+        .gezinti a:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti a.secili { background: var(--kirmizi); color: #fff; }
 
         .kapsayici { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
 
@@ -126,6 +131,7 @@
 
         @@media (max-width: 640px) {
             .dugmeler, .baglantilar { grid-template-columns: 1fr; }
+            .ust-bar .geri { display: none; }
             .kitap { flex-direction: column; align-items: flex-start; }
             .kahraman { padding: 24px; }
             .kahraman h1 { font-size: 25px; }
@@ -135,6 +141,13 @@
 <body>
     <div class="ust-bar">
         <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
+        <nav class="gezinti">
+            <a href="/yardim" class="secili">Yardım</a>
+            <a href="/yardim/skala">Skala</a>
+            <a href="/yardim/komutlar">Komutlar</a>
+            <a href="/yardim/sozluk">Sözlük</a>
+            <a href="/yardim/farklar">Farklar</a>
+        </nav>
         <a href="/" class="geri">← Düzenleme penceresine dön</a>
     </div>
 
@@ -239,6 +252,22 @@ yinele(4) {
         <section>
             <h2><span class="im" style="background:var(--yesil)"></span>İleri adımlar</h2>
             <div class="baglantilar">
+                <a class="kart" href="/yardim/skala">
+                    <div class="ad">Scala'ya Hızlı Giriş →</div>
+                    <div class="ac">19 bölümlük Türkçe Skala/Kojo öğreticisi; örnekler tek tıkla editörde açılır.</div>
+                </a>
+                <a class="kart" href="/yardim/komutlar">
+                    <div class="ad">Koco komutları →</div>
+                    <div class="ac">Kaplumbağa, tuval ve genel komutlar, Türkçe türler — masaüstü belgelerinin tarayıcı sürümü.</div>
+                </a>
+                <a class="kart" href="/yardim/sozluk">
+                    <div class="ad">Koco Sözlüğü →</div>
+                    <div class="ac">754 girdilik Türkçe↔İngilizce terim sözlüğü, aranabilir.</div>
+                </a>
+                <a class="kart" href="/yardim/farklar">
+                    <div class="ad">Masaüstü ile farklar →</div>
+                    <div class="ac">Hangi komutlar tarayıcıda yok, yerine ne kullanılır.</div>
+                </a>
                 <a class="kart" href="/kojo-ile-ogren">
                     <div class="ad">Kojo ile öğren →</div>
                     <div class="ac">Renkler, ağaçlar, oyunlar, olasılık: tarayıcıda açılan ~20 Türkçe örnek.</div>

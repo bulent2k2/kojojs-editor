@@ -1,0 +1,60 @@
+@()
+@*
+  Koco Sözlüğü -- /yardim/sozluk. Sözlüğün kendisi kojojs-dev/sozluk/koco-sozlugu.html
+  (754 girdi, tek dosya HTML, aranabilir); burada server/src/main/public/sozluk/
+  altındaki kopyası statik varlık olarak (/assets/sozluk/koco-sozlugu.html) bir
+  iframe içinde açılıyor. Böylece sözlük dosyası olduğu gibi kalıyor (kendi
+  biçemi, kendi arama kutusu), yardım sayfalarının gezinti şeridi de üstte duruyor.
+  Sözlük güncellenince kojojs-dev'deki dosyayı public/sozluk/ altına kopyalamak yeter.
+*@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>iKoco — Koco Sözlüğü</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700&display=swap" rel="stylesheet">
+    <style>
+        :root { --kirmizi:#E95065; --metin:#2d2f33; --soluk:#6b7078; --cizgi:#e5e7eb; --zemin:#f7f7f8; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100%; }
+        body { font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--metin);
+               background: var(--zemin); display: flex; flex-direction: column; }
+        a { color: var(--kirmizi); text-decoration: none; }
+        .ust-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 24px;
+                   background: #fff; border-bottom: 1px solid var(--cizgi); flex: none; }
+        .ust-bar img { height: 34px; display: block; }
+        .ust-bar .geri { font-weight: 500; font-size: 14px; color: var(--metin); border: 1px solid var(--cizgi);
+                         border-radius: 6px; padding: 7px 14px; background: #fff; white-space: nowrap; }
+        .ust-bar .geri:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti { display: flex; gap: 4px; flex-wrap: wrap; }
+        .gezinti a { font-size: 14px; font-weight: 500; color: var(--metin); padding: 6px 12px; border-radius: 6px; }
+        .gezinti a:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti a.secili { background: var(--kirmizi); color: #fff; }
+        .aciklama { flex: none; padding: 8px 24px; font-size: 13.5px; color: var(--soluk); background: #fff;
+                    border-bottom: 1px solid var(--cizgi); }
+        iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+        @@media (max-width: 640px) { .ust-bar .geri { display: none; } .ust-bar { padding: 10px 14px; } }
+    </style>
+</head>
+<body>
+    <div class="ust-bar">
+        <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
+        <nav class="gezinti">
+            <a href="/yardim">Yardım</a>
+            <a href="/yardim/skala">Skala</a>
+            <a href="/yardim/komutlar">Komutlar</a>
+            <a href="/yardim/sozluk" class="secili">Sözlük</a>
+            <a href="/yardim/farklar">Farklar</a>
+        </nav>
+        <a href="/" class="geri">← Düzenleme penceresine dön</a>
+    </div>
+    <div class="aciklama">
+        Koco (Türkçe) ↔ İngilizce programlama terimleri sözlüğü: 754 girdi, iki yönlü, aksan katlamalı arama
+        (<code>cizim</code> → <code>çizim</code>). Kaynak: <a href="https://github.com/bulent2k2/kojojs-dev/tree/master/sozluk" target="_blank" rel="noopener">kojojs-dev/sozluk</a>.
+        Sözlük ayrı sekmede: <a href="/assets/sozluk/koco-sozlugu.html" target="_blank" rel="noopener">koco-sozlugu.html</a>.
+    </div>
+    <iframe src="/assets/sozluk/koco-sozlugu.html" title="Koco Sözlüğü"></iframe>
+</body>
+</html>
