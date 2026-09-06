@@ -86,13 +86,13 @@
         <section>
             <h2><span class="im" style="background:var(--kirmizi)"></span>Her çalıştırma temiz başlar</h2>
             <p>Masaüstünde yazılımcıklar bir yorumlayıcıda (REPL) art arda çalışır: bir örnekte tanımladığın <code>dez n = …</code> bir sonrakinde hatırlanır, yalın bir deyişin (<code>1 + 2</code>) değeri çıktı gözünde kendiliğinden görünür, <code>çıktıyıSil</code> ile çıktı temizlenir.</p>
-            <p class="ikojo"><b>iKoco'da:</b> her <b>Çalıştır</b> kodu baştan derler; önceki tanımlar hatırlanmaz, çıktı her seferinde temizlenir (<code>çıktıyıSil</code> yok, gerek de yok). Bir değeri görmek için <code>satıryaz(1 + 2)</code> yaz. <code>satıryaz(a, b)</code> gibi çok girdili çağrılar <code>(a,b)</code> biçiminde tek sıralama olarak yazılır; yan yana istiyorsan <code>satıryaz(s"$a $b")</code>.</p>
+            <p class="ikojo"><b>iKoco'da:</b> her <b>Çalıştır</b> kodu baştan derler; önceki tanımlar hatırlanmaz, çıktı her seferinde temizlenir (<code>çıktıyıSil()</code> derlenir ama bir iş yapmaz -- gerek de yok). Bir değeri görmek için <code>satıryaz(1 + 2)</code> yaz. <code>satıryaz(a, b)</code> gibi çok girdili çağrılar <code>(a,b)</code> biçiminde tek sıralama olarak yazılır; yan yana istiyorsan <code>satıryaz(s"$a $b")</code>.</p>
         </section>
 
         <section>
             <h2><span class="im" style="background:var(--turuncu)"></span><code>#yükle</code> ile dosya içe almak</h2>
             <p>Masaüstünde <code>// #yükle /samples/tr/oyku-tanimlari</code> gibi bir yorum satırı başka bir betiği yazılımcığın başına ekler; büyük örnekler (Othello, Anagram, kılavuz öyküleri) böyle parçalara bölünmüştür.</p>
-            <p class="ikojo"><b>iKoco'da:</b> tek dosya derlenir, <code>#yükle</code> yok. Parçaları tek betikte birleştir; ortak tanımları bir <code>nesne</code> içine koyup aynı dosyada tut. Kaydettiğin betiğe verilen kalıcı adresi paylaşarak da yeniden kullanabilirsin.</p>
+            <p class="ikojo"><b>iKoco'da:</b> düzenleyicide tek dosya derlenir, <code>#yükle</code> yok. Parçaları tek betikte birleştir; ortak tanımları bir <code>nesne</code> içine koyup aynı dosyada tut. (<a href="/yardim/ornekler">Örnekler</a> sayfasından açtığın betiklerde <code>#yükle</code> satırları sunucuda kendiliğinden açılır, o yüzden Othello ve Anagram gibi çok parçalı örnekler doğrudan çalışır.) Kaydettiğin betiğe verilen kalıcı adresi paylaşarak da yeniden kullanabilirsin.</p>
         </section>
 
         <section>
@@ -104,7 +104,7 @@
         <section>
             <h2><span class="im" style="background:var(--sari)"></span>Ses ve müzik</h2>
             <p>Masaüstünde <code>notaÇal</code>, <code>müzikMp3üÇal</code>, <code>sesMp3üÇal</code>, <code>Mp3Çalar</code>, <code>vuruş</code>/<code>nota</code> gibi komutlar JFugue/MP3 ile ses çalar.</p>
-            <p class="ikojo"><b>iKoco'da:</b> bu komutlar henüz yok (Web Audio karşılığı gerekir). Şimdilik sesleri atla; oyunun görsel kısmı aynı çalışır. Ses desteği geldiğinde bu sayfa güncellenecek.</p>
+            <p class="ikojo"><b>iKoco'da:</b> MP3 ve nota çalma <b>var</b>: <code>sesMp3üÇal(Ses.vuruş)</code>, <code>müzikMp3üÇal</code>, <code>müzikMp3üÇalDöngülü</code>, <code>müzikMp3üÇalıyorMu</code>, ve Web Audio ile <code>notaÇal(nota, süre)</code> · <code>notaÇalgısınıKur(Çalgı.…)</code>. Ses dosyaları <code>Ses.…</code> sabitlerinde. Henüz olmayan tek şey JFugue <b>partisyonu</b> (<code>MusicScore</code>, <code>müzikÇal</code>) ve <code>Mp3Çalar</code> nesnesi; onlar için parçayı tek tek <code>notaÇal</code> ile çal.</p>
         </section>
 
         <section>
@@ -139,25 +139,16 @@
 
         <section>
             <h2><span class="im" style="background:var(--yesil)"></span>Adı değişen ya da henüz olmayan komutlar</h2>
-            <p>Kılavuz örneklerinde en sık karşılaşılanlar (tam liste kojojs-dev'de <code>kilavuz/eksik-adlar.tsv</code>):</p>
+            <p>Bu liste her sürümde kısalıyor: <code>silipSakla</code>, <code>tuvalAlanı</code>, <code>durdur</code>, <code>yaklaş</code>, <code>durakla</code>, <code>gerekli</code>, <code>tuşaBasınca</code>, <code>fareKonumu</code>, <code>yazıyüzleri</code>, <code>Görünüş.*</code>, <code>Resim.düz</code>, <code>Resim.sil()</code>, <code>ışınlarıAç/Kapat</code> ve <code>yeniKaplumbağa</code> artık masaüstündeki adlarıyla iKoco'da da çalışıyor. Kalanlar (tam liste kojojs-dev'de <code>kilavuz/eksik-adlar.tsv</code>):</p>
             <table>
                 <thead><tr><th>Masaüstü</th><th>iKoco</th></tr></thead>
                 <tbody>
-                    <tr><td><code>silipSakla</code></td><td><code>silVeSakla</code></td></tr>
-                    <tr><td><code>yaklaş(k)</code>, <code>yaklaş(k, x, y)</code>, <code>yaklaşmayıSil</code></td><td><code>yaklaşXY(k, k, x, y)</code>; sıfırlamak için <code>yaklaşXY(1, 1, 0, 0)</code></td></tr>
-                    <tr><td><code>tuvalAlanı</code></td><td><code>tuvalSınırları</code> (<code>.x .y .width .height</code>)</td></tr>
-                    <tr><td><code>durdur</code></td><td><code>canlandırmayıDurdur()</code></td></tr>
-                    <tr><td><code>oyunSüresiniGeriyeSayarakGöster</code></td><td><code>oyunSüresiniGöster</code></td></tr>
-                    <tr><td><code>rastgeleİkil</code> · <code>rastgeleÇanEğrisinden</code></td><td><code>rastgeleSeçim</code> · <code>rastgeleDoğalKesir</code></td></tr>
-                    <tr><td><code>BuAn()</code>, <code>buAn</code></td><td><code>buSaniye</code> (kesirli saniye)</td></tr>
-                    <tr><td><code>gerekli(koşul, mesaj)</code></td><td><code>require(koşul, mesaj)</code> (Scala'nın kendisi)</td></tr>
-                    <tr><td><code>tuşaBasınca { t => … }</code></td><td><code>onKeyPress { t => … }</code> ya da <code>canlandır</code> içinde <code>tuşBasılıMı(tuşlar.…)</code></td></tr>
-                    <tr><td><code>Resim.düz(en, boy)</code> · <code>Resim.sil()</code></td><td><code>Resim.çizgi(en, boy)</code> · <code>resimleriSil()</code></td></tr>
-                    <tr><td><code>yazı(nesne)</code></td><td><code>yazı(yazı: Yazı)</code>: başka türler için <code>.yazıya</code> ekle</td></tr>
-                    <tr><td><code>eksenleriGöster/Gizle</code>, <code>ızgarayıGöster/Gizle</code>, <code>ışınlarıAç/Kapat</code></td><td>henüz yok; satırı sil, çizim aynı çalışır</td></tr>
-                    <tr><td><code>kaplumbağa0</code>, <code>yeniKaplumbağa</code></td><td>henüz yok; tek kaplumbağa var, çoğul nesneler için <code>Resim</code> kullan</td></tr>
-                    <tr><td><code>fareKonumu</code></td><td>henüz yok; <code>fareyiSürükleyince</code>/<code>fareBasılınca</code> ile konumu al</td></tr>
-                    <tr><td><code>giysiKur</code>, <code>giysileriKur</code>, <code>Görünüş.*</code>, <code>yazıyüzleri</code>, <code>yazıYüzünüKur</code>, <code>durakla</code>, <code>konumuDeğiştir</code>, <code>tuvaliKaydır/Döndür</code>, <code>canlandırmaHızı</code>, <code>kalemİnikMi</code></td><td>henüz yok</td></tr>
+                    <tr><td><code>yaklaşmayıSil</code></td><td><code>yaklaşXY(1, 1, 0, 0)</code> (<code>yaklaş</code>ın kendisi artık var)</td></tr>
+                    <tr><td><code>rastgeleÇanEğrisinden</code></td><td><code>rastgeleDoğalKesir</code></td></tr>
+                    <tr><td><code>BuAn()</code></td><td><code>buAn</code> (milisaniye) ya da <code>buSaniye</code> (kesirli saniye)</td></tr>
+                    <tr><td><code>eksenleriGizle</code>, <code>ızgarayıGizle</code></td><td>henüz yok; <code>eksenleriGöster</code> ve <code>ızgarayıGöster</code> var (ızgara şimdilik bir şey çizmiyor)</td></tr>
+                    <tr><td><code>kaplumbağa0</code></td><td><code>kaplumbağa</code>; çoğul kaplumbağa çalışıyor: <code>dez k = yeniKaplumbağa(50, 50)</code></td></tr>
+                    <tr><td><code>giysiKur</code>, <code>giysileriKur</code>, <code>konumuDeğiştir</code>, <code>tuvaliKaydır/Döndür</code>, <code>canlandırmaHızı</code>, <code>kalemİnikMi</code></td><td>henüz yok</td></tr>
                     <tr><td>Java türleri: <code>Takvim</code>, <code>Tarih</code>, <code>SaatDilimi</code>, <code>Yazıyüzü</code>, <code>Boya</code>, <code>İmge</code>, <code>BKK</code>, <code>Mp3Çalar</code>…</td><td>tarayıcıda Java kütüphanesi yok</td></tr>
                 </tbody>
             </table>
