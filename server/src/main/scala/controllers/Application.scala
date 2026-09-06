@@ -245,6 +245,9 @@ class Application @Inject()(
   def yardimKomutlar = Action {
     Ok(views.html.yardimKomutlar()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
+  def yardimOrnekler = Action {
+    Ok(views.html.yardimOrnekler()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
   def yardimSozluk = Action {
     Ok(views.html.yardimSozluk()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
