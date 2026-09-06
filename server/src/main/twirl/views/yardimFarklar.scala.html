@@ -104,7 +104,7 @@
         <section>
             <h2><span class="im" style="background:var(--sari)"></span>Ses ve müzik</h2>
             <p>Masaüstünde <code>notaÇal</code>, <code>müzikMp3üÇal</code>, <code>sesMp3üÇal</code>, <code>Mp3Çalar</code>, <code>vuruş</code>/<code>nota</code> gibi komutlar JFugue/MP3 ile ses çalar.</p>
-            <p class="ikojo"><b>iKoco'da:</b> MP3 ve nota çalma <b>var</b>: <code>sesMp3üÇal(Ses.vuruş)</code>, <code>müzikMp3üÇal</code>, <code>müzikMp3üÇalDöngülü</code>, <code>müzikMp3üÇalıyorMu</code>, ve Web Audio ile <code>notaÇal(nota, süre)</code> · <code>notaÇalgısınıKur(Çalgı.…)</code>. Ses dosyaları <code>Ses.…</code> sabitlerinde. Henüz olmayan tek şey JFugue <b>partisyonu</b> (<code>MusicScore</code>, <code>müzikÇal</code>) ve <code>Mp3Çalar</code> nesnesi; onlar için parçayı tek tek <code>notaÇal</code> ile çal.</p>
+            <p class="ikojo"><b>iKoco'da:</b> MP3 ve nota çalma <b>var</b>: <code>sesMp3üÇal(Ses.vuruş)</code>, <code>müzikMp3üÇal</code>, <code>müzikMp3üÇalDöngülü</code>, <code>müzikMp3üÇalıyorMu</code>, ve Web Audio ile <code>notaÇal(nota, süre)</code> · <code>notaÇalgısınıKur(Çalgı.…)</code>. Ses dosyaları <code>Ses.…</code> sabitlerinde. <code>Mp3Çalar</code> de var (<code>yeniMp3Çalar</code> ile kurulur, masaüstündeki gibi). Henüz olmayan tek şey JFugue <b>partisyonu</b> (<code>MusicScore</code>, <code>müzikÇal</code>); onun için parçayı tek tek <code>notaÇal</code> ile çal.</p>
         </section>
 
         <section>
@@ -139,17 +139,17 @@
 
         <section>
             <h2><span class="im" style="background:var(--yesil)"></span>Adı değişen ya da henüz olmayan komutlar</h2>
-            <p>Bu liste her sürümde kısalıyor: <code>silipSakla</code>, <code>tuvalAlanı</code>, <code>durdur</code>, <code>yaklaş</code>, <code>durakla</code>, <code>gerekli</code>, <code>tuşaBasınca</code>, <code>fareKonumu</code>, <code>yazıyüzleri</code>, <code>Görünüş.*</code>, <code>Resim.düz</code>, <code>Resim.sil()</code>, <code>ışınlarıAç/Kapat</code> ve <code>yeniKaplumbağa</code> artık masaüstündeki adlarıyla iKoco'da da çalışıyor. Kalanlar (tam liste kojojs-dev'de <code>kilavuz/eksik-adlar.tsv</code>):</p>
+            <p>Bu liste her sürümde kısalıyor: <code>silipSakla</code>, <code>tuvalAlanı</code>, <code>durdur</code>, <code>yaklaş</code>, <code>durakla</code>, <code>gerekli</code>, <code>tuşaBasınca</code>, <code>fareKonumu</code>, <code>yazıyüzleri</code>, <code>Görünüş.*</code>, <code>Resim.düz</code>, <code>Resim.sil()</code> ve <code>yeniKaplumbağa</code> artık masaüstündeki adlarıyla iKoco'da da çalışıyor. Kalanlar (tam liste kojojs-dev'de <code>kilavuz/eksik-adlar.tsv</code>):</p>
             <table>
                 <thead><tr><th>Masaüstü</th><th>iKoco</th></tr></thead>
                 <tbody>
                     <tr><td><code>yaklaşmayıSil</code></td><td><code>yaklaşXY(1, 1, 0, 0)</code> (<code>yaklaş</code>ın kendisi artık var)</td></tr>
                     <tr><td><code>rastgeleÇanEğrisinden</code></td><td><code>rastgeleDoğalKesir</code></td></tr>
                     <tr><td><code>BuAn()</code></td><td><code>buAn</code> (milisaniye) ya da <code>buSaniye</code> (kesirli saniye)</td></tr>
-                    <tr><td><code>eksenleriGizle</code>, <code>ızgarayıGizle</code></td><td>henüz yok; <code>eksenleriGöster</code> ve <code>ızgarayıGöster</code> var (ızgara şimdilik bir şey çizmiyor)</td></tr>
+                    <tr><td><code>eksenleriGizle</code>, <code>ızgarayıGizle</code>, <code>ışınlarıAç/Kapat</code></td><td>henüz yok; <code>eksenleriGöster</code> ve <code>ızgarayıGöster</code> var (ızgara şimdilik bir şey çizmiyor)</td></tr>
                     <tr><td><code>kaplumbağa0</code></td><td><code>kaplumbağa</code>; çoğul kaplumbağa çalışıyor: <code>dez k = yeniKaplumbağa(50, 50)</code></td></tr>
                     <tr><td><code>giysiKur</code>, <code>giysileriKur</code>, <code>konumuDeğiştir</code>, <code>tuvaliKaydır/Döndür</code>, <code>canlandırmaHızı</code>, <code>kalemİnikMi</code></td><td>henüz yok</td></tr>
-                    <tr><td>Java türleri: <code>Takvim</code>, <code>Tarih</code>, <code>SaatDilimi</code>, <code>Yazıyüzü</code>, <code>Boya</code>, <code>İmge</code>, <code>BKK</code>, <code>Mp3Çalar</code>…</td><td>tarayıcıda Java kütüphanesi yok</td></tr>
+                    <tr><td>Java türleri: <code>Takvim</code>, <code>Tarih</code>, <code>SaatDilimi</code>, <code>Boya</code>, <code>İmge</code>, <code>BKK</code>…</td><td>tarayıcıda Java kütüphanesi yok (<code>Yazıyüzü</code> ve <code>Mp3Çalar</code> ise iKoco'da kendi karşılıklarıyla var)</td></tr>
                 </tbody>
             </table>
             <p>Hangi Türkçe adların iKoco'da bulunduğunu <a href="/yardim/sozluk">Koco Sözlüğü</a> gösterir. Eksik bir komuta ihtiyacın olursa <a href="https://github.com/bulent2k2/kojojs-dev/issues" target="_blank" rel="noopener">kojojs-dev</a>'de bildir.</p>
