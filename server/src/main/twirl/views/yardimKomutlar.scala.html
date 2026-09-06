@@ -81,13 +81,29 @@
                      border-top: 1px solid var(--cizgi); font-size: 14px; }
         footer { text-align: center; color: var(--soluk); font-size: 13px; border-top: 1px solid var(--cizgi); padding-top: 24px; }
         @@media (max-width: 860px) {
-            .sayfa { grid-template-columns: 1fr; padding: 20px 14px 60px; }
-            .yan { position: static; max-height: none; }
+            /* minmax(0, 1fr), düz 1fr DEĞİL: ızgara öğesinin varsayılan
+               min-width:auto değeri sütunu içindeki en uzun kırılamaz şeye
+               (uzun bir kod satırı) kadar şişiriyor ve sayfa telefonda yatay
+               kayıyordu. Yan sütunda da min-width: 0 aynı gerekçeyle. */
+            .sayfa { grid-template-columns: minmax(0, 1fr); padding: 20px 14px 60px; }
+            .yan, .sayfa > main { min-width: 0; }
+            /* Bölüm listesi telefonda dikey bir kule olarak içeriği çok aşağı
+               itiyordu; sarılan etiketler hâline geliyor. */
+            .yan { position: static; max-height: none; overflow: visible; padding: 12px; }
+            .yan ol { display: flex; flex-wrap: wrap; gap: 5px; }
+            .yan li a { padding: 5px 9px; font-size: 13px; background: var(--zemin);
+                        border-radius: 6px; line-height: 1.25; }
             section.bolum { padding: 20px 16px; }
             .kahraman { padding: 22px 18px; }
             .kahraman h1 { font-size: 25px; }
             .ust-bar { padding: 10px 14px; }
             .ust-bar .geri { display: none; }
+            .bolum-alt { flex-wrap: wrap; }
+            /* dar ekranda hücre dolgusunu kıs: iki sütunlu komut tabloları
+               kendi içlerinde yatay kaymadan sığsın (kod adları bölünmesin) */
+            table { font-size: 13.5px; }
+            th, td { padding: 8px 9px; }
+            td code, th code { font-size: 12.5px; padding: 1px 4px; }
         }
 </style>
 </head>
