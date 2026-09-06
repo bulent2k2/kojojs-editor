@@ -1,0 +1,171 @@
+@()
+@*
+  Masaüstü Koco ile iKoco (tarayıcı) farkları -- /yardim/farklar. Kategoriler
+  kojojs-dev/ornekler/masaustu/tarama.tsv'deki platform engellerinden (yükle,
+  arayüz, ses, öykü, dosya, canlandırma, çini, tuvalçizim) ve kılavuz üretiminin
+  (kojojs-dev/kilavuz/eksik-adlar.tsv) bulgularından derlendi. Komut adları
+  TurkishTurtle.scala ve kojo/tr/*.scala'dan DOĞRULANDI. Biçem: yardim.scala.html.
+*@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>iKoco — Masaüstü ile farklar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700&display=swap" rel="stylesheet">
+    <style>
+        :root { --kirmizi:#E95065; --mavi:#46BDDF; --yesil:#52D273; --sari:#E5C453; --turuncu:#E57255;
+                --metin:#2d2f33; --soluk:#6b7078; --cizgi:#e5e7eb; --zemin:#f7f7f8; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--metin);
+               background: var(--zemin); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        a { color: var(--kirmizi); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code, pre { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
+        .ust-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 24px;
+                   background: #fff; border-bottom: 1px solid var(--cizgi); position: sticky; top: 0; z-index: 10; }
+        .ust-bar img { height: 34px; display: block; }
+        .ust-bar .geri { font-weight: 500; font-size: 14px; color: var(--metin); border: 1px solid var(--cizgi);
+                         border-radius: 6px; padding: 7px 14px; background: #fff; white-space: nowrap; }
+        .ust-bar .geri:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti { display: flex; gap: 4px; flex-wrap: wrap; }
+        .gezinti a { font-size: 14px; font-weight: 500; color: var(--metin); padding: 6px 12px; border-radius: 6px; }
+        .gezinti a:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti a.secili { background: var(--kirmizi); color: #fff; }
+        .kapsayici { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+        .kahraman { background: linear-gradient(135deg, #fff 0%, #fdf3f4 100%); border: 1px solid var(--cizgi);
+                    border-radius: 14px; padding: 32px 32px 28px; margin-bottom: 40px; }
+        .kahraman h1 { margin: 0 0 8px; font-size: 30px; font-weight: 700; }
+        .kahraman h1 .vurgu { color: var(--kirmizi); }
+        .kahraman p { margin: 0; font-size: 17px; color: #404551; max-width: 62ch; }
+        section { margin-bottom: 36px; background: #fff; border: 1px solid var(--cizgi); border-radius: 12px; padding: 22px 26px; }
+        h2 { font-size: 20px; font-weight: 700; margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+        h2 .im { width: 10px; height: 22px; border-radius: 3px; display: inline-block; flex: none; }
+        section p { margin: 0 0 10px; }
+        section p.ikojo { background: #f2fbf4; border-left: 4px solid var(--yesil); border-radius: 8px; padding: 8px 12px; }
+        section p.ikojo b { color: #2c8a48; }
+        code { background: var(--zemin); border-radius: 4px; padding: 1px 6px; font-size: 13.5px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--cizgi); border-radius: 10px; overflow: hidden; margin: 8px 0 4px; }
+        th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--cizgi); vertical-align: top; font-size: 14.5px; }
+        tr:last-child td { border-bottom: none; }
+        th { background: #fafbfc; font-weight: 600; font-size: 13px; color: var(--soluk); text-transform: uppercase; letter-spacing: .03em; }
+        .rozet { display: inline-block; background: var(--turuncu); color: #fff; font-size: 11px; font-weight: 700;
+                 text-transform: uppercase; letter-spacing: .04em; border-radius: 4px; padding: 1px 7px; vertical-align: middle; }
+        footer { text-align: center; color: var(--soluk); font-size: 13px; border-top: 1px solid var(--cizgi); padding-top: 24px; }
+        @@media (max-width: 640px) { .kahraman { padding: 24px; } .kahraman h1 { font-size: 25px; } section { padding: 18px 16px; }
+                                     .ust-bar .geri { display: none; } .ust-bar { padding: 10px 14px; } }
+    </style>
+</head>
+<body>
+    <div class="ust-bar">
+        <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
+        <nav class="gezinti">
+            <a href="/yardim">Yardım</a>
+            <a href="/yardim/skala">Skala</a>
+            <a href="/yardim/komutlar">Komutlar</a>
+            <a href="/yardim/sozluk">Sözlük</a>
+            <a href="/yardim/farklar" class="secili">Farklar</a>
+        </nav>
+        <a href="/" class="geri">← Düzenleme penceresine dön</a>
+    </div>
+
+    <div class="kapsayici">
+        <div class="kahraman">
+            <h1>Masaüstü Koco ile <span class="vurgu">iKoco</span> arasındaki farklar</h1>
+            <p>
+                iKoco, Koco'nun tarayıcıda çalışan sürümüdür: aynı Türkçe anahtar kelimeler, aynı kaplumbağa,
+                aynı <code>Resim</code> birimi. Ama masaüstü Koco bir Java/Swing uygulaması; bazı özellikleri
+                tarayıcıya henüz taşınmadı ya da taşınamaz. Kılavuzlarda turuncu <span class="rozet">masaüstü</span>
+                rozeti taşıyan örnekler bu yüzden. Aşağıda her fark için ne yapılacağı yazıyor.
+            </p>
+        </div>
+
+        <section>
+            <h2><span class="im" style="background:var(--kirmizi)"></span>Her çalıştırma temiz başlar</h2>
+            <p>Masaüstünde yazılımcıklar bir yorumlayıcıda (REPL) art arda çalışır: bir örnekte tanımladığın <code>dez n = …</code> bir sonrakinde hatırlanır, yalın bir deyişin (<code>1 + 2</code>) değeri çıktı gözünde kendiliğinden görünür, <code>çıktıyıSil</code> ile çıktı temizlenir.</p>
+            <p class="ikojo"><b>iKoco'da:</b> her <b>Çalıştır</b> kodu baştan derler; önceki tanımlar hatırlanmaz, çıktı her seferinde temizlenir (<code>çıktıyıSil</code> yok, gerek de yok). Bir değeri görmek için <code>satıryaz(1 + 2)</code> yaz. <code>satıryaz(a, b)</code> gibi çok girdili çağrılar <code>(a,b)</code> biçiminde tek sıralama olarak yazılır; yan yana istiyorsan <code>satıryaz(s"$a $b")</code>.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--turuncu)"></span><code>#yükle</code> ile dosya içe almak</h2>
+            <p>Masaüstünde <code>// #yükle /samples/tr/oyku-tanimlari</code> gibi bir yorum satırı başka bir betiği yazılımcığın başına ekler; büyük örnekler (Othello, Anagram, kılavuz öyküleri) böyle parçalara bölünmüştür.</p>
+            <p class="ikojo"><b>iKoco'da:</b> tek dosya derlenir, <code>#yükle</code> yok. Parçaları tek betikte birleştir; ortak tanımları bir <code>nesne</code> içine koyup aynı dosyada tut. Kaydettiğin betiğe verilen kalıcı adresi paylaşarak da yeniden kullanabilirsin.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--mavi)"></span>Swing arayüzü (<code>ay</code>, düğmeler, yazı girdileri)</h2>
+            <p>Masaüstünde <code>ay.Düğme</code>, <code>ay.Yazıgirdisi</code>, <code>ay.Salındıraç</code>, <code>ay.Tanıt</code> gibi Swing bileşenleri <code>Resim.arayüz(…)</code> ile tuvale konur; <code>satıroku</code> bir iletişim kutusu açar.</p>
+            <p class="ikojo"><b>iKoco'da:</b> Swing yok. Fare ve klavye olaylarıyla etkileşim kur: <code>resim.fareyeTıklayınca { (x, y) => … }</code>, <code>fareyiSürükleyince</code>, <code>fareBasılınca</code>; <code>canlandır</code> döngüsünde <code>tuşBasılıMı(tuşlar.sol)</code>. Metin için <code>Resim.yazı</code> ve <code>güncelle</code>. <code>satıroku</code> tarayıcının soru kutusunu açar.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--sari)"></span>Ses ve müzik</h2>
+            <p>Masaüstünde <code>notaÇal</code>, <code>müzikMp3üÇal</code>, <code>sesMp3üÇal</code>, <code>Mp3Çalar</code>, <code>vuruş</code>/<code>nota</code> gibi komutlar JFugue/MP3 ile ses çalar.</p>
+            <p class="ikojo"><b>iKoco'da:</b> bu komutlar henüz yok (Web Audio karşılığı gerekir). Şimdilik sesleri atla; oyunun görsel kısmı aynı çalışır. Ses desteği geldiğinde bu sayfa güncellenecek.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--yesil)"></span>Öykü anlatıcı (<code>Story</code>/<code>Page</code>)</h2>
+            <p>Masaüstünde <code>Page(name = …, body = &lt;body&gt;…&lt;/body&gt;)</code> sayfalarından bir <code>Story</code> kurulur, <code>stPlayStory</code> ile sağ panelde HTML sayfalar hâlinde oynatılır; tıklanan kod örnekleri düzenleyiciye taşınır. Skala kılavuzu ve Kojo Belgeleri böyle öykülerdi.</p>
+            <p class="ikojo"><b>iKoco'da:</b> öykü anlatıcı yok. O iki öykü bu yardım sayfalarına dönüştürüldü: <a href="/yardim/skala">Skala</a> ve <a href="/yardim/komutlar">Komutlar</a>. Kod örnekleri "Editörde aç" bağlantısıyla (<code>/?zrc=…</code>) düzenleyicide açılır. Kendi öykünü anlatmak için şimdilik bir web sayfası yazıp örneklerine aynı biçimde bağlantı ver.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--kirmizi)"></span>Dosya ve klavye girdisi</h2>
+            <p>Masaüstünde <code>Dosya</code>, <code>scala.io.Source</code>, <code>java.io</code> ile diskten okuma/yazma; <code>satıroku</code>, <code>sayıOku</code>, <code>kesirOku</code> ile kullanıcıdan girdi alma vardır.</p>
+            <p class="ikojo"><b>iKoco'da:</b> tarayıcı diske erişemez; veriyi betiğin içine göm (bir <code>Dizin</code> ya da çok satırlı <code>"""…"""</code> yazı olarak) ya da <code>Resim.imge("https://…")</code> gibi bir adresten yükle. <code>satıroku</code> tarayıcının soru kutusuyla çalışır; <code>sayıOku</code>/<code>kesirOku</code> yerine <code>satıroku(…).sayıya</code>.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--turuncu)"></span>Canlandırma geçişleri (<code>Canlandırma</code>, <code>Geçiş</code>)</h2>
+            <p>Masaüstünde <code>Canlandırma</code>, <code>Geçiş</code>, <code>YumuşakGeçiş</code>, <code>canlandırmaDizisi</code>, <code>canlandırmaEşzamanlı</code> ile bildirimsel (Transition) canlandırmalar kurulur.</p>
+            <p class="ikojo"><b>iKoco'da:</b> bu API yok. Aynı etkiyi <code>canlandır { … }</code> döngüsüyle elle kur: her karede konumu/açıyı biraz değiştir, <code>resim.kondur(x, y)</code>, <code>döndür</code>, <code>büyüt</code>; durumu taşımak için <code>canlandırmaDurumla(başlangıç) { d => … }</code>. Bitince <code>canlandırmayıDurdur()</code>.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--mavi)"></span>Çini dünyası (<code>ÇiniDünyası</code>, <code>BirSayfaKostüm</code>)</h2>
+            <p>Masaüstünde Tiled ile çizilmiş haritalar <code>ÇiniDünyası</code>, <code>ÇiniXY</code> ve sprite sayfaları (<code>BirSayfaKostüm</code>) ile oyun sahnesine dönüşür; <code>çarptıMı</code>, <code>sağdaÇiniVarMı</code> gibi yardımcılar vardır.</p>
+            <p class="ikojo"><b>iKoco'da:</b> çini dünyası yok. Izgara tabanlı oyunlar için haritayı bir <code>Dizin[Yazı]</code> ya da <code>Dizim</code> ile tut, her hücreyi <code>Resim.dikdörtgen</code>/<code>Resim.imge</code> ile çiz; çarpışma için <code>resim.çarpıştıMı(diğeri)</code> ve <code>sınırları</code>.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--sari)"></span>Tuval çizimi (<code>Grafik2B</code>, <code>tuvalÇizim</code>)</h2>
+            <p>Masaüstünde <code>canlandırTuvalÇizimle</code> ve <code>Grafik2B</code> (Java2D) ile doğrudan piksel düzeyinde çizim; <code>Bellekteİmge</code>, <code>İmgeİşlemi</code> ile imge işleme vardır.</p>
+            <p class="ikojo"><b>iKoco'da:</b> Java2D yok. Vektör çizim için <code>Resim</code> birimi (<code>Resim.daire</code>, <code>Resim.çizgi</code>, <code>Resim.dikdörtgen</code>, dönüştürücüler <code>götür</code>/<code>döndürme</code>/<code>büyütme</code>/<code>kalemRengi</code>/<code>boyaRengi</code>) ve kaplumbağa; çok sayıda nesne için resimleri <code>Resim.diziDüzenli</code> ile birleştir.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--yesil)"></span>Adı değişen ya da henüz olmayan komutlar</h2>
+            <p>Kılavuz örneklerinde en sık karşılaşılanlar (tam liste kojojs-dev'de <code>kilavuz/eksik-adlar.tsv</code>):</p>
+            <table>
+                <thead><tr><th>Masaüstü</th><th>iKoco</th></tr></thead>
+                <tbody>
+                    <tr><td><code>silipSakla</code></td><td><code>silVeSakla</code></td></tr>
+                    <tr><td><code>yaklaş(k)</code>, <code>yaklaş(k, x, y)</code>, <code>yaklaşmayıSil</code></td><td><code>yaklaşXY(k, k, x, y)</code>; sıfırlamak için <code>yaklaşXY(1, 1, 0, 0)</code></td></tr>
+                    <tr><td><code>tuvalAlanı</code></td><td><code>tuvalSınırları</code> (<code>.x .y .width .height</code>)</td></tr>
+                    <tr><td><code>durdur</code></td><td><code>canlandırmayıDurdur()</code></td></tr>
+                    <tr><td><code>oyunSüresiniGeriyeSayarakGöster</code></td><td><code>oyunSüresiniGöster</code></td></tr>
+                    <tr><td><code>rastgeleİkil</code> · <code>rastgeleÇanEğrisinden</code></td><td><code>rastgeleSeçim</code> · <code>rastgeleDoğalKesir</code></td></tr>
+                    <tr><td><code>BuAn()</code>, <code>buAn</code></td><td><code>buSaniye</code> (kesirli saniye)</td></tr>
+                    <tr><td><code>gerekli(koşul, mesaj)</code></td><td><code>require(koşul, mesaj)</code> (Scala'nın kendisi)</td></tr>
+                    <tr><td><code>tuşaBasınca { t => … }</code></td><td><code>onKeyPress { t => … }</code> ya da <code>canlandır</code> içinde <code>tuşBasılıMı(tuşlar.…)</code></td></tr>
+                    <tr><td><code>Resim.düz(en, boy)</code> · <code>Resim.sil()</code></td><td><code>Resim.çizgi(en, boy)</code> · <code>resimleriSil()</code></td></tr>
+                    <tr><td><code>yazı(nesne)</code></td><td><code>yazı(yazı: Yazı)</code>: başka türler için <code>.yazıya</code> ekle</td></tr>
+                    <tr><td><code>eksenleriGöster/Gizle</code>, <code>ızgarayıGöster/Gizle</code>, <code>ışınlarıAç/Kapat</code></td><td>henüz yok; satırı sil, çizim aynı çalışır</td></tr>
+                    <tr><td><code>kaplumbağa0</code>, <code>yeniKaplumbağa</code></td><td>henüz yok; tek kaplumbağa var, çoğul nesneler için <code>Resim</code> kullan</td></tr>
+                    <tr><td><code>fareKonumu</code></td><td>henüz yok; <code>fareyiSürükleyince</code>/<code>fareBasılınca</code> ile konumu al</td></tr>
+                    <tr><td><code>giysiKur</code>, <code>giysileriKur</code>, <code>Görünüş.*</code>, <code>yazıyüzleri</code>, <code>yazıYüzünüKur</code>, <code>durakla</code>, <code>konumuDeğiştir</code>, <code>tuvaliKaydır/Döndür</code>, <code>canlandırmaHızı</code>, <code>kalemİnikMi</code></td><td>henüz yok</td></tr>
+                    <tr><td>Java türleri: <code>Takvim</code>, <code>Tarih</code>, <code>SaatDilimi</code>, <code>Yazıyüzü</code>, <code>Boya</code>, <code>İmge</code>, <code>BKK</code>, <code>Mp3Çalar</code>…</td><td>tarayıcıda Java kütüphanesi yok</td></tr>
+                </tbody>
+            </table>
+            <p>Hangi Türkçe adların iKoco'da bulunduğunu <a href="/yardim/sozluk">Koco Sözlüğü</a> gösterir. Eksik bir komuta ihtiyacın olursa <a href="https://github.com/bulent2k2/kojojs-dev/issues" target="_blank" rel="noopener">kojojs-dev</a>'de bildir.</p>
+        </section>
+
+        <footer>
+            Koco · Kojo'nun Türkçesi · <a href="/yardim">Yardım</a> · <a href="/">Düzenleme penceresine dön</a>
+        </footer>
+    </div>
+</body>
+</html>
