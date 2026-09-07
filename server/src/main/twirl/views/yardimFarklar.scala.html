@@ -138,6 +138,16 @@
         </section>
 
         <section>
+            <h2><span class="im" style="background:var(--turuncu)"></span>Kaplumbağa komutları sıraya girer</h2>
+            <p>Masaüstünde <code>ileri(100)</code> kaplumbağa gerçekten yürüyene kadar betiği bekletir. Sonraki satır çalıştığında hareket bitmiştir; bu yüzden <code>k1.ileri(100); k1.uzaklık(k2)</code> masaüstünde <b>hareketten sonraki</b> uzaklığı verir.</p>
+            <p class="ikojo"><b>iKoco'da:</b> tarayıcı tek iş parçacıklıdır, bekletmek sayfayı dondururdu. Onun için kaplumbağa komutları bir <b>sıraya</b> girer ve betik akmaya devam eder. Sonuç aynıdır — çizim doğru sırayla olur — ama <b>değer okuyan</b> komutlar için fark eder: <code>uzaklık</code> o anki konumu okur, yani henüz işlenmemiş komutlardan <b>önceki</b> konumu. Yukarıdaki örnek iKoco'da hareketten <b>önceki</b> uzaklığı verir.</p>
+            <p>Doğru anı yakalamak için okumayı sıraya sokan komutlar var: <code>konumuOku</code>, <code>yönüOku</code>, <code>dokunuyorMu</code>. Bunlar bir işlev alır ve o işlev, kendisinden önce yazdığın bütün komutlar bittikten sonra çalışır:</p>
+            <pre><code>yinele(4) { ileri(100); sağ() }
+konumuOku { n =&gt; yaz(s"kare bitti, buradayım: ${n.x}, ${n.y}") }</code></pre>
+            <p>Aynı sebeple <code>çevir(öbürü)</code> hedefin konumunu sıranın doğru noktasında okur, yani masaüstündeki gibi davranır.</p>
+        </section>
+
+        <section>
             <h2><span class="im" style="background:var(--yesil)"></span>Adı değişen ya da henüz olmayan komutlar</h2>
             <p>Bu liste her sürümde kısalıyor: <code>silipSakla</code>, <code>tuvalAlanı</code>, <code>durdur</code>, <code>yaklaş</code>, <code>durakla</code>, <code>gerekli</code>, <code>tuşaBasınca</code>, <code>fareKonumu</code>, <code>yazıyüzleri</code>, <code>Görünüş.*</code>, <code>Resim.düz</code>, <code>Resim.sil()</code>, <code>yeniKaplumbağa</code>, <code>kalemİnikMi</code>, <code>canlandırmaHızı</code>, <code>konumuDeğiştir</code>, <code>tuvaliKaydır/Döndür</code>, <code>yaklaşmayıSil</code>, <code>rastgeleÇanEğrisinden</code>, <code>eksenleri/ızgarayıGizle</code> ve giysi komutları (<code>giysiKur</code>, <code>giysileriKur</code>, <code>birsonrakiGiysi</code>, <code>giysiyiBüyült</code>) artık masaüstündeki adlarıyla iKoco'da da çalışıyor. Kalanlar (tam liste kojojs-dev'de <code>kilavuz/eksik-adlar.tsv</code>):</p>
             <table>
