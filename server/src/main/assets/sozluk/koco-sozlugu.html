@@ -273,6 +273,9 @@ const CATS = [
 ["Nothing","Hiç",""],
 ["Null","Yok",""],
 ["Option","Belki",""],
+["Either","İkisindenBiri","ya soldaki değer ya sağdaki"],
+["Left","Sol",""],
+["Right","Sağ",""],
 ["Some","Biri",""],
 ["None","Hiçbiri",""],
 ["Range","Aralık",""],
@@ -874,6 +877,15 @@ const CATS = [
 ["prependedAll","önüneEkleHepsini",""],
 ]},
 { key:"collx", tr:"Koleksiyon Türleri", en:"Collection types", note:"Yığın, Kuyruk, Öncelik Sırası, Eşlem/Eşlek, Küme, Aralık, Belki ve Miskin Dizin'e özgü adlar. Names specific to individual collection types, beyond the shared core above.", rows:[
+// --- İkisindenBiri / Either (Eylül 2026) ---
+["isLeft","solMu",""],
+["isRight","sağMı","sağ = işin yolunda gittiği taraf"],
+["fold","katla","İkisindenBiri'nde: katla(solİşlev, sağİşlev)"],
+["swap","takasla","sol ile sağ yer değiştirir"],
+["merge","birleştir","iki taraf aynı türdeyse hangisiyse o"],
+["toOption","belkiye","sağdaysa Biri, soldaysa Hiçbiri"],
+["Either.cond","İkisindenBiri.koşulla","koşul doğruysa Sağ, değilse Sol"],
+["partitionMap","bölİşle","Sol/Sağ etiketleyip ikiye ayırır"],
 // --- Yineleyici (Eylül 2026) ---
 ["iterator","yineleyici","topluluğu bir kez gezdiren şey"],
 ["hasNext","dahaVarMı","daha öge kaldı mı"],
