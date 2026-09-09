@@ -178,6 +178,21 @@ tr.ayrinti .gomulu pre {
   font-family: "IBM Plex Mono", monospace; font-size: 12.5px; background: var(--surface);
   border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto;
 }
+tr.ayrinti .calisan { margin-top: 12px; }
+tr.ayrinti .cbaslik { font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+tr.ayrinti a.cbtn {
+  display: flex; align-items: center; gap: 9px; text-decoration: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 11px; margin-bottom: 6px; color: var(--ink);
+}
+tr.ayrinti a.cbtn:hover { border-color: var(--accent); }
+tr.ayrinti a.cbtn .crun { color: var(--accent); font-size: 11px; flex: 0 0 auto; }
+tr.ayrinti a.cbtn code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px;
+  flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+tr.ayrinti a.cbtn .csayfa { font-size: 11px; color: var(--muted); flex: 0 0 auto; }
 #empty { display: none; color: var(--muted); text-align: center; padding: 60px 0; }
 footer {
   margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
@@ -1553,17 +1568,19 @@ function render() {
     html += `<div class="tablewrap"><table>`;
     for (const r of rows) {
       const y = yardımBul(r[1]);
+      const ö = örnekBul(r[1]);
+      const açılır = y || ö;
       // Aynı Türkçe ad birden çok kategoride geçebiliyor (sil, yazı, dizi...).
       // id yalnız İLKİNE veriliyor: yinelenen id geçersiz HTML olurdu ve
       // #ad bağlantısı yardımı olmayan satıra düşebilirdi.
       const ilk = !görülen.has(kök(r[1])); if (ilk) görülen.add(kök(r[1]));
-      html += `<tr${ilk ? ` id="g-${encodeURIComponent(kök(r[1]))}"` : ""} class="satir${y ? " acilir" : ""}"${y ? ` data-ad="${esc(kök(r[1]))}"` : ""}>
+      html += `<tr${ilk ? ` id="g-${encodeURIComponent(kök(r[1]))}"` : ""} class="satir${açılır ? " acilir" : ""}"${açılır ? ` data-ad="${esc(kök(r[1]))}"` : ""}>
         <td class="term"><span class="tag ${tagA}">${tagA.toUpperCase()}</span>${esc(r[first])}</td>
         <td class="arrow">&rarr;</td>
         <td class="term"><span class="tag ${tagB}">${tagB.toUpperCase()}</span>${esc(r[second])}</td>
-        <td class="note">${esc(r[2])}${y ? '<span class="chev">&#9656;</span>' : ""}</td>
+        <td class="note">${esc(r[2])}${açılır ? '<span class="chev">&#9656;</span>' : ""}</td>
       </tr>`;
-      if (y) html += `<tr class="ayrinti" hidden><td colspan="4">${ayrıntıHtml(kök(r[1]), y)}</td></tr>`;
+      if (açılır) html += `<tr class="ayrinti" hidden><td colspan="4">${ayrıntıHtml(kök(r[1]), y, ö)}</td></tr>`;
     }
     html += `</table></div></section>`;
   }
@@ -1591,17 +1608,42 @@ function renderStats() {
 
 // "Resim.daire" gibi nitelikli adlarda yardım son parçada aranıyor
 function kök(ad) { return ad.includes(".") ? ad.split(".").pop() : ad; }
+
+// Komut -> onu kullanan ÇALIŞAN örnek betikler. Veri ayrı dosyada
+// (ornekler.json) çünkü ~180 KB: sayfayı o kadar şişirmeye değmez ve
+// bağlantılar zaten yalnız site ayaktayken anlamlı. Gelmezse bu bölüm
+// hiç görünmüyor, sözlüğün gerisi etkilenmiyor.
+let ORNEK = null;
+fetch("ornekler.json")
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { if (d) { ORNEK = d; renderChips(); render(); hashaGit(); } })
+  .catch(() => {});
+function örnekBul(ad) {
+  if (!ORNEK) return null;
+  return ORNEK.dizin[ad] || ORNEK.dizin[kök(ad)] || null;
+}
 function yardımBul(ad) { return YARDIM[ad] || YARDIM[kök(ad)] || null; }
 
-function ayrıntıHtml(ad, y) {
+function ayrıntıHtml(ad, y, ö) {
   let h = "";
-  // Birleşik girdilerde (sil, yazı) html zaten HER İKİ anlamı da taşıyor;
-  // yapılandırılmış alanları da basarsak koleksiyon anlamı iki kez çıkar.
-  if (y.html) return `<div class="gomulu">${y.html}</div>`;
-  if (y.tür === "yöntem") {
+  if (y && y.html) {
+    // Birleşik girdilerde (sil, yazı) html zaten HER İKİ anlamı da taşıyor
+    h += `<div class="gomulu">${y.html}</div>`;
+  } else if (y && y.tür === "yöntem") {
     h += `<div class="imza">${esc(y.imza)}</div><p class="acik">${esc(y.açıklama)}</p>`;
     h += `<pre class="ornek">${esc(y.örnek)}\n<span class="sonuc">// ${esc(y.sonuç)}</span></pre>`;
     h += `<p class="kaynak">Örnek sınanıyor: help.scala + KoleksiyonYardımıTest</p>`;
+  }
+  if (ö && ORNEK) {
+    h += `<div class="calisan"><div class="cbaslik">Bunu kullanan çalışan örnekler</div>`;
+    for (const [i, etiket] of ö) {
+      const b = ORNEK.havuz[i];
+      h += `<a class="cbtn" href="/?zrc=${b.z}" target="_blank" rel="noopener"` +
+           ` title="${esc(b.s)} sayfasından, ${b.n} satır">` +
+           `<span class="crun">&#9654;</span><code>${esc(etiket)}</code>` +
+           `<span class="csayfa">${esc(b.s)}</span></a>`;
+    }
+    h += `</div>`;
   }
   return h;
 }
