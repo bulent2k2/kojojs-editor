@@ -1,7 +1,7 @@
 @()
 @*
   Koco Sözlüğü -- /yardim/sozluk. Sözlüğün kendisi kojojs-dev/sozluk/koco-sozlugu.html
-  (754 girdi, tek dosya HTML, aranabilir); burada server/src/main/assets/sozluk/
+  (975 girdi, tek dosya HTML, aranabilir); burada server/src/main/assets/sozluk/
   altındaki kopyası statik varlık olarak (/assets/sozluk/koco-sozlugu.html) bir
   iframe içinde açılıyor. Böylece sözlük dosyası olduğu gibi kalıyor (kendi
   biçemi, kendi arama kutusu), yardım sayfalarının gezinti şeridi de üstte duruyor.
@@ -52,10 +52,26 @@
         <a href="/" class="geri">← Düzenleme penceresine dön</a>
     </div>
     <div class="aciklama">
-        Koco (Türkçe) ↔ İngilizce programlama terimleri sözlüğü: 754 girdi, iki yönlü, aksan katlamalı arama
-        (<code>cizim</code> → <code>çizim</code>). Kaynak: <a href="https://github.com/bulent2k2/kojojs-dev/tree/master/sozluk" target="_blank" rel="noopener">kojojs-dev/sozluk</a>.
+        Koco (Türkçe) ↔ İngilizce programlama terimleri sözlüğü: 975 girdi, iki yönlü, aksan katlamalı arama
+        (<code>cizim</code> → <code>çizim</code>). Sağında ▸ olan satırlara tıklayınca açıklama ve
+        çalışan örnek çıkıyor; çoğunda o komutu kullanan, düzenleyicide açılıp çalışan
+        örnek betiklere bağlantı da var. Her girdiye doğrudan bağlanılabiliyor (<code>#katla</code> gibi). Kaynak: <a href="https://github.com/bulent2k2/kojojs-dev/tree/master/sozluk" target="_blank" rel="noopener">kojojs-dev/sozluk</a>.
         Sözlük ayrı sekmede: <a href="/assets/sozluk/koco-sozlugu.html" target="_blank" rel="noopener">koco-sozlugu.html</a>.
     </div>
-    <iframe src="/assets/sozluk/koco-sozlugu.html" title="Koco Sözlüğü"></iframe>
+    @* Parça (fragment) iframe'e AKTARILIYOR. Sözlük iframe içinde açıldığı için
+       /yardim/sozluk#katla adresindeki #katla DIŞ belgede kalıyordu; iframe'in
+       kendi location.hash'i boş kalınca içerideki hashaGit() hiç tetiklenmiyor,
+       yani "her girdiye doğrudan bağlanılabiliyor" sözü tam da o sözün yazılı
+       olduğu sayfada işlemiyordu. Tek başına sayfada zaten çalışıyordu. *@
+    <iframe id="soz" src="/assets/sozluk/koco-sozlugu.html" title="Koco Sözlüğü"></iframe>
+    <script>
+      (function () {
+        var cerceve = document.getElementById("soz");
+        var temel = "/assets/sozluk/koco-sozlugu.html";
+        function aktar() { if (location.hash) cerceve.src = temel + location.hash; }
+        aktar();
+        addEventListener("hashchange", aktar);
+      })();
+    </script>
 </body>
 </html>
