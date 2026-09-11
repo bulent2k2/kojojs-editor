@@ -82,15 +82,27 @@ class CompilerHandler[M](modelRW: ModelRW[M, OutputData]) extends ActionHandler(
               CompilerResult(Left(annotations), log)
           }
         } recover {
+        // Buradaki metinler KULLANICININ EKRANINA çıkıyor: FiddleEditor
+        // errorMessage'ı doğrudan çıktı paneline basıyor. Bu yüzden Türkçe.
         case e: dom.ext.AjaxException =>
           e.xhr.status match {
+            // 400: yönlendiricinin kendi iletisi. O da Türkçe (kojojs-core
+            // CompilerManager: "Sunucu şu anda çok yoğun...") ve derleme
+            // hatalarının kullanıcıya anlaşılır geldiği tek yol bu -- olduğu
+            // gibi basıyoruz.
             case 400 =>
               ServerError(e.xhr.responseText)
+            // status 0 = yanıt YOK: sunucu kapalı, ağ kesik ya da istek
+            // engellendi (ölçüldü: kapalı bir porta XHR -> onerror, status 0).
+            // Eskiden buraya da genel dal düşüyordu ve kullanıcı
+            // "Server responded with 0:" görüyordu -- yanıt veren yok ki.
+            case 0 =>
+              ServerError("Sunucuya ulaşılamadı. Bağlantınızı denetleyip yine deneyin.")
             case x =>
-              ServerError(s"Server responded with $x: ${e.xhr.responseText}")
+              ServerError(s"Sunucu hata verdi ($x): ${e.xhr.responseText}")
           }
-        case e: Throwable =>
-          ServerError(s"Unknown error while compiling")
+        case _: Throwable =>
+          ServerError("Derleme sırasında beklenmeyen bir hata oldu. Biraz sonra yine deneyin.")
       }
       updated(CompilerData(CompilerStatus.Compiling, None, Nil, None, ""), Effect(effect))
 
