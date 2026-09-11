@@ -1,0 +1,25 @@
+# Yardım sayfalarındaki elle yapıştırılan bağlantıların savları.
+#
+# Bu depoda derleme CI'ı yok (editör sbt 0.13 + Play 2.6 ve yerel ~/.ivy2
+# önbelleği istiyor; bkz. koco-deploy/README). Buradaki denetimler saf Python,
+# saniyeler sürüyor ve derlemeye hiç dokunmuyor.
+name: denetimler
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  denetimler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ?zrc= bağlantıları ELLE yapıştırılıyor ve uzunluklarını kimse saymıyor.
+      # Sınırı aşan bir bağlantı derlemeyi, sınamayı ve dağıtımı sessizce geçip
+      # ancak kullanıcı tıklayınca HTTP 414 veriyor. Eylül 2026'da tam bu oldu
+      # (kojoOgren "XOX -- yenilmez", 3698 karakter); 618 bağlantı içinde tek
+      # bozuk olan oydu.
+      - name: yardım bağlantıları URI sınırına sığıyor mu
+        run: python3 baglanti-denetle.py
