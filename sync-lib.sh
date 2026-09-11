@@ -24,8 +24,15 @@ HEDEF="$(dirname "$0")/server/src/main/assets/javascript"
 [ -d "$KAYNAK" ] || { echo "kaynak dizin yok: $KAYNAK" >&2; exit 2; }
 
 # kaynaktaki ad : buradaki ad
+# pixi5.min.js.map: PIXI 5'in kaynak haritası. Burada sunuluyor ve pixi.min.js
+# sonundaki "//# sourceMappingURL=pixi.min.js.map" işareti sayesinde tarayıcı
+# devtools'ta onu çekiyor. Uzun süre senkron zincirinin DIŞINDAYDI: kaynak
+# tarafta karşılığı yoktu, yani PIXI bir dahaki yükseltmede js tazelenir, harita
+# sessizce eskir ve hata ayıklarken yanlış kaynak gösterirdi. Kaynağa alındı
+# (kojojs-dev lib/pixi5.min.js.map) ve buraya çift olarak eklendi.
 CIFTLER="
 pixi5.min.js:pixi.min.js
+pixi5.min.js.map:pixi.min.js.map
 libtess.cat.js:libtess.cat.js
 jsts.min.js:jsts.min.js
 howler.min.js:howler.min.js
