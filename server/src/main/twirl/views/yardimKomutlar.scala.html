@@ -158,17 +158,19 @@ ileri</pre>@("")<div class="kod-alt"><a class="ac" href="/?zrc=H4sIAAAAAAACA21R2
 <div class="kod"><pre class="kod-blok">sil
 canlandırmaHızınıKur(0) // anında çiz: kare kare canlandırma yok
 // daha önce kullandığımız hızıKur(hız) komutuna benziyor,
-// ama daha hassas ayar yapmamıza yarıyor. Girdisi adım atma süresini belirliyor
-// onun için de bu iki komut ters çalışıyor:
-// hız tarifi ve karşılık gelen adım atma süreleri şöyle:
+// ama daha hassas ayar yapmamıza yarıyor. Sayı büyüdükçe yavaşlıyor, yani
+// bu iki komut ters çalışıyor. Girdi 100 ADIMLIK yolun süresi; bekleme
+// uzaklıkla ölçekleniyor, yani ileri(50) yarısını, ileri(200) iki katını
+// bekliyor. Hız tarifleri ve 100 adımın karşılık gelen süreleri şöyle:
 //   çokHızlı: 0  &lt;- SIFIR. Canlandırma büsbütün kapanır, çizim anında biter
 //   hızlı:    10
 //   orta:     100
 //   yavaş:    1000 (varsayılan -- hiç hız vermezsen kaplumbağa böyle gider)
 // 0 ile 1 arasındaki fark büyük: 0 canlandırmayı kapatıyor, 1 ise hâlâ
-// canlandırıyor -- ve her adım en az bir ekran karesi (~16 ms) yiyor. Bu
-// yüzden 1, 2 ve 10 neredeyse aynı hızda çıkıyor; aşağıdaki çizim 840 adım
-// olduğu için hepsinde ~15 saniye sürüyor, 0 ile ~1 saniye.
+// canlandırıyor -- ve canlandırılan her hareket en az bir ekran karesi
+// (~16 ms) yiyor. Aşağıdaki çizimde 840 ileri komutu var ve hepsi kısa
+// (20 ya da 100 adım), yani 1, 2 ve 10 hesaplanan beklemeyi bir karenin
+// altında bırakıyor: üçü de ~15 saniye sürüyor, 0 ile ~1 saniye.
 // Eksi (sıfırdan küçük) değer VERME: kabul edilmiyor, hata alırsın.
 yaklaş(0.2)
 kalemKalınlığınıKur(20)
@@ -182,7 +184,7 @@ yinele(12) {
             ileri(100)
         }
     }
-}</pre>@("")<div class="kod-alt"><a class="ac" href="/?zrc=H4sIAAAAAAACA21UwW7bRhC98ysGQQ8iIDOU0gaFmwJFXKV1nQCBZaTHYiSuzTWXu8TuUgkV2L8iIJecdclJN9L_1Zkl5VixBUgUZ9-8mfd2dmVZGevhUmaZEsmb_lFZqb3SkewX3RIVXrvk2kXRH_RErY1HL41O_pnPPjHmwlRvxUqo0bM5g3ueZ3FkFtdi6eFBED5HQJ-BujDXJvk8_ygy6fKL2nolxkDP4vA1PM8I-6-xKjstKzWGD0Rs7PTPMbyXS19bcfOIODOG5ZwYZWzy36PleSVE9kT8XFQC_YkpS9SZewLgGu3xU_K6lspL7fbrSi6lhxWqgAqtHvcJ963D76DFx0MpozgQcN5iYBxg-wIDYmhhDzpszAeXDmNudfFE1Nv7KIWfP4ef-p2Ze7Q-clJFS9SKpHdbW-Lf3XbdbXW3PavtKI0Zj_SmM4T2q1yTQLSi_3mYBo0pIsJmmBPwm14Splb9crfptiXRQh64mZj_xeRVWftaIyyEXsvG2DFTILEFmhydQwfYoIUGqxKZhCqh7bYETuAvaWmOJCAVKQE9Jbp2Z4WTWhKnklYxK5MaXWuQpEBDJshSkIXs64MX1pE2VN32bhOYjzmDWwSySF5KWAXFvEqgAq6EEvpRVSWshLtN-61RIjAAsZqCDaWsY0gBXh3B_PTN6XkCJw-9W7Q7R1_f7jTVqdhvOw52y_Le_YWkRnvafE9Jn0nax2inMQQoMoQaXOHdZkClKYxWaB02JAI1HB1BTn70MlfClmLtRCiv6nKB3YbbYilwJTNhY6ZMQdL7BNCiC02Rh5doCxbQtLuCNT4cCioV9Pjg6pgypROQt19U-4X5vmMDgHsip3NhB2_Z5DUJtyAKizpMHW336HbyEkoXQyPDGLyumYwaWGeUMRnDlGkmKZ0pKzLRUE1syMWgNcwxbWKo-BuQQcjzGbQMjv_6c9o3EAZHZXW3qYfZyUVFw0UTdDv5BRxq2Yiw-aSfBfYG3U6GpYQJZgW3TH5dks6MVbS79iu5FdMkdhsS-2F2_m7GB2tRK6CbUZXhLND8ewQeS8tuJ1GDhaJ-R2kyjaMClSjPeFWr_ogNZ3aaxlEjNY3jaDKNh-vXkcjRi7S_V_ar6X41XBY8viF5HxlgLwgVro0rApAUqQo64FaLQg2-3md856F5iw_CGd0J1M8P0SfA_a1-E90cXlYznVHof4qleWW-BgAA" target="_blank" rel="noopener">Editörde aç →</a></div></div>
+}</pre>@("")<div class="kod-alt"><a class="ac" href="/?zrc=H4sIAAAAAAACA21VwW7bRhC98ysGQQ8kIDOU0hSF2wJNHadVnACFZaTHYiSurTWXS2F3qYQK7F8RkIvPuuSkG-n_6swupUiNCUgUZx7fvnkzu5LlojIOrmWeK5G-CbeFkdopHcmQtDNUeGvTWxtFv9Mdta4cOlnp9O3k_BNjrqrFO7EUKn42YXDgeZZE1fRWzBwcBOFzBHT11EV1W6WfJx9FLu38qjZOiQHQvTh-9PcLwv5TGZWPy4UawAcirszo9QD-ljNXG3H3HXFeVVzOWaUqk_77XXqyECJ_In4pFgLdWVWWqHP7BMA22uGn9I9aKie13eWVnEkHS1Qe5aWehhf20uE30OLjcSlx4gn4vWnP2MN2C_SIXsIOdCzMeZeOY3Z59UTUmX2Uws-fww-hMxOHxkVWqmiGWlHp3caU-Fe3WXUb3W0uahNnCeORnnSO0D7IFRWIRoSvw9egqYqIsDnOCfhVzwhTq5Du1t2mJFqYe24m5l8JeVXWrtYIU6FXsqnMgCmQ2DzNHK1FC9iggQYXJTIJrYSm2xA4hQk23Qam7bZpt3m7LdoHQdklPq6VRwzoSUvmnNYgCxkWBCeMpWKQQI_rnupPaXIJwyyDV6_H79-NL6ggVWuw7dYIK38hiYUSpWCyeoUFvVsorlTRopTRcr8eSCWMjF-SeV6q9XYO-vAoo7jXgs4nvDyikF4H2w_UGHnNaFgKrwlz76Bm31kyrw43gpYNAj32cd1-bZQ4ZUKg-qqCyQh6ChnArycwGb8ZX6Zwdtg2Ms_Sx7VbJl9wq6kM7rQs942fSrIs0M53lHQNsxCjIUMfYK0hFLrQo6iAeInGcrdoZTg5gblsHzwXVWhKsbLCL6_qcordmmVxKXAjc2ESpszYPhgCGrReFDl4jabou19wjYfzyIPB9bh-EIYgrYB5-0W1X5jvG9YDWNNSHEVZ6VwYmkIjCuGAFOKKrDAgCoO-FTQYzBXfD3-C0lK7Qw9fPa6RZ96LDFbmAn7-MQsj0I89HQCG15yLhaUYzQl6slFG7tEG-Nb4pJ-r4QBGYSLoJUtuoSYd_WA20mtjVVpqv4-U69tH9WDh6zyFdts-tFsgQffDl2CJtxF-iMhHNioYfT_sUykznRekMCbfr4kp59oDS5EQT7cmkz6cX74_57NhWiugw12VYT_M0SHwRjPctTRqaOfQYMRZOkqiAkn4BWe1CqdEf-yMsiRqpKaxjoejpP8HseRp_CILR-Mum-2y_rzrN1iyj_SwF4TyJ98NASxv0IJ2rtHsHB0vvAnh4Ao8ZH9yFM7pWCM9_4s-AQ5_THfR3fF5e65zCv0Hdvs20oEHAAA=" target="_blank" rel="noopener">Editörde aç →</a></div></div>
 <p>ikojo'da <code>yaklaş(0.2)</code> yerine <code>yaklaşXY(0.2, 0.2, 0, 0)</code> yaz.</p>
 <div class="bolum-alt"><a href="#b01">← Kojo&#x27;ya hoşgeldin!</a><a href="#b03">Çizim, boyama ve tuval komutları →</a></div></section>
 @("")
