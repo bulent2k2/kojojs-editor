@@ -43,7 +43,16 @@
                                     // asagisi yalnizca main() TANIMLIYSA onu cagirmak icin.
                                     eval(msg.data + "\n;if (typeof ScalaFiddle !== 'undefined') { var sf = ScalaFiddle; if (typeof sf === 'function') { if (typeof sf().main === 'function') sf().main() } else if (sf && typeof sf.main === 'function') sf.main() }");
                                 } catch (ex) {
-                                    result.insertAdjacentHTML('beforeend', '<pre class="error">ERROR: ' + ex.message + '</pre>')
+                                    // "HATA:" -- yazilimcik CALISIRKEN cikan hata. Derleyiciden
+                                    // gelenler bu yoldan gecmiyor, onlar oneksiz basiliyor.
+                                    // Ileti DOM ile ekleniyor, insertAdjacentHTML ile degil:
+                                    // ex.message icinde < ya da > gecerse (Scala tur adlari,
+                                    // ornegin "Dizi[Sayi] bekleniyordu") HTML sayilip metin
+                                    // sessizce kayboluyordu.
+                                    var hataKutusu = document.createElement("pre");
+                                    hataKutusu.className = "error";
+                                    hataKutusu.textContent = "HATA: " + ex.message;
+                                    result.appendChild(hataKutusu);
                                 } finally {
                                     e.source.postMessage("evalCompleted", "*");
                                 }
