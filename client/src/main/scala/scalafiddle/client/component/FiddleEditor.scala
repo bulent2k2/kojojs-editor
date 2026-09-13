@@ -346,6 +346,18 @@ object FiddleEditor {
       }
     }
 
+    // "print" komutunun gövdesi sonuç çerçevesinde `result.innerHTML = msg.data`
+    // ile basılıyor (resultframe.scala.html:33), yani HTML olarak ayrıştırılıyor.
+    // Derleyici iletileri ise ham metin: içlerinde `<error>`, `<init>`, `<none>`
+    // gibi parçalar geçiyor ve etiket sanılıp SESSİZCE yutuluyordu -- öğrenci
+    // "found   :" satırını boş görüyordu. Ölçüldü (2026-09, Chromium):
+    //   gönderilen: found   : <error>        ekranda: found   :
+    //   gönderilen: value <init> with ...    ekranda: value  with ...
+    // Bu yüzden `<pre>`ye giren her metin buradan geçmeli. Yalnız üç imle
+    // uğraşıyoruz: `<pre>` içi metin bağlamı, öznitelik değil.
+    def htmlKacir(metin: String): String =
+      metin.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
     def sendFrameCmd(cmd: String, data: String = "") = {
       val msg = js.Dynamic.literal(cmd = cmd, data = data)
       if (frameReady) {
@@ -745,14 +757,14 @@ object FiddleEditor {
 
             // update after a short delay, to allow DOM to update in case the code is slow to complete
             js.timers.setTimeout(50) {
-              sendFrameCmd("print", s"""<pre class="error">$allErrors</pre>""")
+              sendFrameCmd("print", s"""<pre class="error">${htmlKacir(allErrors)}</pre>""")
             }
 
           }
 
           compilerData.errorMessage.foreach { error =>
             js.timers.setTimeout(50) {
-              sendFrameCmd("print", s"""<pre class="error">$error</pre>""")
+              sendFrameCmd("print", s"""<pre class="error">${htmlKacir(error)}</pre>""")
             }
           }
 
