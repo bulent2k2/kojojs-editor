@@ -1,11 +1,17 @@
 @()
 @*
   Koco Sözlüğü -- /yardim/sozluk. Sözlüğün kendisi kojojs-dev/sozluk/koco-sozlugu.html
-  (980 girdi, tek dosya HTML, aranabilir); burada server/src/main/assets/sozluk/
+  (tek dosya HTML, aranabilir); burada server/src/main/assets/sozluk/
   altındaki kopyası statik varlık olarak (/assets/sozluk/koco-sozlugu.html) bir
   iframe içinde açılıyor. Böylece sözlük dosyası olduğu gibi kalıyor (kendi
   biçemi, kendi arama kutusu), yardım sayfalarının gezinti şeridi de üstte duruyor.
   Sözlük güncellenince kojojs-dev'deki dosyayı assets/sozluk/ altına kopyalamak yeter.
+
+  GİRDİ SAYISI BURAYA YAZILMIYOR -- bilerek. Sözlük sayıyı ÇALIŞMA ANINDA kendi
+  başlığında ve "Hepsi · N" çipinde gösteriyor; şablona sabit yazılınca her
+  tazelemede bayatlıyor ve ikisi AYNI EKRANDA çelişiyor (ölçüldü: şablonlar 980
+  derken sözlük 1019, sonra 1236 gösteriyordu -- üst şeritte bir sayı, hemen
+  altındaki iframe'de başkası).
 *@
 <!DOCTYPE html>
 <html lang="tr">
@@ -52,7 +58,7 @@
         <a href="/" class="geri">← Düzenleme penceresine dön</a>
     </div>
     <div class="aciklama">
-        Koco (Türkçe) ↔ İngilizce programlama terimleri sözlüğü: 980 girdi, iki yönlü, aksan katlamalı arama
+        Koco (Türkçe) ↔ İngilizce programlama terimleri sözlüğü: iki yönlü, aksan katlamalı arama
         (<code>cizim</code> → <code>çizim</code>). Sağında ▸ olan satırlara tıklayınca açıklama ve
         çalışan örnek çıkıyor; çoğunda o komutu kullanan, düzenleyicide açılıp çalışan
         örnek betiklere bağlantı da var. Her girdiye doğrudan bağlanılabiliyor (<code>#katla</code> gibi). Kaynak: <a href="https://github.com/bulent2k2/kojojs-dev/tree/master/sozluk" target="_blank" rel="noopener">kojojs-dev/sozluk</a>.
