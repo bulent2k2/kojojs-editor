@@ -23,3 +23,29 @@ jobs:
       # bozuk olan oydu.
       - name: yardım bağlantıları URI sınırına sığıyor mu
         run: python3 baglanti-denetle.py
+
+      # Sunulan sözlük, kaynağı olan kojojs-dev'deki dosyadan ELLE kopyalanıyor.
+      # Bir turda unutuldu ve sunulan sözlük 754 girdide kaldı, kaynak 975'e
+      # çıkmışken; sync-sozluk.sh tam bunun üzerine yazıldı ama kapıya hiç
+      # takılmamıştı. Artık takılıyor.
+      #
+      # YALNIZ master'da: bu iki depo çiftler hâlinde değişiyor (bir kusur hem
+      # kaynakta hem aynada düzeltiliyor), ve PR'larda kojojs-dev'in master'ına
+      # bakmak öyle her çiftte kırmızı yanardı -- sürekli kırmızı yanan bir
+      # gözcüyü kimse okumaz. master'da kırmızı ise sav gerçekten bozuk:
+      # sunulan kopya ile kaynak o an ayrı düşmüş demektir.
+      - uses: actions/checkout@v4
+        if: github.event_name == 'push'
+        with:
+          repository: bulent2k2/kojojs-dev
+          path: kojojs-dev
+      - name: sunulan sözlük kopyası kaynakla aynı mı
+        if: github.event_name == 'push'
+        run: |
+          ./sync-sozluk.sh --denetle kojojs-dev || {
+            echo "::error::İki depo ayrı düştü. Kaynak kojojs-dev -- ama buradaki kopya DAHA"
+            echo "::error::YENİ ise eksik olan kojojs-dev tarafındaki PR'dır; sync-sozluk.sh'i"
+            echo "::error::körlemesine koşmak düzeltmeyi geri alır. Önce hangi tarafın yeni"
+            echo "::error::olduğuna bakın."
+            exit 1
+          }

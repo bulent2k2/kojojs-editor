@@ -208,7 +208,13 @@ footer code { font-family: "IBM Plex Mono", monospace; font-size: 12px; backgrou
 <body>
 <div class="wrap">
 <header class="masthead">
-  <div class="eyebrow"><a href="https://claude.ai/code/artifact/10a6030f-b400-43b0-928c-14d6b925058d">◂ Kojo Sözlükleri</a> &middot; bulent2k2/kojo &middot; Koco &middot; Türkçe</div>
+  <!-- target="_blank" ŞART, süs değil: bu sayfa ikojo'da /yardim/sozluk içinde bir
+       IFRAME olarak açılıyor (kojojs-editor: yardimSozluk.scala.html). Target'siz
+       bağlantı iframe'in KENDİSİNİ claude.ai'ye götürüyor, claude.ai de
+       çerçevelenmeyi reddediyor -> kullanıcı "claude.ai refused to connect"
+       görüyor ve sözlük kayboluyor. Tek başına açılan sayfada sorun görünmüyordu,
+       o yüzden gözden kaçtı. Aşağıdaki JS üretimi (a.cbtn) bunu zaten yapıyor. -->
+  <div class="eyebrow"><a href="https://claude.ai/code/artifact/10a6030f-b400-43b0-928c-14d6b925058d" target="_blank" rel="noopener">◂ Kojo Sözlükleri</a> &middot; bulent2k2/kojo &middot; Koco &middot; Türkçe</div>
   <h1>Koco Sözlüğü <span class="tick">·</span> The Koco Dictionary</h1>
   <p class="subtitle">Kojo'nun Türkçe programlama sözlüğü — anahtar sözcükler, türler, değerler ve komutlar, iki yönlü.
   The complete Turkish&nbsp;&harr;&nbsp;English vocabulary of Koco, extracted from the patched compiler, <span style="font-family:'IBM Plex Mono',monospace;font-size:0.9em">dict.scala</span>, the TurkishAPI, and the level-2 properties.</p>
