@@ -63,7 +63,10 @@
                                     canvas.height = 0;
                                     canvas.width = container.clientWidth;
                                     canvas.getContext("2d").clearRect(0, 0, 10000, 10000);
-                                    result.innerHTML = "<h2>Compiled JS code</h2>";
+                                    // Ctrl+J / Cmd+J ile gelen tek ekran. Ogrencinin
+                                    // olagan akisinda gorunmuyor ama gorulunce de
+                                    // Turkce olsun.
+                                    result.innerHTML = "<h2>Derlenmiş JS kodu</h2>";
                                     var pre = document.createElement("pre");
                                     var code = document.createElement("code");
                                     code.setAttribute("class", "language-javascript");
