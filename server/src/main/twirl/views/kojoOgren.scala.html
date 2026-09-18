@@ -41,6 +41,10 @@
             position: sticky; top: 0; z-index: 10;
         }
         .ust-bar img { height: 34px; display: block; }
+        .gezinti { display: flex; gap: 4px; flex-wrap: wrap; }
+        .gezinti a { font-size: 14px; font-weight: 500; color: var(--metin); padding: 6px 12px; border-radius: 6px; }
+        .gezinti a:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti a.secili { background: var(--kirmizi); color: #fff; }
         .ust-bar .geri {
             font-weight: 500; font-size: 14px; color: var(--metin);
             border: 1px solid var(--cizgi); border-radius: 6px; padding: 7px 14px;
@@ -135,7 +139,15 @@
 <body>
 <div class="ust-bar">
   <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
-  <a href="/yardim" class="geri">Yardım</a>
+  <nav class="gezinti">
+    <a href="/yardim">Yardım</a>
+    <a href="/yardim/ornekler">Örnekler</a>
+    <a href="/yardim/komutlar">Komutlar</a>
+    <a href="/yardim/sozluk">Sözlük</a>
+    <a href="/yardim/skala">Skala</a>
+    <a href="/yardim/farklar">Farklar</a>
+  </nav>
+  <a href="/" class="geri">← Düzenleme penceresine dön</a>
 </div>
 <div class="kapsayici">
 <div class="kahraman">
