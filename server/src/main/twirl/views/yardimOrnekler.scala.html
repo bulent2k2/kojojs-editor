@@ -82,10 +82,10 @@
         <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
         <nav class="gezinti">
             <a href="/yardim">Yardım</a>
-            <a href="/yardim/skala">Skala</a>
-            <a href="/yardim/komutlar">Komutlar</a>
             <a href="/yardim/ornekler" class="secili">Örnekler</a>
+            <a href="/yardim/komutlar">Komutlar</a>
             <a href="/yardim/sozluk">Sözlük</a>
+            <a href="/yardim/skala">Skala</a>
             <a href="/yardim/farklar">Farklar</a>
         </nav>
         <a href="/" class="geri">← Düzenleme penceresine dön</a>
@@ -98,8 +98,8 @@
                betik düzenleme penceresinde açılsın; sonra <b>Çalıştır</b>'a bas.</p>
         </div>
 <section>
-<h2><span class="im" style="background:var(--yesil)"></span>Başlangıç</h2>
-<p class="alt">iKoco için yazılmış on örnek; sırayla ilerlemek için.</p>
+<h2><span class="im" style="background:var(--yesil)"></span><a href="https://github.com/bulent2k2/kojojs-dev/tree/master/ornekler">Başlangıç</a></h2>
+<p class="alt">iKoco için yazılmış örnekler; sırayla ilerlemek için. Kaynakları <a href="https://github.com/bulent2k2/kojojs-dev/tree/master/ornekler">ornekler/</a> dizininde.</p>
 <ul class="liste">
   <li><a href="/ornek/01-ilk-adimlar.kojo"><span class="ad">İlk adımlar</span><div class="ac"><code>ileri</code>, <code>sağ</code>, <code>yinele</code>, <code>ev</code> — kaplumbağanın temeli</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>01-ilk-adimlar.kojo</code></span></li>
   <li><a href="/ornek/02-renkli-cicek.kojo"><span class="ad">Renkli çiçek</span><div class="ac"><code>yineleDizinli</code> ile sayaç, renk listesinde dolaşmak</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>02-renkli-cicek.kojo</code></span></li>
@@ -111,6 +111,9 @@
   <li><a href="/ornek/08-kumanda-kolu.kojo"><span class="ad">Kumanda kolu</span><div class="ac"><code>kumandaKolu</code>, <code>oynatSahneİçinde</code> — fareyle sürülen top</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>08-kumanda-kolu.kojo</code></span></li>
   <li><a href="/ornek/09-nerede-ve-dokunma.kojo"><span class="ad">Nerede ve dokunma</span><div class="ac"><code>konumuOku</code>, <code>yönüOku</code>, <code>dokunuyorMu</code> — kuyruktan okuma</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>09-nerede-ve-dokunma.kojo</code></span></li>
   <li><a href="/ornek/10-anahtar-kelimeler.kojo"><span class="ad">Anahtar kelimeler</span><div class="ac">Türkçe <b>anahtar kelimeleri</b> bir arada gösterir: <code>tanım</code>, <code>dez</code>, <code>den</code>, <code>eğer</code>/<code>yoksa</code>, <code>için</code>, <code>eşle</code>/<code>durum</code></div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>10-anahtar-kelimeler.kojo</code></span></li>
+  <li><a href="/ornek/11-acilar-ve-radyan.kojo"><span class="ad">Açılar ve radyan</span><div class="ac">Radyan nedir — adım adım devinimli anlatım. Masaüstündeki <code>samples/tr/angles.kojo</code>&#x27;nun tarayıcı sürümü: geçişler <code>durakla</code> yerine bir <b>düğmeye</b> bağlı (bkz. aşağıdaki not)</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>11-acilar-ve-radyan.kojo</code></span></li>
+  <li><a href="/ornek/12-uc-cisim.kojo"><span class="ad">Üç cisim</span><div class="ac">Yerçekimi benzetimi — Newton mekaniğiyle üç gökcisminin birbirini çekmesi</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>12-uc-cisim.kojo</code></span></li>
+  <li><a href="/ornek/13-xox-yenilmez.kojo"><span class="ad">XOX — yenilmez</span><div class="ac"><b>minimax</b> ve <b>alfa-beta budaması</b> — yenilmeyen bir oyun stratejisi nasıl programlanır</div></a><span class="sag"><span class="rozet calisir" title="ikojo için yazıldı">çalışır</span><code>13-xox-yenilmez.kojo</code></span></li>
 </ul>
 </section>
 @("")
@@ -219,7 +222,26 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--sari)"></span>Üretken Sanat</h2>
+<h2><span class="im" style="background:var(--sari)"></span>Benzetim</h2>
+<p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
+<ul class="liste">
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-start.kojo"><span class="ad">1. Başla</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>bounce-start.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-reflect.kojo"><span class="ad">2. Yansıma</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>bounce-reflect.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-table.kojo"><span class="ad">3. Bilardo Masası</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>bounce-table.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-gravity.kojo"><span class="ad">4. Yerçekimi</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>bounce-gravity.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-friction.kojo"><span class="ad">5. Sürtünme</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>bounce-friction.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/nbody-two.kojo"><span class="ad">6. İkiz Yıldızlar</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>nbody-two.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/nbody-three.kojo"><span class="ad">7. Üç Cisim (kaos)</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>nbody-three.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/nbody-four-by-hand.kojo"><span class="ad">8. Dört Cisim, türsüz</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>nbody-four-by-hand.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/nbody-four.kojo"><span class="ad">9. Dört Cisim (iki ikiz çift)</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>nbody-four.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/nbody-stable-triple.kojo"><span class="ad">10. Kararlı Üçlü</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>nbody-stable-triple.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/nbody-solar.kojo"><span class="ad">11. Güneş Sistemi</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>nbody-solar.kojo</code></span></li>
+  <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-collision.kojo"><span class="ad">12. Gerçek Bilardo</span></a><span class="sag"><span class="rozet eksik" title="">?</span><code>bounce-collision.kojo</code></span></li>
+</ul>
+</section>
+@("")
+<section>
+<h2><span class="im" style="background:var(--yesil)"></span>Üretken Sanat</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/genart-tiled-lines.kojo"><span class="ad">Doğrularla Döşeme</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>genart-tiled-lines.kojo</code></span></li>
@@ -233,7 +255,7 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--yesil)"></span>Canlandırma ve Oyunlar</h2>
+<h2><span class="im" style="background:var(--kirmizi)"></span>Canlandırma ve Oyunlar</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/lunar-lander.kojo"><span class="ad">Aya İniş Modülü</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>lunar-lander.kojo</code></span></li>
@@ -257,7 +279,7 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--kirmizi)"></span>Robot Benzeşmesi</h2>
+<h2><span class="im" style="background:var(--mavi)"></span>Robot Benzeşmesi</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/robosim/tr/obstacle-greedy.kojo"><span class="ad">Nesne Algılama 1</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: başka dosya içe alıyor">masaüstü</span><code>obstacle-greedy.kojo</code></span></li>
@@ -266,7 +288,7 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--mavi)"></span>Arayüz Araçları</h2>
+<h2><span class="im" style="background:var(--turuncu)"></span>Arayüz Araçları</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/widgets-canvas.kojo"><span class="ad">Tuval İçi Araçlar</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: Swing arayüzü">masaüstü</span><code>widgets-canvas.kojo</code></span></li>
@@ -274,7 +296,7 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--turuncu)"></span>Müzik</h2>
+<h2><span class="im" style="background:var(--sari)"></span>Müzik</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/some-notes.kojo"><span class="ad">Bazı Notalar</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: MIDI müzik">masaüstü</span><code>some-notes.kojo</code></span></li>
@@ -284,7 +306,7 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--sari)"></span>Genel Programlama</h2>
+<h2><span class="im" style="background:var(--yesil)"></span>Genel Programlama</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/read-vector-mean.kojo"><span class="ad">Girdi/Çıktı</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>read-vector-mean.kojo</code></span></li>
@@ -294,7 +316,7 @@
 </section>
 @("")
 <section>
-<h2><span class="im" style="background:var(--yesil)"></span>Matematik Öğrenme Birimleri</h2>
+<h2><span class="im" style="background:var(--kirmizi)"></span>Matematik Öğrenme Birimleri</h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/addition-game.kojo"><span class="ad">Toplama Oyunu</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: Swing arayüzü">masaüstü</span><code>addition-game.kojo</code></span></li>
