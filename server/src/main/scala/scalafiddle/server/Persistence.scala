@@ -20,7 +20,20 @@ import scalafiddle.shared.{FiddleData, FiddleId, Library}
 
 case class AddFiddle(fiddle: FiddleData, user: String)
 
-case class UpdateFiddle(fiddle: FiddleData, id: String)
+/** `user`: isteği yapan kullanıcı (oturum yoksa "anonymous"). */
+case class UpdateFiddle(fiddle: FiddleData, id: String, user: String)
+
+/**
+  * Bir fiddle'a yeni sürüm ekleme yetkisi. Sahip, veritabanındaki SON sürümün
+  * kayıtlı kullanıcısı; istemcinin gönderdiği `FiddleData.author` değil --
+  * o alan istemciden geliyor ve her şeyi taşıyabilir.
+  */
+object FiddleOwnership {
+  def mayUpdate(owner: String, requester: String): Boolean =
+    owner == "anonymous" || owner == requester
+}
+
+class NotAllowedToUpdate extends Exception("Not allowed to update fiddle")
 
 case class ForkFiddle(fiddle: FiddleData, id: String, version: Int, user: String)
 
@@ -122,11 +135,13 @@ class Persistence @Inject()(config: Configuration) extends Actor with ActorLoggi
       }
       res pipeTo sender()
 
-    case UpdateFiddle(fiddle, id) =>
+    case UpdateFiddle(fiddle, id, user) =>
       // find last fiddle version for this id
       val res = db
         .run(dal.findFiddleVersions(id))
         .flatMap {
+          case fiddles if fiddles.nonEmpty && !FiddleOwnership.mayUpdate(fiddles.last.user, user) =>
+            Future.successful(Failure(new NotAllowedToUpdate))
           case fiddles if fiddles.nonEmpty =>
             val latest     = fiddles.last
             val newVersion = latest.version + 1
