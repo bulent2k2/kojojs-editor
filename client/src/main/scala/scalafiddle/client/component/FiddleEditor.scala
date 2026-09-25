@@ -56,14 +56,29 @@ object FiddleEditor {
     var prevFrame                        = ""
 
     // "Ev" düğmesi: tuvali başlangıç görünümüne döndürür (merkez + zoom 1).
-    // Runtime (resultframe iframe, aynı-köken) kocoResetView global'ini koyar;
-    // henüz bir program çalışmadıysa tanımsızdır, o zaman sessizce hiçbir şey yapmaz.
+    // Sonuç çerçevesi opak kökende (#45: sandbox'ta allow-same-origin yok), yani
+    // içine uzanılamıyor; komut iletiyle gidiyor ve çerçeve, runtime'ın koyduğu
+    // kocoResetView'u varsa çağırıyor. Henüz bir program çalışmadıysa o tanımsız,
+    // o zaman sessizce hiçbir şey olmuyor.
     def resetCanvasView: Callback = Callback {
       val frame = resultFrame
-      if (frame != null && frame.contentWindow != null) {
-        val w = frame.contentWindow.asInstanceOf[js.Dynamic]
-        if (!js.isUndefined(w.kocoResetView)) w.kocoResetView()
-      }
+      if (frame != null && frame.contentWindow != null && frameReady)
+        frame.contentWindow.postMessage(js.Dynamic.literal(cmd = "resetView", data = ""), "*")
+    }
+
+    // Sonuç çerçevesinin adresi. Çerçeve opak kökende olduğu için kendi
+    // localStorage'ına erişemiyor (#45); eski dolgu yolu seçeneği
+    // (konsolda `localStorage.kojoDolgu = "libtess"`) bu yüzden çerçevenin
+    // KENDİ adresiyle taşınıyor. Kitaplık o adresi zaten okuyor
+    // (kojojs-dev KojoWorld.libtessİstendi, `dolgu=libtess`).
+    // Bir kez hesaplanıyor: her render'da okunsaydı, seçenek değişince React
+    // çerçevenin src'sini yeniden yazıp onu bir derlemenin ortasında ikinci
+    // kez yükleyebilirdi. Değişiklik sayfa yenilenince etkili olur.
+    lazy val resultFrameSrc: String = {
+      val libtess =
+        try dom.window.localStorage.getItem("kojoDolgu") == "libtess"
+        catch { case _: Throwable => false }
+      "/resultframe?theme=light" + (if (libtess) "&dolgu=libtess" else "")
     }
 
     def render(props: Props, state: State) = {
@@ -174,8 +189,19 @@ object FiddleEditor {
                     scrolling := "no",
                     overflow := "hidden",
                     allowFullScreen := "true",
-                    sandbox := "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals",
-                    src := s"/resultframe?theme=light"
+                    // allow-same-origin YOK (#45): çerçeve kullanıcı kodunu çalıştırıyor.
+                    // Editörle aynı kökende olsaydı o kod editörün kökeninde, oturum
+                    // açmış kullanıcının yetkisiyle davranabilirdi. Opak kökende
+                    // editörle yalnız iletiyle konuşuyor. allow-popups-to-escape-sandbox
+                    // da YOK: kodun açtığı pencere kum havuzundan çıkıp editöre
+                    // geri uzanabiliyordu (ölçüldü). Sunucu aynı kısıtı CSP başlığıyla
+                    // da koyuyor (Application.resultFrame).
+                    sandbox := "allow-scripts allow-popups allow-modals",
+                    // "Çalıştır" tıklaması opak kökenli çerçeveye kullanıcı etkinliği
+                    // olarak geçmiyor; autoplay izni olmadan programın başında
+                    // kurulan ses bağlamı askıda kalıyor ve ses çıkmıyordu (ölçüldü).
+                    VdomAttr("allow") := "autoplay; fullscreen",
+                    src := resultFrameSrc
                   )
                 )
               case UserFiddleData(fiddles) =>
@@ -270,8 +296,8 @@ object FiddleEditor {
                     width := "0%",
                     height := "0%",
                     frameBorder := "0",
-                    sandbox := "allow-scripts allow-popups allow-popups-to-escape-sandbox",
-                    src := s"/resultframe?theme=light"
+                    sandbox := "allow-scripts allow-popups",
+                    src := resultFrameSrc
                   )
                 )
               case ScalaFiddleHelp(url) =>
@@ -283,7 +309,11 @@ object FiddleEditor {
                     width := "100%",
                     height := "100%",
                     frameBorder := "0",
-                    sandbox := "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation",
+                    // Yardım çerçevesi (SCALAFIDDLE_HELP_URL, varsayılanı about:blank).
+                    // allow-same-origin ve allow-top-navigation YOK (#45): aynı kökenli
+                    // bir yardım sayfası kum havuzunu anlamsız kılar, dış bir sayfa
+                    // da editörü başka yere yönlendirebilirdi.
+                    sandbox := "allow-scripts allow-popups",
                     src := url
                   )
                 )
@@ -636,12 +666,16 @@ object FiddleEditor {
         // focus to the editor
         editor.focus()
 
-        // listen to messages from the iframe
+        // listen to messages from the iframe -- yalnız sonuç çerçevesinden
+        // (#45): sayfaya başka bir pencerenin yolladığı ileti yok sayılıyor.
         dom.window.addEventListener("message", (e: MessageEvent) => {
-          e.data match {
-            case "evalCompleted" =>
-              $.modState(s => s.copy(status = CompilerStatus.Result)).runNow()
-            case _ =>
+          val frame = resultFrame
+          if (frame != null && (e.source.asInstanceOf[js.Any] eq frame.contentWindow.asInstanceOf[js.Any])) {
+            e.data match {
+              case "evalCompleted" =>
+                $.modState(s => s.copy(status = CompilerStatus.Result)).runNow()
+              case _ =>
+            }
           }
         })
 
