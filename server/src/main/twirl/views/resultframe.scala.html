@@ -20,8 +20,14 @@
                     var canvas = document.getElementById("canvas");
                     var result = document.getElementById("output");
                     var container = document.getElementById("fiddle-container");
+                    // Yalniz editorden (ust pencere) gelen komutlar (#45). Bu dinleyici
+                    // gelen kodu eval ediyor ve "print" ile HTML basiyor; baska bir
+                    // pencerenin (ornegin editoru cerceveleyen bir sayfanin) yolladigi
+                    // ileti burada kod calistiramamali.
                     window.addEventListener('message', function (e) {
+                        if (e.source !== window.parent) return;
                         var msg = e.data;
+                        if (!msg) return;
                         switch (msg.cmd) {
                             case "clear":
                                 result.innerHTML = "";
@@ -56,6 +62,11 @@
                                 } finally {
                                     e.source.postMessage("evalCompleted", "*");
                                 }
+                                break;
+                            case "resetView":
+                                // Editorun "Ev" dugmesi (#45: cerceve opak kokende, editor
+                                // kocoResetView'a dogrudan uzanamiyor).
+                                if (typeof window.kocoResetView === "function") window.kocoResetView();
                                 break;
                             case "showCode":
                                 if (result.getAttribute("data-jscode") != "true") {
