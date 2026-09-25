@@ -219,17 +219,21 @@ class Application @Inject()(
     // "ScalaFiddle is not defined" düzeltmesi (2026-09-03) tam olarak böyle
     // görünmez kaldı. Belge birkaç KB, her seferinde doğrulamanın maliyeti yok.
     //
-    // Güvenlik başlıkları (#45): bu sayfa kendisine iletiyle gelen kodu eval
-    // ediyor. CSP `sandbox` onu, KİM açarsa açsın (editörün iframe'i, başka
-    // bir sitenin iframe'i, window.open) opak kökende tutuyor: kod editörün
-    // kökeninde hiç koşmuyor. `frame-ancestors 'self'` ve X-Frame-Options
-    // yalnız editörün kendisinin çerçevelemesine izin veriyor. Chromium'da
-    // ölçüldü: saldırgan sayfası sandbox'sız çerçeveleyip kod yollayınca kod
-    // editörün kökeninde koşuyordu; başlıklarla çerçeveleme reddediliyor.
+    // CSP `sandbox` (#45): bu sayfa kendisine iletiyle gelen kodu eval ediyor.
+    // Başlık onu, KİM açarsa açsın (editörün iframe'i, başka bir sitenin
+    // iframe'i, window.open) opak kökende tutuyor: kod editörün kökeninde
+    // hiç koşmuyor. Chromium'da ölçüldü: saldırgan sayfası sandbox'sız
+    // çerçeveleyip kod yollayınca kod editörün kökeninde koşuyordu; başlıkla
+    // opak kalıyor ve editöre uzanamıyor.
+    //
+    // frame-ancestors / X-Frame-Options BİLEREK YOK: ikisi de bütün ata
+    // çerçevelere bakıyor, yani editörün kendisi başka bir sitenin içinde
+    // açıldığında (Hugging Face Spaces -- start.sh SPACE_HOST --, bir okul
+    // platformu) sonuç çerçevesi boş kalırdı (ölçüldü). Güvenlik için
+    // gerekmiyorlar: sandbox başlığı tek başına yetiyor (ölçüldü).
     Ok(views.html.resultframe()).withHeaders(
       CACHE_CONTROL             -> "no-cache",
-      "Content-Security-Policy" -> "sandbox allow-scripts allow-popups allow-modals; frame-ancestors 'self'",
-      "X-Frame-Options"         -> "SAMEORIGIN"
+      "Content-Security-Policy" -> "sandbox allow-scripts allow-popups allow-modals"
     )
   }
 

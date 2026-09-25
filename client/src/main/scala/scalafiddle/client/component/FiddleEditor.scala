@@ -197,6 +197,10 @@ object FiddleEditor {
                     // geri uzanabiliyordu (ölçüldü). Sunucu aynı kısıtı CSP başlığıyla
                     // da koyuyor (Application.resultFrame).
                     sandbox := "allow-scripts allow-popups allow-modals",
+                    // "Çalıştır" tıklaması opak kökenli çerçeveye kullanıcı etkinliği
+                    // olarak geçmiyor; autoplay izni olmadan programın başında
+                    // kurulan ses bağlamı askıda kalıyor ve ses çıkmıyordu (ölçüldü).
+                    VdomAttr("allow") := "autoplay; fullscreen",
                     src := resultFrameSrc
                   )
                 )
