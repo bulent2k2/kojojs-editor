@@ -20,10 +20,13 @@
                     var canvas = document.getElementById("canvas");
                     var result = document.getElementById("output");
                     var container = document.getElementById("fiddle-container");
-                    // Yalniz editorden (ust pencere) gelen komutlar (#45). Bu dinleyici
-                    // gelen kodu eval ediyor ve "print" ile HTML basiyor; baska bir
-                    // pencerenin (ornegin editoru cerceveleyen bir sayfanin) yolladigi
-                    // ileti burada kod calistiramamali.
+                    // Yalniz bu sayfayi cerceveleyen pencereden (ust pencere) gelen
+                    // komutlar (#45). Bu dinleyici gelen kodu eval ediyor ve "print" ile
+                    // HTML basiyor; kardes cerceveler ya da acilan pencereler burada kod
+                    // calistiramamali. Ust pencerenin EDITOR oldugunu bu denetim degil,
+                    // sunucunun basliklari sagliyor: frame-ancestors 'self' baska bir
+                    // sitenin bu sayfayi cercevelemesini reddediyor, CSP sandbox da
+                    // sayfayi her durumda opak kokende tutuyor (Application.resultFrame).
                     window.addEventListener('message', function (e) {
                         if (e.source !== window.parent) return;
                         var msg = e.data;

@@ -71,7 +71,10 @@ object FiddleEditor {
     // (konsolda `localStorage.kojoDolgu = "libtess"`) bu yüzden çerçevenin
     // KENDİ adresiyle taşınıyor. Kitaplık o adresi zaten okuyor
     // (kojojs-dev KojoWorld.libtessİstendi, `dolgu=libtess`).
-    def resultFrameSrc: String = {
+    // Bir kez hesaplanıyor: her render'da okunsaydı, seçenek değişince React
+    // çerçevenin src'sini yeniden yazıp onu bir derlemenin ortasında ikinci
+    // kez yükleyebilirdi. Değişiklik sayfa yenilenince etkili olur.
+    lazy val resultFrameSrc: String = {
       val libtess =
         try dom.window.localStorage.getItem("kojoDolgu") == "libtess"
         catch { case _: Throwable => false }
@@ -189,8 +192,11 @@ object FiddleEditor {
                     // allow-same-origin YOK (#45): çerçeve kullanıcı kodunu çalıştırıyor.
                     // Editörle aynı kökende olsaydı o kod editörün kökeninde, oturum
                     // açmış kullanıcının yetkisiyle davranabilirdi. Opak kökende
-                    // editörle yalnız iletiyle konuşuyor.
-                    sandbox := "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-modals",
+                    // editörle yalnız iletiyle konuşuyor. allow-popups-to-escape-sandbox
+                    // da YOK: kodun açtığı pencere kum havuzundan çıkıp editöre
+                    // geri uzanabiliyordu (ölçüldü). Sunucu aynı kısıtı CSP başlığıyla
+                    // da koyuyor (Application.resultFrame).
+                    sandbox := "allow-scripts allow-popups allow-modals",
                     src := resultFrameSrc
                   )
                 )
@@ -286,7 +292,7 @@ object FiddleEditor {
                     width := "0%",
                     height := "0%",
                     frameBorder := "0",
-                    sandbox := "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+                    sandbox := "allow-scripts allow-popups",
                     src := resultFrameSrc
                   )
                 )
@@ -299,7 +305,11 @@ object FiddleEditor {
                     width := "100%",
                     height := "100%",
                     frameBorder := "0",
-                    sandbox := "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation",
+                    // Yardım çerçevesi (SCALAFIDDLE_HELP_URL, varsayılanı about:blank).
+                    // allow-same-origin ve allow-top-navigation YOK (#45): aynı kökenli
+                    // bir yardım sayfası kum havuzunu anlamsız kılar, dış bir sayfa
+                    // da editörü başka yere yönlendirebilirdi.
+                    sandbox := "allow-scripts allow-popups",
                     src := url
                   )
                 )

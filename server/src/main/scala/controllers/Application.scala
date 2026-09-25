@@ -218,7 +218,19 @@ class Application @Inject()(
     // önbellekle her dağıtımdan sonra bir saat boyunca ESKİ çalıştırıcı koşuyor;
     // "ScalaFiddle is not defined" düzeltmesi (2026-09-03) tam olarak böyle
     // görünmez kaldı. Belge birkaç KB, her seferinde doğrulamanın maliyeti yok.
-    Ok(views.html.resultframe()).withHeaders(CACHE_CONTROL -> "no-cache")
+    //
+    // Güvenlik başlıkları (#45): bu sayfa kendisine iletiyle gelen kodu eval
+    // ediyor. CSP `sandbox` onu, KİM açarsa açsın (editörün iframe'i, başka
+    // bir sitenin iframe'i, window.open) opak kökende tutuyor: kod editörün
+    // kökeninde hiç koşmuyor. `frame-ancestors 'self'` ve X-Frame-Options
+    // yalnız editörün kendisinin çerçevelemesine izin veriyor. Chromium'da
+    // ölçüldü: saldırgan sayfası sandbox'sız çerçeveleyip kod yollayınca kod
+    // editörün kökeninde koşuyordu; başlıklarla çerçeveleme reddediliyor.
+    Ok(views.html.resultframe()).withHeaders(
+      CACHE_CONTROL             -> "no-cache",
+      "Content-Security-Policy" -> "sandbox allow-scripts allow-popups allow-modals; frame-ancestors 'self'",
+      "X-Frame-Options"         -> "SAMEORIGIN"
+    )
   }
 
   // iKoco Yardım/Bilgi sayfası (Türkçe, kendi başına duran belge). no-cache:
