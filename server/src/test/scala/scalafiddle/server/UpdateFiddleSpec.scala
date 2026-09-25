@@ -20,7 +20,8 @@ import scalafiddle.shared.{FiddleData, FiddleId, UserInfo}
 /**
   * Fiddle güncelleme yetkisi kayıtlı sahibe göre mi? Eskiden `ApiService.update`
   * istemcinin gönderdiği `FiddleData.author`a bakıyordu; alan boş gelince izin
-  * veriyordu, yani herkes başkasının fiddle'ına onun adına yeni sürüm ekleyebiliyordu.
+  * veriyordu, alan isteği yapanın kendi id'sini taşıyınca da -- yani herkes başkasının
+  * fiddle'ına onun adına yeni sürüm ekleyebiliyordu.
   *
   * Gerçek Persistence aktörü, application.conf'taki bellek içi "h2" veritabanıyla.
   */
@@ -70,6 +71,15 @@ class UpdateFiddleSpec extends WordSpec with Matchers with BeforeAndAfterAll {
       val fid = kaydet(Some(kullanici("github:sahip")))
       val sonuc = bekle(api(Some(kullanici("github:baskasi"))).update(fiddle("saldırgan kodu", None), fid.id))
       sonuc shouldBe Left("Not allowed to update fiddle")
+      sonSurum(fid.id).sourceCode shouldBe "sahibin kodu"
+    }
+
+    "author'a saldırganın kendi id'si konsa da başkasının fiddle'ına sürüm eklemiyor" in {
+      val fid       = kaydet(Some(kullanici("github:sahip")))
+      val saldirgan = kullanici("github:baskasi")
+      val kendiAdi  = Some(UserInfo(saldirgan.userID, "baskasi", None, loggedIn = true))
+      bekle(api(Some(saldirgan)).update(fiddle("saldırgan kodu", kendiAdi), fid.id)) shouldBe
+        Left("Not allowed to update fiddle")
       sonSurum(fid.id).sourceCode shouldBe "sahibin kodu"
     }
 
