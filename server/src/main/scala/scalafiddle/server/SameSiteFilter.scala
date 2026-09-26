@@ -16,7 +16,9 @@ import scala.concurrent.{ExecutionContext, Future}
   * `result.withCookies` ile koyuyor, yani hepsi `Result.newCookies`'te.
   *
   * `Lax`, `Strict` değil: GitHub girişinden dönüş üst düzey bir gezinme ve OAuth
-  * durum çerezi ona gitmeli. Kendi SameSite'ı olan çereze (Play oturumu) dokunulmuyor.
+  * durum çerezi ona gitmeli. Kendi SameSite'ı olan çereze dokunulmuyor. (Play'in
+  * kendi oturum/flash çerezleri bu süzgeçten hiç geçmiyor; sunucu katmanında
+  * pişiriliyor ve `play.http.session.sameSite` varsayılanını, "lax", alıyor.)
   */
 class SameSiteFilter @Inject()(implicit val mat: Materializer, ec: ExecutionContext) extends Filter {
   def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =

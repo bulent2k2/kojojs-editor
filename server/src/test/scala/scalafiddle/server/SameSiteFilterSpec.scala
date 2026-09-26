@@ -1,7 +1,10 @@
 package scalafiddle.server
 
 import org.scalatest._
-import play.api.mvc.{Cookie, DiscardingCookie, Results}
+import play.api.mvc.{Cookie, DefaultCookieHeaderEncoding, DiscardingCookie, RequestHeader, Result, Results}
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 /**
   * Yanıtın koyduğu çerezlere `SameSite=Lax` (#47). Silhouette 5.0.1 çerezleri
@@ -14,7 +17,7 @@ class SameSiteFilterSpec extends WordSpec with Matchers {
       SameSiteFilter.laxCerez(c) shouldBe c.copy(sameSite = Some(Cookie.SameSite.Lax))
     }
     "kendi SameSite'ı olan çereze dokunmuyor" in {
-      val c = Cookie("PLAY_SESSION", "v", sameSite = Some(Cookie.SameSite.Strict))
+      val c = Cookie("baska", "v", sameSite = Some(Cookie.SameSite.Strict))
       SameSiteFilter.laxCerez(c) shouldBe c
     }
     "yanıttaki bütün yeni çerezleri, silinen çerez dahil, kapsıyor" in {
@@ -31,6 +34,26 @@ class SameSiteFilterSpec extends WordSpec with Matchers {
     "çerez koymayan yanıtı olduğu gibi bırakıyor" in {
       val r = Results.Ok("x")
       SameSiteFilter.laxYap(r) should be theSameInstanceAs r
+    }
+    "Play'in Set-Cookie kodlayıcısı özniteliği gerçekten yazıyor" in {
+      val baslik = new DefaultCookieHeaderEncoding()
+        .encodeSetCookieHeader(Seq(SameSiteFilter.laxCerez(Cookie("authenticator", "v"))))
+      baslik should include("SameSite=Lax")
+    }
+  }
+
+  "SameSiteFilter (süzgeç)" should {
+    // İstek başlığı ve Materializer süzgeçte kullanılmıyor; null yeterli.
+    val suzgec = new SameSiteFilter()(null, ExecutionContext.global)
+
+    "eylemin yanıtındaki çerezlere Lax koyuyor" in {
+      // Açık türlü işlev: Filter.apply aşırı yüklü (EssentialAction sürümü de var).
+      val eylem: RequestHeader => Future[Result] = _ => Future.successful(Results.Ok.withCookies(Cookie("authenticator", "v")))
+      val sonuc = Await.result(suzgec.apply(eylem)(null), 5.seconds)
+      sonuc.newCookies.map(_.sameSite) shouldBe Seq(Some(Cookie.SameSite.Lax))
+    }
+    "Filters'a kayıtlı (sökülürse çerezler yine özniteliksiz gider)" in {
+      new Filters(null, null, suzgec).filters should contain(suzgec)
     }
   }
 }

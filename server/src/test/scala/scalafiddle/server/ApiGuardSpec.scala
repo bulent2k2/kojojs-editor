@@ -38,9 +38,11 @@ class ApiGuardSpec extends WordSpec with Matchers {
       ApiGuard.fiddleKimligiMi("a1B2c3D") shouldBe true
     }
     "başka her şeyi reddediyor" in {
-      Seq("", "abc", "a1B2c3D4", "abc\"de", "a1B2c3", "ab/cdef", "ab cdef", "çğüşöıİ").foreach { id =>
-        withClue(s"'$id' -- ") { ApiGuard.fiddleKimligiMi(id) shouldBe false }
-      }
+      // Uzunluk dışındakiler 7 karakter: tırnağa/işarete takılsın, uzunluğa değil.
+      Seq("", "abc", "a1B2c3", "a1B2c3D4", "abc\"def", "ab<cdef", "ab/cdef", "ab cdef", "ab_cdef", "abcdeğf")
+        .foreach { id =>
+          withClue(s"'$id' -- ") { ApiGuard.fiddleKimligiMi(id) shouldBe false }
+        }
     }
   }
 }
