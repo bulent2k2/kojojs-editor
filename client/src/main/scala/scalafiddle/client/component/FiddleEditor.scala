@@ -23,6 +23,24 @@ object FiddleEditor {
   private var editorRef: dom.raw.HTMLDivElement    = _
   private var resultRef: dom.raw.HTMLIFrameElement = _
 
+  // Sonuç çerçevesinin izin politikası. "Çalıştır" tıklaması opak kökenli
+  // çerçeveye kullanıcı etkinliği olarak geçmiyor; autoplay izni olmadan
+  // programın başında kurulan ses bağlamı askıda kalıyor ve ses çıkmıyor (#45).
+  //
+  // Öznitelik vdom'da DEĞİL, ref'te konuyor: React 15.5.4 yalnız beyaz
+  // listesindeki öznitelikleri (HTMLDOMPropertyConfig) yazıyor, `allow` orada
+  // yok ve sessizce düşüyordu -- canlıda çerçevede
+  // document.featurePolicy.allowsFeature("autoplay") == false (ölçüldü). İzin
+  // yalnız bir SONRAKİ gezinmede geçerli; her çalıştırma çerçeveyi zaten
+  // yeniden yüklüyor (beginCompilation), kod o yüklemeden sonra geliyor.
+  private val resultFrameAllow = "autoplay; fullscreen"
+
+  private def resultFrameRef(r: dom.raw.HTMLIFrameElement): Unit = {
+    resultRef = r
+    if (r != null && r.getAttribute("allow") != resultFrameAllow)
+      r.setAttribute("allow", resultFrameAllow)
+  }
+
   case class EditorBinding(name: String, keys: String, action: () => Any)
 
   case class Props(data: ModelProxy[FiddleData],
@@ -179,7 +197,7 @@ object FiddleEditor {
                       onClick --> resetCanvasView
                     )("⌂")
                   ),
-                  iframe.ref(resultRef = _)(
+                  iframe.ref(resultFrameRef _)(
                     id := "resultframe",
                     onLoad ==> frameLoaded,
                     VdomAttr[String]("data-frameid") := "frame-code",
@@ -197,10 +215,7 @@ object FiddleEditor {
                     // geri uzanabiliyordu (ölçüldü). Sunucu aynı kısıtı CSP başlığıyla
                     // da koyuyor (Application.resultFrame).
                     sandbox := "allow-scripts allow-popups allow-modals",
-                    // "Çalıştır" tıklaması opak kökenli çerçeveye kullanıcı etkinliği
-                    // olarak geçmiyor; autoplay izni olmadan programın başında
-                    // kurulan ses bağlamı askıda kalıyor ve ses çıkmıyordu (ölçüldü).
-                    VdomAttr("allow") := "autoplay; fullscreen",
+                    // `allow` (autoplay, fullscreen) resultFrameRef'te konuyor.
                     src := resultFrameSrc
                   )
                 )
@@ -685,9 +700,14 @@ object FiddleEditor {
       } >>
         props.dispatch(UpdateLoginInfo) >>
         updateFiddle(props.data()) >>
+        // Paylaşılan betik (/sf/<id>) açılışta kendiliğinden koşuyor. Düğmeler
+        // gibi o da beginCompilation'dan geçiyor: çerçevenin ilk yüklenişi
+        // `allow` öznitelikten ÖNCE başlıyor (resultFrameRef), yeniden yükleme
+        // izni çerçeveye taşıyor (#49 incelemesi §3).
         Callback.when(props.fiddleId.isDefined)(
-          props.dispatch(
-            compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))
+          Callback.future(beginCompilation().map(_ =>
+            props.dispatch(
+              compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))))
     }
 
     val fiddleStart = """\s*// \$FiddleStart\s*$""".r
