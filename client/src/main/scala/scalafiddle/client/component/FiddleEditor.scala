@@ -30,15 +30,22 @@ object FiddleEditor {
   // Öznitelik vdom'da DEĞİL, ref'te konuyor: React 15.5.4 yalnız beyaz
   // listesindeki öznitelikleri (HTMLDOMPropertyConfig) yazıyor, `allow` orada
   // yok ve sessizce düşüyordu -- canlıda çerçevede
-  // document.featurePolicy.allowsFeature("autoplay") == false (ölçüldü). İzin
-  // yalnız bir SONRAKİ gezinmede geçerli; her çalıştırma çerçeveyi zaten
-  // yeniden yüklüyor (beginCompilation), kod o yüklemeden sonra geliyor.
+  // document.featurePolicy.allowsFeature("autoplay") == false (ölçüldü).
+  //
+  // İzin yalnız bir SONRAKİ gezinmede geçerli, ref ise çerçevenin ilk
+  // gezinmesi başladıktan sonra çağrılıyor. Bu yüzden öğe yeni takıldığında
+  // gezinme yeniden başlatılıyor (ilki iptal oluyor, tek `load` geliyor).
+  // Yoksa ilk koşu izinsiz kalıyordu: editör yardım çerçevesiyle açılıyor,
+  // kod çerçevesi ilk derleme sonucuyla takılıyor ve kod ona yeniden
+  // yüklemeden gidiyor -- canlıda ilk koşuda ses yok, sonrakilerde var.
   private val resultFrameAllow = "autoplay; fullscreen"
 
   private def resultFrameRef(r: dom.raw.HTMLIFrameElement): Unit = {
     resultRef = r
-    if (r != null && r.getAttribute("allow") != resultFrameAllow)
+    if (r != null && r.getAttribute("allow") != resultFrameAllow) {
       r.setAttribute("allow", resultFrameAllow)
+      if (r.getAttribute("src") != null) r.src = r.src
+    }
   }
 
   case class EditorBinding(name: String, keys: String, action: () => Any)
@@ -700,14 +707,9 @@ object FiddleEditor {
       } >>
         props.dispatch(UpdateLoginInfo) >>
         updateFiddle(props.data()) >>
-        // Paylaşılan betik (/sf/<id>) açılışta kendiliğinden koşuyor. Düğmeler
-        // gibi o da beginCompilation'dan geçiyor: çerçevenin ilk yüklenişi
-        // `allow` öznitelikten ÖNCE başlıyor (resultFrameRef), yeniden yükleme
-        // izni çerçeveye taşıyor (#49 incelemesi §3).
         Callback.when(props.fiddleId.isDefined)(
-          Callback.future(beginCompilation().map(_ =>
-            props.dispatch(
-              compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))))
+          props.dispatch(
+            compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))
     }
 
     val fiddleStart = """\s*// \$FiddleStart\s*$""".r
