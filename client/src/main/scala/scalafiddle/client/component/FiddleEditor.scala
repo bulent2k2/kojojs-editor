@@ -700,9 +700,14 @@ object FiddleEditor {
       } >>
         props.dispatch(UpdateLoginInfo) >>
         updateFiddle(props.data()) >>
+        // Paylaşılan betik (/sf/<id>) açılışta kendiliğinden koşuyor. Düğmeler
+        // gibi o da beginCompilation'dan geçiyor: çerçevenin ilk yüklenişi
+        // `allow` öznitelikten ÖNCE başlıyor (resultFrameRef), yeniden yükleme
+        // izni çerçeveye taşıyor (#49 incelemesi §3).
         Callback.when(props.fiddleId.isDefined)(
-          props.dispatch(
-            compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))
+          Callback.future(beginCompilation().map(_ =>
+            props.dispatch(
+              compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))))
     }
 
     val fiddleStart = """\s*// \$FiddleStart\s*$""".r
