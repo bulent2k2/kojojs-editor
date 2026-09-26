@@ -185,6 +185,13 @@ class Application @Inject()(
   }
 
   def htmlScript(fiddleId: String, version: String) = Action { implicit request =>
+    // fiddleId aşağıda bir JavaScript dizgisine kaçırılmadan gömülüyor; yalnız
+    // gerçek kimlik biçimi geçsin (#47). version'ı yol deseni (\d+) zaten süzüyor.
+    if (!ApiGuard.fiddleKimligiMi(fiddleId)) NotFound
+    else htmlScriptJs(fiddleId, version)
+  }
+
+  private def htmlScriptJs(fiddleId: String, version: String) = {
     val js =
       s"""(function() {
         |var listener = function(event) {
@@ -274,20 +281,25 @@ class Application @Inject()(
   val loginProviders = config.get[Seq[String]]("scalafiddle.loginProviders").map(AllLoginProviders.providers)
 
   def autowireApi(path: String) = silhouette.UserAwareAction.async { implicit request =>
-    val apiService: Api = new ApiService(persistence, request.identity, loginProviders)
+    // CSRF (#47): editörün kendi isteği ApiHeader taşıyor, başka bir sitenin
+    // formu ya da opak bir çerçeve taşıyamıyor.
+    if (!ApiGuard.izinli(request.headers)) Future.successful(Forbidden("Forbidden"))
+    else {
+      val apiService: Api = new ApiService(persistence, request.identity, loginProviders)
 
-    // get the request body as JSON
-    val b = request.body.asText.get
+      // get the request body as JSON
+      val b = request.body.asText.get
 
-    // call Autowire route
-    Router
-      .route[Api](apiService)(
-        autowire.Core.Request(path.split("/"), json.read(b).asInstanceOf[Js.Obj].value.toMap)
-      )
-      .map(buffer => {
-        val data = json.write(buffer)
-        Ok(data)
-      })
+      // call Autowire route
+      Router
+        .route[Api](apiService)(
+          autowire.Core.Request(path.split("/"), json.read(b).asInstanceOf[Js.Obj].value.toMap)
+        )
+        .map(buffer => {
+          val data = json.write(buffer)
+          Ok(data)
+        })
+    }
   }
 
   val passthroughParams = Seq(
