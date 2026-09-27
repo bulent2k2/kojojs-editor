@@ -79,6 +79,9 @@ object FiddleEditor {
     @volatile var frameReady: Boolean    = false
     var pendingMessages: List[js.Object] = Nil
     var prevFrame                        = ""
+    // "klavyeOdagi"ya çerçeve yüklemesi başına bir kez uyuluyor (kojojs-dev#168):
+    // zamanlayıcıyla ileti yağdıran bir betik odağı editörden sürekli çekemesin.
+    var klavyeOdağıVerildi               = false
 
     // "Ev" düğmesi: tuvali başlangıç görünümüne döndürür (merkez + zoom 1).
     // Sonuç çerçevesi opak kökende (#45: sandbox'ta allow-same-origin yok), yani
@@ -382,6 +385,7 @@ object FiddleEditor {
       val frame = e.target
       // println("Frame loaded")
       frameReady = true
+      klavyeOdağıVerildi = false
       // send pending messages
       pendingMessages.reverse.foreach(msg => frame.contentWindow.postMessage(msg, "*"))
       pendingMessages = Nil
@@ -700,12 +704,16 @@ object FiddleEditor {
                 // Tuş dinleyen program odak istiyor (kojojs-dev#168): odak
                 // "Çalıştır"dan sonra kod düzenleyicide kalıyordu ve tuşlar,
                 // tuvale bir kez tıklanana dek programa ulaşmıyordu. Opak
-                // kökenli çerçeve odağı kendisi alamıyor; üst pencere verebiliyor
-                // (Chromium'da ölçüldü: iki çağrıdan biri de yetiyor). Tuş
+                // kökenli çerçevenin kendi odak alması tarayıcıya bağlı
+                // (Chromium'da alabiliyor); üst pencerenin verdiği odak
+                // kısıtlanmıyor (ölçüldü: iki çağrıdan biri de yetiyor). Tuş
                 // kullanmayan program bu iletiyi yollamıyor, düzenleyicide
                 // yazmaya devam edilebiliyor.
-                frame.focus()
-                frame.contentWindow.focus()
+                if (!klavyeOdağıVerildi) {
+                  klavyeOdağıVerildi = true
+                  frame.focus()
+                  frame.contentWindow.focus()
+                }
               case _ =>
             }
           }
