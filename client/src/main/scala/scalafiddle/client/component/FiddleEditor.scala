@@ -696,6 +696,16 @@ object FiddleEditor {
             e.data match {
               case "evalCompleted" =>
                 $.modState(s => s.copy(status = CompilerStatus.Result)).runNow()
+              case "klavyeOdagi" =>
+                // Tuş dinleyen program odak istiyor (kojojs-dev#168): odak
+                // "Çalıştır"dan sonra kod düzenleyicide kalıyordu ve tuşlar,
+                // tuvale bir kez tıklanana dek programa ulaşmıyordu. Opak
+                // kökenli çerçeve odağı kendisi alamıyor; üst pencere verebiliyor
+                // (Chromium'da ölçüldü: iki çağrıdan biri de yetiyor). Tuş
+                // kullanmayan program bu iletiyi yollamıyor, düzenleyicide
+                // yazmaya devam edilebiliyor.
+                frame.focus()
+                frame.contentWindow.focus()
               case _ =>
             }
           }
