@@ -32,19 +32,38 @@ object FiddleEditor {
   // yok ve sessizce düşüyordu -- canlıda çerçevede
   // document.featurePolicy.allowsFeature("autoplay") == false (ölçüldü).
   //
-  // İzin yalnız bir SONRAKİ gezinmede geçerli, ref ise çerçevenin ilk
-  // gezinmesi başladıktan sonra çağrılıyor. Bu yüzden öğe yeni takıldığında
-  // gezinme yeniden başlatılıyor (ilki iptal oluyor, tek `load` geliyor).
-  // Yoksa ilk koşu izinsiz kalıyordu: editör yardım çerçevesiyle açılıyor,
-  // kod çerçevesi ilk derleme sonucuyla takılıyor ve kod ona yeniden
-  // yüklemeden gidiyor -- canlıda ilk koşuda ses yok, sonrakilerde var.
+  // İzin yalnız öznitelik GEZİNMEDEN ÖNCE yazılmışsa geçerli; ref ise çerçeve
+  // belgeye takıldıktan, yani ilk gezinmesi başladıktan SONRA çağrılıyor. Bu
+  // yüzden kod çerçevesi vdom'da `about:blank` ile kuruluyor ve gerçek adresi
+  // ref, `allow`'u yazdıktan sonra veriyor: ilk gerçek gezinme izni taşıyor
+  // (#51). Yoksa ilk koşu izinsiz kalıyordu -- editör yardım çerçevesiyle
+  // açılıyor, kod çerçevesi ilk derleme sonucuyla takılıyor, canlıda ilk
+  // koşuda ses yok, sonrakilerde var.
+  //
+  // Ölçüldü (React 15.5.4, bu dosyadaki ağacın biçimi; Chromium 141, başlı ve
+  // başsız), ilk koşuda:
+  //   yalnız allow            autoplay=false  /resultframe'e 1 istek
+  //   allow + r.src = r.src   autoplay=true   2 istek (ilki iptal; önceki çare)
+  //   about:blank + ref src   autoplay=true   1 istek
+  //
+  // Ref'in koruması `allow`a DEĞİL `src`e bakıyor, ve kod çerçevesinin bir
+  // `key`i var. İkisi de "Betiklerim"den kod dalına dönüş için: o dalın
+  // iframe'i ağaçta kod çerçevesiyle AYNI yerde, React anahtarsız öğeyi iki dal
+  // arasında paylaşıyordu (ölçüldü). Paylaşılan öğeye React `src`i
+  // `about:blank`e geri yazıyor, `allow` ise öğede duruyor -- `allow`a bakan
+  // koruma o zaman hiçbir şey yapmıyor ve çerçeve `about:blank`te kalıyordu,
+  // sonraki koşular da (`beginCompilation` `about:blank`i yeniden yüklüyor).
+  // `key` öğeyi hiçbir dalla paylaşmıyor, yani kod dalına her girişte taze
+  // takılıyor: taze takılışta `about:blank`in yüklemesi `onLoad`a düşmüyor
+  // (ölçüldü). Paylaşılan öğede ise başlı Chromium'da ikinci bir `load` geliyor
+  // ve `frameLoaded` bekleyen iletileri `about:blank` belgesine boşaltıyordu.
   private val resultFrameAllow = "autoplay; fullscreen"
 
-  private def resultFrameRef(r: dom.raw.HTMLIFrameElement): Unit = {
+  private def resultFrameRef(r: dom.raw.HTMLIFrameElement, gerçekSrc: String): Unit = {
     resultRef = r
-    if (r != null && r.getAttribute("allow") != resultFrameAllow) {
-      r.setAttribute("allow", resultFrameAllow)
-      if (r.getAttribute("src") != null) r.src = r.src
+    if (r != null) {
+      if (r.getAttribute("allow") != resultFrameAllow) r.setAttribute("allow", resultFrameAllow)
+      if (r.getAttribute("src") == "about:blank") r.src = gerçekSrc
     }
   }
 
@@ -207,7 +226,8 @@ object FiddleEditor {
                       onClick --> resetCanvasView
                     )("⌂")
                   ),
-                  iframe.ref(resultFrameRef _)(
+                  iframe.ref(r => resultFrameRef(r, resultFrameSrc))(
+                    key := "frame-code", // öğe hiçbir dalla paylaşılmasın (resultFrameRef'e bkz.)
                     id := "resultframe",
                     onLoad ==> frameLoaded,
                     VdomAttr[String]("data-frameid") := "frame-code",
@@ -225,8 +245,9 @@ object FiddleEditor {
                     // geri uzanabiliyordu (ölçüldü). Sunucu aynı kısıtı CSP başlığıyla
                     // da koyuyor (Application.resultFrame).
                     sandbox := "allow-scripts allow-popups allow-modals",
-                    // `allow` (autoplay, fullscreen) resultFrameRef'te konuyor.
-                    src := resultFrameSrc
+                    // `allow` (autoplay, fullscreen) ve gerçek adres resultFrameRef'te
+                    // konuyor; ilk gerçek gezinme izni taşısın diye burada about:blank.
+                    src := "about:blank"
                   )
                 )
               case UserFiddleData(fiddles) =>
