@@ -208,7 +208,7 @@ footer code { font-family: "IBM Plex Mono", monospace; font-size: 12px; backgrou
 <body>
 <div class="wrap">
 <header class="masthead">
-  <!-- target="_blank" ŞART, süs değil: bu sayfa ikojo'da /yardim/sozluk içinde bir
+  <!-- target="_blank" ŞART, süs değil: bu sayfa iKojo'da /yardim/sozluk içinde bir
        IFRAME olarak açılıyor (kojojs-editor: yardimSozluk.scala.html). Target'siz
        bağlantı iframe'in KENDİSİNİ claude.ai'ye götürüyor, claude.ai de
        çerçevelenmeyi reddediyor -> kullanıcı "claude.ai refused to connect"
@@ -575,7 +575,7 @@ const CATS = [
 ["forSome","bazı","eskitilmiş / deprecated"],
 ]},
 { key:"type", tr:"Türler", en:"Types", note:"", rows:[
-["ComposableTransformer","Dönüştürücü","ötele/renk... birleştirici; * ile zincir, -> ile uygula; tür adı yalnız ikojo"],
+["ComposableTransformer","Dönüştürücü","ötele/renk... birleştirici; * ile zincir, -> ile uygula; tür adı yalnız iKojo"],
 ["Int","Sayı",""],
 ["Double","Kesir",""],
 ["Boolean","İkil","alt: Seçim"],
@@ -860,8 +860,8 @@ const CATS = [
 ["turtle0","kaplumbağa","alt: kaplumbağa0"],
 ]},
 { key:"canvas", tr:"Tuval ve Genel Komutlar", en:"Canvas & program commands", note:"", rows:[
-["onMousePress","fareBasılınca","fareye basılınca (tıklamadan önce); alt: fareyeBasınca (masaüstünün adı; fareBasılınca yalnız ikojo)"],
-["setup","kur","yükleme bitince bir kez çalışır; yalnız ikojo"],
+["onMousePress","fareBasılınca","fareye basılınca (tıklamadan önce); alt: fareyeBasınca (masaüstünün adı; fareBasılınca yalnız iKojo)"],
+["setup","kur","yükleme bitince bir kez çalışır; yalnız iKojo"],
 ["currentTime/1000","buSaniye","şu anın saniyesi (zaman ölçümü)"],
 ["clear","sil",""],
 ["cleari","silVeSakla","alt: silipSakla"],
@@ -1031,9 +1031,9 @@ const CATS = [
 ["dumpCompletions","yazıTamamlamaSeçenekleriniYazdırmayıAçKapa",""],
 ]},
 { key:"pic", tr:"Resimler", en:"Pictures", note:"Resim yapıcıları ve dönüşümleri — picture constructors and transforms.", rows:[
-["fadeIn","belirgin","saydamlığı artırır (fade/fadeOut: soluk); yalnız ikojo"],
-["Picture.textu","Resim.yazıRenkli","renkli metin (Resim.yazı renksiz); alt: Resim.renkliYazı (yalnız ikojo)"],
-["erasePictures","resimleriSil","tüm çizilen resimleri sil; yalnız ikojo — masaüstünde: Resim.sil"],
+["fadeIn","belirgin","saydamlığı artırır (fade/fadeOut: soluk); yalnız iKojo"],
+["Picture.textu","Resim.yazıRenkli","renkli metin (Resim.yazı renksiz); alt: Resim.renkliYazı (yalnız iKojo)"],
+["erasePictures","resimleriSil","tüm çizilen resimleri sil; yalnız iKojo — masaüstünde: Resim.sil"],
 ["draw","çiz","alt: Resim.çiz"],
 ["drawAndHide","çizVeSakla",""],
 ["drawCentered","çizMerkezde",""],
@@ -1103,7 +1103,7 @@ const CATS = [
 ["picGeom","geometri",""],
 ["Picture.contains","içinde","resmin içinde mi"],
 ["erase","sil (resmin yöntemi)","r.sil() o resmi siler; tuvali silen sil() ayrı"],
-["erasePictures","Resim.sil","Resim.sil() bütün resimleri siler; ikojo'da resimleriSil"],
+["erasePictures","Resim.sil","Resim.sil() bütün resimleri siler; iKojo'da resimleriSil"],
 ["intersects","çarpıştı","alt: çarptıMı/kesişir"],
 ["toggleV","görünürlüğüTersineÇevir",""],
 ["opacityMod","saydamlıkOranınıKur",""],
@@ -1166,7 +1166,7 @@ const CATS = [
 ["bezierVertex","bezierNoktası",""],
 ]},
 { key:"math", tr:"Matematik", en:"Math", note:"", rows:[
-["bölünüyorMu","bölünüyorMu","bölünüyorMu(sayı, bölen): İkil — sayı % bölen == 0; yalnız ikojo"],
+["bölünüyorMu","bölünüyorMu","bölünüyorMu(sayı, bölen): İkil — sayı % bölen == 0; yalnız iKojo"],
 ["math.Pi","piSayısı",""],
 ["math.E","eSayısı",""],
 ["square","karesi",""],
@@ -1530,7 +1530,7 @@ const CATS = [
 ["Future.never","olmaz","Gelecek"],
 ["ExecutionContext.global","küresel","Gelecek'in çalışma bağlamı"],
 ]},
-{ key:"ui", tr:"Arayüz", en:"UI widgets", note:"ay = java.awt + javax.swing — the Turkish window-toolkit namespace. Bu katmanın tamamı masaüstü Koco'ya özgü: tarayıcıdaki ikojo'da yok. Desktop-only; not available in the browser.", rows:[
+{ key:"ui", tr:"Arayüz", en:"UI widgets", note:"ay = java.awt + javax.swing — the Turkish window-toolkit namespace. Bu katmanın tamamı masaüstü Koco'ya özgü: tarayıcıdaki iKojo'da yok. Desktop-only; not available in the browser.", rows:[
 ["JComponent","ay.Parça",""],
 ["JSeparator","ay.BölmeÇizgisi",""],
 ["RowPanel","ay.Satır","alt: ay.Sıra"],
@@ -1916,7 +1916,7 @@ function ayrıntıHtml(ad, y, ö) {
         ? `<p class="turler">Şu türlerde var: ${esc(y.türler)}.</p>`
         : `<p class="turler">Dizi, Dizin, Yöney, Küme, Kuyruk gibi topluluklarda aynı biçimde çalışır.</p>`;
     }
-    h += `<p class="kaynak">Örnek sınanıyor: masaüstünde KoleksiyonYardımıTest, ikojo'da YardimOrnekDerlemeDeneme</p>`;
+    h += `<p class="kaynak">Örnek sınanıyor: masaüstünde KoleksiyonYardımıTest, iKojo'da YardimOrnekDerlemeDeneme</p>`;
   }
   if (ö && ORNEK) {
     h += `<div class="calisan"><div class="cbaslik">Bunu kullanan çalışan örnekler</div>`;
