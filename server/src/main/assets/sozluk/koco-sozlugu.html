@@ -249,8 +249,10 @@ footer code { font-family: "IBM Plex Mono", monospace; font-size: 12px; backgrou
 
 <script>
 // Yardım metinleri: masaüstü Koco'nun lite/i18n/tr/help.scala'ından ÜRETİLDİ
-// (araclar: Test/runMain net.kogics.kojo.araclar.YardımDışaAktar).
-// Elle düzenlemeyin -- kaynak orası, örnekleri orada test ediliyor.
+// (araclar: Test/runMain net.kogics.kojo.araclar.YardımDışaAktar) + sonuna
+// sozluk/yardim-ikojo.json'daki iKojo'ya özgü "komut" girdileri eklendi.
+// Elle düzenlemeyin: araclar/yardim-gom.py gömer; kaynaklar yardim.json ve
+// yardim-ikojo.json (örnekleri derleniyor: YardimOrnekDerlemeDeneme).
 const YARDIM = {
   "adımı":{"tür":"yöntem","imza":"adımı","açıklama":"Aralığın kaçar kaçar gittiği. adım ile aynı.","örnek":"(Aralık.kapalı(1, 10) adım 3).adımı","sonuç":"3","türler":"Aralık"},
   "al":{"tür":"yöntem","imza":"al(kaçTane)","açıklama":"Baştan bu kadar öge alır.","örnek":"Dizin(1, 2, 3, 4).al(2)","sonuç":"Dizin(1, 2)","türler":""},
@@ -524,7 +526,14 @@ const YARDIM = {
   "çizimiSil":{"tür":"metin","html":"\u003cdiv>\u003cstrong>çizimiSil\u003c/strong>() - Bu komut tuvaldeki çizimleri siler. \u003c/div>"},
   "çıktıyıSil":{"tür":"metin","html":"\u003cdiv>\u003cstrong>çıktıyıSil\u003c/strong>() - Bu komut çıktı penceresindeki bütün çıktıları silerek temizler. \u003c/div>"},
   "ışınlarıAç":{"tür":"metin","html":"\u003cdiv>\u003cstrong>ışınlarıAç\u003c/strong>() - Bu komut kaplumbağanın önünü, arkasını, sağını ve solunu bir artı çizerek daha kolay seçmemizi sağlar.\u003c/div>"},
-  "ışınlarıKapat":{"tür":"metin","html":"\u003cdiv>\u003cstrong>ışınlarıKapat\u003c/strong>() - Bu komut \u003ctt>ışınlarıAç()\u003c/tt> komutuyla kaplumbağanın üstüne çizilen artıyı siler.\u003c/div>"}
+  "ışınlarıKapat":{"tür":"metin","html":"\u003cdiv>\u003cstrong>ışınlarıKapat\u003c/strong>() - Bu komut \u003ctt>ışınlarıAç()\u003c/tt> komutuyla kaplumbağanın üstüne çizilen artıyı siler.\u003c/div>"},
+  "notaÇal":{"tür":"komut","imza":"notaÇal(nota, süreMiliSaniye, ses = 80)","açıklama":"Bir notayı Web Audio ile çalar. nota MIDI perdesidir (60 = orta do, 69 = la, 440 Hz), ses 0-127. BEKLEMEZ: notayı bir zaman çizelgesine yazıp hemen döner; notalar birbirinin ardına çalar (masaüstündeki gibi). Süreyi ölçmek için buAn değil kalanNotaSüresi kullan.","örnek":"notaÇalgısınıKur(Çalgı.Piyano)\nnotaÇal(60, 500)\nnotaÇal(64, 500)\nnotaÇal(67, 1000)","sonuç":"do-mi-sol arpej, toplam 2 saniye","not":"Tarayıcılar sesi ilk tıklamadan sonra açar; sıraya girenler o zaman çalmaya başlar."},
+  "notaÇalgısınıKur":{"tür":"komut","imza":"notaÇalgısınıKur(çalgı)","açıklama":"Bundan sonraki notaÇal çağrılarının çalgısını seçer (0-127; Çalgı.Piyano, Çalgı.ElektroPiyano, Çalgı.AkustikBas…). Web Audio'da kaba bir yaklaşım: çalgı bir dalga biçimine eşlenir.","örnek":"notaÇalgısınıKur(Çalgı.ElektroPiyano)\nnotaÇal(60, 500)","sonuç":"","not":""},
+  "notaSus":{"tür":"komut","imza":"notaSus(süreMiliSaniye)","açıklama":"Sessiz bekleyiş (es): ses çıkarmaz, sıradaki nota süre kadar sonra başlar. Melodi listesinde es'i göstermek için perde yerine -1 yazıp notaSus'a yönlendirmek yaygın.","örnek":"notaÇal(60, 250)\nnotaSus(250)\nnotaÇal(67, 500)","sonuç":"do, çeyrek es, sol","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
+  "akorÇal":{"tür":"komut","imza":"akorÇal(notalar, süreMiliSaniye, ses = 80)","açıklama":"Notaların HEPSİ aynı anda başlar ve aynı süre çalar; sonraki nota o kadar sonra başlar. Ses düzeyi nota sayısının karekökü kadar bölünür, yani akor tek nota kadar yüksek çalar (çok kalabalık akorda cızırdamasın diye daha da kısılır). Listedeki her nota 0-127 olmalı; biri dışarıdaysa hiçbiri çalmaz.","örnek":"akorÇal(Dizi(48, 52, 55), 1000)","sonuç":"do majör, 1 saniye","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
+  "beraberÇal":{"tür":"komut","imza":"beraberÇal(süreliNotalar, ses = 80)","açıklama":"(nota, süre) çiftlerinin hepsi aynı anda başlar, her nota kendi süresince çalar; sonraki nota EN UZUN notanın bitişinde başlar. Melodiyle bası beraber çalmak için. Önce hepsi doğrulanır: biri sınır dışıysa hiçbiri çalmaz; boş liste bir şey yapmaz.","örnek":"beraberÇal(Dizi((67, 500), (43, 1000)))","sonuç":"sol 0,5 sn, bas 1 sn; sonraki nota 1 sn sonra","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
+  "kalanNotaSüresi":{"tür":"komut","imza":"kalanNotaSüresi","açıklama":"Sıradaki notaların bitmesine kalan süre (milisaniye); çalan yoksa 0. Nota döngüsünden hemen sonra çağrılırsa melodinin toplam süresidir. buAn - başlangıç bunu vermez: notaÇal beklemediği için o fark yalnız notaları sıraya koyma süresidir.","örnek":"notaÇal(60, 500)\nnotaÇal(64, 500)\nkalanNotaSüresi","sonuç":"1000 (tarayıcı sesi açtıktan sonra birkaç ms daha az olabilir)","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
+  "notaÇalarıKapat":{"tür":"komut","imza":"notaÇalarıKapat()","açıklama":"Çalmakta olan ve sıradaki bütün notaları susturur, zaman imlecini sıfırlar: bundan sonraki notaÇal hemen çalar. notaÇalarıDurdur ile aynı. Çalıştır ve Durdur düğmeleri için gerekmez (ikisi de sayfayı yeniden yükleyip sesi keser); betiğin kendi içinden, örneğin bir düğmeyle melodiyi baştan başlatırken ya da yarıda kesmek isterken kullanılır.","örnek":"notaÇal(60, 5000)\nnotaÇalarıKapat()\nnotaÇal(64, 500)","sonuç":"ilk nota susar, mi hemen çalar","not":"Masaüstünde de var (stopNotePlayer)."}
 };
 
 // [english, turkish, note] — note may be ""
@@ -976,6 +985,11 @@ const CATS = [
 ["joystick","kumandaKolu",""],
 ["playNote","notaÇal",""],
 ["setNoteInstrument","notaÇalgısınıKur",""],
+["playChord","akorÇal","akorÇal(notalar, süre, ses=80): hepsi aynı anda çalar; yalnız iKojo"],
+["playTogether","beraberÇal","beraberÇal(çiftler, ses=80): aynı anda başlar, her biri kendi süresince; yalnız iKojo"],
+["playRest","notaSus","notaSus(süre): sessiz bekleyiş (es); yalnız iKojo"],
+["noteTimeLeftMillis","kalanNotaSüresi","çalacak notaların bitmesine kalan süre (ms); yalnız iKojo"],
+["stopNotePlayer","notaÇalarıKapat","notaları susturur, imleci sıfırlar; alt: notaÇalarıDurdur; masaüstünde de var (stopNotePlayer)"],
 ["playMp3","müzikMp3üÇal",""],
 ["playMp3Sound","sesMp3üÇal",""],
 ["playMp3Loop","müzikMp3üÇalDöngülü",""],
@@ -1917,6 +1931,14 @@ function ayrıntıHtml(ad, y, ö) {
         : `<p class="turler">Dizi, Dizin, Yöney, Küme, Kuyruk gibi topluluklarda aynı biçimde çalışır.</p>`;
     }
     h += `<p class="kaynak">Örnek sınanıyor: masaüstünde KoleksiyonYardımıTest, iKojo'da YardimOrnekDerlemeDeneme</p>`;
+  } else if (y && y.tür === "komut") {
+    // iKojo'ya özgü komutlar (sozluk/yardim-ikojo.json): masaüstü help.scala'sında
+    // yok, bu yüzden "masaüstünde sınanıyor" DENMİYOR; örnek iKojo'da derleniyor.
+    h += `<div class="imza">${esc(y.imza)}</div><p class="acik">${esc(y.açıklama)}</p>`;
+    h += `<pre class="ornek">${esc(y.örnek)}` +
+         (y.sonuç ? `\n<span class="sonuc">// ${esc(y.sonuç)}</span>` : ``) + `</pre>`;
+    if (y.not) h += `<p class="turler">${esc(y.not)}</p>`;
+    h += `<p class="kaynak">Örnek iKojo'da derleniyor: YardimOrnekDerlemeDeneme</p>`;
   }
   if (ö && ORNEK) {
     h += `<div class="calisan"><div class="cbaslik">Bunu kullanan çalışan örnekler</div>`;
