@@ -1,0 +1,33 @@
+# Üst şerit telefonda sığıyor mu (kojojs-dev#183 sonrası "Çevir" şeridi taşırmıştı).
+#
+# Editörün kendi derlemesi CI'da koşmuyor (bkz. denetimler.yml); bu iş gerçek main.less'i
+# derleyip şeridin DOM'unu aynı sınıflarla kurar ve başsız Chrome'da ölçer. DOM docs/
+# ust-serit-olcumu.js içinde elle tutulan bir KOPYA: sınıf adları Scala kaynağında aranıyor,
+# ama yapı değişikliği yakalanmaz (betiğin başındaki "BİLİNEN SINIR").
+name: üst şerit
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  serit-olcumu:
+    name: "şerit telefonda sığıyor mu (420, 873, 412, 390, 960 px)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: ölçüm
+        run: |
+          mkdir /tmp/ust && cd /tmp/ust
+          npm init -y >/dev/null
+          npm install --silent semantic-ui-css@2.3.1 font-awesome@4.7.0 less@4 playwright-core
+          cp "$GITHUB_WORKSPACE/docs/ust-serit-olcumu.js" .
+          KOJO_REPO="$GITHUB_WORKSPACE" KOJO_CHROME="$(command -v google-chrome)" node ust-serit-olcumu.js

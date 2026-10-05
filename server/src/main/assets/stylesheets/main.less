@@ -2,7 +2,9 @@
 @import "lib/font-awesome/less/font-awesome.less";
 
 @mobile: ~"(max-width: 1280px)";
-@dar: ~"(max-width: 700px)"; // telefon: üst şeritte yalnız simgeler
+// Dar ekran: üst şeritte yalnız simgeler. 960px: yan yatmış telefon (Pixel, ~870px) da
+// bu düzene girsin; yazılı düğmeler ~950px'ten önce sığmıyordu (ölçüm: docs/ust-serit-olcumu.js).
+@dar: ~"(max-width: 960px)";
 
 html,
 body,
@@ -58,6 +60,7 @@ body {
       align-items: center;
 
       > .logo {
+        position: relative;
         margin: 0 10px;
         @media @dar {
           margin: 0 4px;
@@ -263,6 +266,10 @@ img.author {
 .full-screen > header .ui.vertical.menu .item.yalniz-dar {
   display: none;
 }
+.full-screen > header .dar-ekran,
+.full-screen > header .logo-daire {
+  display: none;
+}
 @media @dar {
   .full-screen > header {
     .cikis {
@@ -283,8 +290,48 @@ img.author {
       border: 0;
     }
     .ui.button {
-      padding-left: .9em;
-      padding-right: .9em;
+      padding-left: .8em;
+      padding-right: .8em;
+    }
+    /* Çalıştır'ın soluna yanlışlıkla dokunmak ana sayfaya götürüyor ve
+       kaydedilmemiş kodu siliyordu: dar ekranda yalnız kırmızı daire (logo
+       görüntüsünün x 19-57, y 2-41 / 112x44 pikseli) bağlantı, geri kalanı
+       (i, "ojo" yazısı) etkisiz. */
+    .logo > .logo-tam {
+      pointer-events: none;
+    }
+    .logo > .logo-daire {
+      display: block;
+      position: absolute;
+      left: 16.96%;
+      top: 4.5%;
+      width: 35.7%;
+      height: 91%;
+      border-radius: 50%;
+    }
+    .ui.button.login > img {
+      padding-right: 0;
+    }
+    /* Güncelle/Çatalla ve Çevir'in iki ayrı düğmesi dar ekranda tek düğme
+       (menülü): yalnız-geniş ögeler gizlenir, yalnız-dar ögeler görünür. */
+    .genis-ekran {
+      display: none !important;
+    }
+    .dar-ekran {
+      display: inline-block;
+    }
+    /* Açılan menüler dar ekranda ekranı aşmasın: üst şeridin altında tam genişlik. */
+    .ui.dropdown > .menu {
+      position: fixed;
+      top: 58px;
+      left: 4px;
+      right: 4px;
+      width: auto;
+      min-width: 0;
+    }
+    .ui.pointing.dropdown > .menu:before,
+    .ui.pointing.dropdown > .menu:after {
+      display: none;
     }
     .ui.button:not(.icon) > .icon:not(.button) {
       margin: 0;
