@@ -74,7 +74,7 @@ class CevirTest extends FunSuite {
   test("adres: yön yoksa parametresiz, varsa ?yon=") {
     assert(Cevir.adres("http://x", Cevir.Oto) == "http://x/cevir")
     assert(Cevir.adres("http://x", Cevir.TrdenEn) == "http://x/cevir?yon=tr2en")
-    assert(Cevir.adres("", Cevir.EndenTr) == "/cevir?yon=en2tr") // koco-deploy'da compilerURL boş (tek köken)
+    assert(Cevir.adres("", Cevir.EndenTr) == "/cevir?yon=en2tr") // boş taban: /compile ile aynı kalıp ("$compilerURL/yol")
   }
 
   test("rapor: kalan ve belirsiz adlar satır numarasıyla, geri alma ipucu") {
