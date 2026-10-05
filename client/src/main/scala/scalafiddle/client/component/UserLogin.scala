@@ -37,9 +37,10 @@ object UserLogin {
             case Ready(loginProviders) if loginProviders.size == 1 =>
               val provider = loginProviders.head
               a(href := s"/authenticate/${provider.id}")(
-                div(cls := "ui button login")(
+                div(cls := "ui button login", VdomAttr("title") := s"${provider.name} ile giriş yap")(
                   img(src := provider.logoUrl),
-                  s"${provider.name} ile giriş yap"
+                  // Dar ekranda (CSS) yazı gizlenir, yalnız sağlayıcı simgesi kalır
+                  span(cls := "etiket")(s"${provider.name} ile giriş yap")
                 ))
             case Ready(loginProviders) =>
               Dropdown("top basic button embed-options", span("Giriş yap", Icon.caretDown))(_ =>

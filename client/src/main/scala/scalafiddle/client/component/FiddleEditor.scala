@@ -153,9 +153,13 @@ object FiddleEditor {
         header(
           div(cls := "left")(
             div(cls := "logo")(
-              a(href := "/")(
+              a(cls := "logo-tam", href := "/")(
                 img(src := "/assets/images/scalafiddle-logo.png", alt := "ScalaFiddle")
-              )
+              ),
+              // Dar ekranda (CSS) yalnız kırmızı daire ana sayfaya götürür; logonun geri kalanı
+              // etkisiz. Çalıştır'ın soluna yanlışlıkla dokunmak sayfayı değiştirip
+              // kaydedilmemiş kodu siliyordu. Geniş ekranda gizli, logo-tam çalışır.
+              a(cls := "logo-daire", href := "/", VdomAttr("title") := "Ana sayfa", VdomAttr("aria-label") := "Ana sayfa")()
             ),
             // Düğme yazıları span.etiket içinde: dar ekranda (telefon) CSS onları
             // gizleyip yalnız simgeleri bırakıyor; title ipucu o durumda ad veriyor.
@@ -188,28 +192,49 @@ object FiddleEditor {
             div(cls := "ui basic button", VdomAttr("title") := "Kaydet", onClick --> props.dispatch(SaveFiddle(reconstructSource(state))))(
               Icon.save,
               span(cls := "etiket")("Kaydet")).when(showSave),
-            div(cls := "ui basic button", VdomAttr("title") := "Güncelle", onClick --> props.dispatch(UpdateFiddle(reconstructSource(state))))(
+            div(cls := "ui basic button genis-ekran", VdomAttr("title") := "Güncelle", onClick --> props.dispatch(UpdateFiddle(reconstructSource(state))))(
               Icon.pencilSquare,
               span(cls := "etiket")("Güncelle")).when(showUpdate),
-            div(cls := "ui basic button", VdomAttr("title") := "Çatalla", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
+            div(cls := "ui basic button genis-ekran", VdomAttr("title") := "Çatalla", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
               Icon.codeFork,
               span(cls := "etiket")("Çatalla")).when(fiddleHasId),
+            // Dar ekranda Güncelle ve Çatalla tek "⋯" menüsünde (geniş ekranda gizli):
+            // iki düğme dar şeride sığmıyordu.
+            span(cls := "dar-ekran")(
+              Dropdown("basic button", span(VdomAttr("title") := "Güncelle / Çatalla", Icon.ellipsisH))(closeCB =>
+                div(cls := "ui vertical menu", display.block)(
+                  a(cls := "item", onClick --> (props.dispatch(UpdateFiddle(reconstructSource(state))) >> closeCB()))("Güncelle").when(showUpdate),
+                  a(cls := "item", onClick --> (props.dispatch(ForkFiddle(reconstructSource(state))) >> closeCB()))("Çatalla")
+                ))
+            ).when(fiddleHasId),
             // Çevir (kojojs-dev#183): betiği Koco (Türkçe) <-> Kojo (İngilizce) çevirir.
             // Düğme yönü betikten bulur; yanındaki menü yönü elle seçtirir (Türkçe
             // anahtar sözcüğü olmayan bir Türkçe betik "İngilizce" sanılabilir).
             // Sonuç editöre geri alınabilir yazılır (Ctrl+Z), rapor çıktı panosuna düşer.
             div(
-              cls := "ui basic button",
+              cls := "ui basic button genis-ekran",
               VdomAttr("title") := "Çevir: Türkçe \u2194 İngilizce (Ctrl+Z geri alır)",
               onClick --> cevir(Cevir.Oto),
               Icon.language,
               span(cls := "etiket")("Çevir")
             ),
-            Dropdown("basic button", span(Icon.caretDown))(closeCB =>
-              div(cls := "ui vertical menu", display.block)(
-                a(cls := "item", onClick --> (cevir(Cevir.TrdenEn) >> closeCB()))("İngilizceye çevir (Koco \u2192 Kojo)"),
-                a(cls := "item", onClick --> (cevir(Cevir.EndenTr) >> closeCB()))("Türkçeye çevir (Kojo \u2192 Koco)")
-              ))
+            span(cls := "genis-ekran")(
+              Dropdown("basic button", span(Icon.caretDown))(closeCB =>
+                div(cls := "ui vertical menu", display.block)(
+                  a(cls := "item", onClick --> (cevir(Cevir.TrdenEn) >> closeCB()))("İngilizceye çevir (Koco \u2192 Kojo)"),
+                  a(cls := "item", onClick --> (cevir(Cevir.EndenTr) >> closeCB()))("Türkçeye çevir (Kojo \u2192 Koco)")
+                ))
+            ),
+            // Dar ekranda tek düğme: dokununca üç seçenekli menü açılır ("otomatik" =
+            // geniş ekrandaki Çevir düğmesinin tek tıkı). ▾ düğmesi yer kaplıyordu.
+            span(cls := "dar-ekran")(
+              Dropdown("basic button", span(VdomAttr("title") := "Çevir: Türkçe \u2194 İngilizce (Ctrl+Z geri alır)", Icon.language, span(cls := "etiket")("Çevir")))(closeCB =>
+                div(cls := "ui vertical menu", display.block)(
+                  a(cls := "item", onClick --> (cevir(Cevir.Oto) >> closeCB()))("Otomatik (yönü betikten bul)"),
+                  a(cls := "item", onClick --> (cevir(Cevir.TrdenEn) >> closeCB()))("İngilizceye çevir (Koco \u2192 Kojo)"),
+                  a(cls := "item", onClick --> (cevir(Cevir.EndenTr) >> closeCB()))("Türkçeye çevir (Kojo \u2192 Koco)")
+                ))
+            )
           ),
           div(cls := "right")(
             // Dış docs.kogics.net yerine editörün kendi Türkçe Yardım/Bilgi
