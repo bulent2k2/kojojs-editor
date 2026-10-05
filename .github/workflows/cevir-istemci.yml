@@ -1,0 +1,55 @@
+# "Çevir" düğmesinin istemci mantığı (kojojs-dev#183 Aşama 4).
+#
+# Editörün kendi derlemesi CI'da koşmuyor (sbt 0.13 + Scala.js 0.6 + Play 2.6, bkz.
+# denetimler.yml). Cevir.scala ise yalnız scalajs-dom'a dayanıyor; cevir-istemci/
+# projesi onu güncel Scala.js'te derleyip Node'da sınıyor. FiddleEditor.scala'daki
+# yapıştırma kodu bu işle DERLENMİYOR.
+#
+# İkinci iş: Ace'e yazma yolu seçiminin dayanağı (Ctrl+Z). Ace sürümü
+# yükseltilirse davranışın değişip değişmediği burada kırmızıyla görünür.
+name: çevir istemcisi
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  istemci-sinamasi:
+    name: Cevir.scala derleniyor ve sınanıyor
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - name: cevir-istemci test
+        working-directory: cevir-istemci
+        run: sbt -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8 test
+
+  ace-geri-alma:
+    name: "Ace yazma yolları, Ctrl+Z geçmişi"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: ölçüm
+        run: |
+          mkdir /tmp/ace && cd /tmp/ace
+          npm init -y >/dev/null
+          npm install --silent ace-builds@1.2.4 playwright-core
+          cp "$GITHUB_WORKSPACE/docs/ace-geri-al-olcumu.js" .
+          KOJO_CHROME="$(command -v google-chrome)" node ace-geri-al-olcumu.js

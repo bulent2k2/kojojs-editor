@@ -25,3 +25,7 @@ node_modules
 # vscode specific
 .vscode
 .metals
+
+cevir-istemci/target/
+cevir-istemci/project/target/
+cevir-istemci/project/project/
