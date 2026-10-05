@@ -533,7 +533,7 @@ const YARDIM = {
   "akorÇal":{"tür":"komut","imza":"akorÇal(notalar, süreMiliSaniye, ses = 80)","açıklama":"Notaların HEPSİ aynı anda başlar ve aynı süre çalar; sonraki nota o kadar sonra başlar. Ses düzeyi nota sayısının karekökü kadar bölünür, yani akor tek nota kadar yüksek çalar (çok kalabalık akorda cızırdamasın diye daha da kısılır). Listedeki her nota 0-127 olmalı; biri dışarıdaysa hiçbiri çalmaz.","örnek":"akorÇal(Dizi(48, 52, 55), 1000)","sonuç":"do majör, 1 saniye","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
   "beraberÇal":{"tür":"komut","imza":"beraberÇal(süreliNotalar, ses = 80)","açıklama":"(nota, süre) çiftlerinin hepsi aynı anda başlar, her nota kendi süresince çalar; sonraki nota EN UZUN notanın bitişinde başlar. Melodiyle bası beraber çalmak için. Önce hepsi doğrulanır: biri sınır dışıysa hiçbiri çalmaz; boş liste bir şey yapmaz.","örnek":"beraberÇal(Dizi((67, 500), (43, 1000)))","sonuç":"sol 0,5 sn, bas 1 sn; sonraki nota 1 sn sonra","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
   "kalanNotaSüresi":{"tür":"komut","imza":"kalanNotaSüresi","açıklama":"Sıradaki notaların bitmesine kalan süre (milisaniye); çalan yoksa 0. Nota döngüsünden hemen sonra çağrılırsa melodinin toplam süresidir. buAn - başlangıç bunu vermez: notaÇal beklemediği için o fark yalnız notaları sıraya koyma süresidir.","örnek":"notaÇal(60, 500)\nnotaÇal(64, 500)\nkalanNotaSüresi","sonuç":"1000 (tarayıcı sesi açtıktan sonra birkaç ms daha az olabilir)","not":"Yalnız iKojo'da; masaüstünde karşılığı yok."},
-  "notaÇalarıKapat":{"tür":"komut","imza":"notaÇalarıKapat()","açıklama":"Çalmakta olan ve sıradaki bütün notaları susturur, zaman imlecini sıfırlar: bundan sonraki notaÇal hemen çalar. notaÇalarıDurdur ile aynı. Çalıştır ve Durdur düğmeleri için gerekmez (ikisi de sayfayı yeniden yükleyip sesi keser); betiğin kendi içinden, örneğin bir düğmeyle melodiyi baştan başlatırken ya da yarıda kesmek isterken kullanılır.","örnek":"notaÇal(60, 5000)\nnotaÇalarıKapat()\nnotaÇal(64, 500)","sonuç":"ilk nota susar, mi hemen çalar","not":"Masaüstünde İngilizce adıyla var: stopNotePlayer."}
+  "notaÇalarıKapat":{"tür":"komut","imza":"notaÇalarıKapat()","açıklama":"Çalmakta olan ve sıradaki bütün notaları susturur, zaman imlecini sıfırlar: bundan sonraki notaÇal hemen çalar. notaÇalarıDurdur ile aynı. Çalıştır ve Durdur düğmeleri için gerekmez (ikisi de sayfayı yeniden yükleyip sesi keser); betiğin kendi içinden, örneğin bir düğmeyle melodiyi baştan başlatırken ya da yarıda kesmek isterken kullanılır.","örnek":"notaÇal(60, 5000)\nnotaÇalarıKapat()\nnotaÇal(64, 500)","sonuç":"ilk nota susar, mi hemen çalar","not":"Masaüstünde de var (stopNotePlayer)."}
 };
 
 // [english, turkish, note] — note may be ""
@@ -989,7 +989,7 @@ const CATS = [
 ["playTogether","beraberÇal","beraberÇal(çiftler, ses=80): aynı anda başlar, her biri kendi süresince; yalnız iKojo"],
 ["playRest","notaSus","notaSus(süre): sessiz bekleyiş (es); yalnız iKojo"],
 ["noteTimeLeftMillis","kalanNotaSüresi","çalacak notaların bitmesine kalan süre (ms); yalnız iKojo"],
-["stopNotePlayer","notaÇalarıKapat","notaları susturur, imleci sıfırlar; alt: notaÇalarıDurdur; masaüstünde İngilizcesi var"],
+["stopNotePlayer","notaÇalarıKapat","notaları susturur, imleci sıfırlar; alt: notaÇalarıDurdur; masaüstünde de var (stopNotePlayer)"],
 ["playMp3","müzikMp3üÇal",""],
 ["playMp3Sound","sesMp3üÇal",""],
 ["playMp3Loop","müzikMp3üÇalDöngülü",""],
