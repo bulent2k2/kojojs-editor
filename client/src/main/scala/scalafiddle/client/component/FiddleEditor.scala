@@ -198,8 +198,8 @@ object FiddleEditor {
             div(cls := "ui basic button genis-ekran", VdomAttr("title") := "Çatalla", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
               Icon.codeFork,
               span(cls := "etiket")("Çatalla")).when(fiddleHasId),
-            // Dar ekranda Güncelle ve Çatalla tek "⋯" menüsünde (geniş ekranda gizli):
-            // iki düğme dar şeride sığmıyordu.
+            // Dar ekranda (telefon, dar pencere) Güncelle ve Çatalla tek "⋯" menüsünde (geniş
+            // ekranda gizli): ayrı düğmeler yazılı düzende şeride sığmıyordu.
             span(cls := "dar-ekran")(
               Dropdown("basic button", span(VdomAttr("title") := "Güncelle / Çatalla", Icon.ellipsisH))(closeCB =>
                 div(cls := "ui vertical menu", display.block)(

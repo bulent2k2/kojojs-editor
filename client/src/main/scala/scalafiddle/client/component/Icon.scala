@@ -179,8 +179,8 @@ object Icon {
   def drupal              = apply("drupal")
   def edit                = apply("edit")
   def eject               = apply("eject")
-  def ellipsisH           = apply("ellipsis h")
-  def ellipsisV           = apply("ellipsis v")
+  def ellipsisH           = apply("ellipsis horizontal") // "ellipsis h" Semantic'te h-square (kutulu H) çiziyordu
+  def ellipsisV           = apply("ellipsis vertical")
   def empire              = apply("empire")
   def envelope            = apply("envelope")
   def envelopeO           = apply("envelope o")
