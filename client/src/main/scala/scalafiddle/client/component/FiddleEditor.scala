@@ -193,7 +193,23 @@ object FiddleEditor {
               span(cls := "etiket")("Güncelle")).when(showUpdate),
             div(cls := "ui basic button", VdomAttr("title") := "Çatalla", onClick --> props.dispatch(ForkFiddle(reconstructSource(state))))(
               Icon.codeFork,
-              span(cls := "etiket")("Çatalla")).when(fiddleHasId)
+              span(cls := "etiket")("Çatalla")).when(fiddleHasId),
+            // Çevir (kojojs-dev#183): betiği Koco (Türkçe) <-> Kojo (İngilizce) çevirir.
+            // Düğme yönü betikten bulur; yanındaki menü yönü elle seçtirir (Türkçe
+            // anahtar sözcüğü olmayan bir Türkçe betik "İngilizce" sanılabilir).
+            // Sonuç editöre geri alınabilir yazılır (Ctrl+Z), rapor çıktı panosuna düşer.
+            div(
+              cls := "ui basic button",
+              VdomAttr("title") := "Çevir: Türkçe \u2194 İngilizce (Ctrl+Z geri alır)",
+              onClick --> cevir(Cevir.Oto),
+              Icon.language,
+              span(cls := "etiket")("Çevir")
+            ),
+            Dropdown("basic button", span(Icon.caretDown))(closeCB =>
+              div(cls := "ui vertical menu", display.block)(
+                a(cls := "item", onClick --> (cevir(Cevir.TrdenEn) >> closeCB()))("İngilizceye çevir (Koco \u2192 Kojo)"),
+                a(cls := "item", onClick --> (cevir(Cevir.EndenTr) >> closeCB()))("Türkçeye çevir (Kojo \u2192 Koco)")
+              ))
           ),
           div(cls := "right")(
             // Dış docs.kogics.net yerine editörün kendi Türkçe Yardım/Bilgi
@@ -443,6 +459,35 @@ object FiddleEditor {
         // println(s"Buffering a frame command: $cmd")
         pendingMessages = msg :: pendingMessages
       }
+    }
+
+    // "Çevir" (kojojs-dev#183 Aşama 4). Betiği sunucudaki çevirmene gönderir,
+    // sonucu editöre GERİ ALINABİLİR yazar (Cevir.yaz) ve raporu çıktı panosuna basar.
+    //
+    // İstek sürerken kullanıcı yazmaya devam edebilir: o zaman çeviri uygulanmıyor,
+    // yoksa yeni yazdıkları sessizce silinirdi.
+    def cevir(yon: Option[String]): Callback = Callback {
+      val gonderilen = editor.getSession().getValue().asInstanceOf[String]
+      // clearResult + kısa gecikme: outputDataUpdated'daki kalıpla aynı (DOM güncellensin).
+      def bildir(html: String): Unit = {
+        clearResult()
+        js.timers.setTimeout(50) { sendFrameCmd("print", html) }
+      }
+      def hata(metin: String): Unit = bildir(s"""<pre class="error">${htmlKacir(metin)}</pre>""")
+
+      if (gonderilen.trim.isEmpty) hata("Çevrilecek betik yok.")
+      else
+        Cevir.cevir(ScalaFiddleConfig.compilerURL, gonderilen, yon).foreach {
+          case Left(ileti) => hata(ileti)
+          case Right(sonuc) =>
+            if (editor.getSession().getValue().asInstanceOf[String] != gonderilen)
+              hata("Betik çeviri sürerken değişti, çeviri uygulanmadı. Yine deneyin.")
+            else {
+              val degisti = sonuc.kod != gonderilen
+              if (degisti) Cevir.yaz(editor, sonuc.kod)
+              bildir(s"<pre>${htmlKacir(Cevir.rapor(sonuc, degisti))}</pre>")
+            }
+        }
     }
 
     def complete(): Unit = {
