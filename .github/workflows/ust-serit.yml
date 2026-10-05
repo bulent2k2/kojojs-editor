@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   serit-olcumu:
-    name: "şerit telefonda sığıyor mu (420, 873, 412, 390, 960 px)"
+    name: "şerit tek satır sığıyor mu (390-1400 px, üç kademe)"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

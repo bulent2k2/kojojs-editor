@@ -2,9 +2,15 @@
 @import "lib/font-awesome/less/font-awesome.less";
 
 @mobile: ~"(max-width: 1280px)";
-// Dar ekran: üst şeritte yalnız simgeler. 960px: yan yatmış telefon (Pixel, ~870px) da
-// bu düzene girsin; yazılı düğmeler ~950px'ten önce sığmıyordu (ölçüm: docs/ust-serit-olcumu.js).
-@dar: ~"(max-width: 960px)";
+// Üst şerit üç kademeli (ölçüm: docs/ust-serit-olcumu.js; KOJO_TARAMA=1 ile genişlik taraması).
+// Eşikler ölçülen en kötü durumun ~30px üstünde (düğme yazısı tek satır kalmalı):
+//   geniş  (> @dar):  yazılı düğmeler, Güncelle/Çatalla ayrı, ▾'lı Çevir, avatar adı + "Çıkış yap"
+//                     (en kötü durumda ≥1190px ister)
+//   orta   (@dar ve > @kisa): düğme yazıları görünür; avatar ve giriş yalnız simge; tek menülü
+//                     Çevir; Güncelle/Çatalla tek "⋯" menüsünde (≥810px ister)
+//   kısa   (@kisa):   yalnız simgeler (telefon dikey; ≥380px'te sığar)
+@kisa: ~"(max-width: 840px)";
+@dar:  ~"(max-width: 1220px)";
 
 html,
 body,
@@ -270,33 +276,35 @@ img.author {
 .full-screen > header .logo-daire {
   display: none;
 }
+.gorsel-gizli() {
+  /* Yazı yalnız görsel olarak gizlenir (sr-only kalıbı): ekran okuyucu "Çalıştır",
+     "Kaydet" vb. adı okumaya devam eder; `title` fare ipucudur, erişilebilirlik
+     etiketinin yerini tutmaz. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* @dar (orta + kısa): avatar ve giriş yalnız simge, tek menülü Çevir, "⋯" menüsü, kırmızı daire logo. */
 @media @dar {
   .full-screen > header {
     .cikis {
       display: none;
     }
-    /* Düğme yazısı yalnız görsel olarak gizlenir (sr-only kalıbı): ekran
-       okuyucu "Çalıştır", "Kaydet" vb. adı okumaya devam eder; `title` fare
-       ipucudur, erişilebilirlik etiketinin yerini tutmaz. */
-    .etiket {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-    .ui.button {
-      padding-left: .8em;
-      padding-right: .8em;
+    .username .etiket,
+    .ui.button.login .etiket {
+      .gorsel-gizli();
     }
     /* Çalıştır'ın soluna yanlışlıkla dokunmak ana sayfaya götürüyor ve
-       kaydedilmemiş kodu siliyordu: dar ekranda yalnız kırmızı daire (logo
-       görüntüsünün x 19-57, y 2-41 / 112x44 pikseli) bağlantı, geri kalanı
-       (i, "ojo" yazısı) etkisiz. */
+       kaydedilmemiş kodu siliyordu: yalnız kırmızı daire (logo görüntüsünün
+       x 19-57, y 2-41 / 112x44 pikseli) bağlantı, geri kalanı (i, "ojo"
+       yazısı) etkisiz. */
     .logo > .logo-tam {
       pointer-events: none;
     }
@@ -312,8 +320,8 @@ img.author {
     .ui.button.login > img {
       padding-right: 0;
     }
-    /* Güncelle/Çatalla ve Çevir'in iki ayrı düğmesi dar ekranda tek düğme
-       (menülü): yalnız-geniş ögeler gizlenir, yalnız-dar ögeler görünür. */
+    /* Çevir'in iki ayrı düğmesi (düğme + ▾) tek menülü düğme olur: yalnız-geniş
+       ögeler gizlenir, yalnız-dar ögeler görünür. */
     .genis-ekran {
       display: none !important;
     }
@@ -321,26 +329,45 @@ img.author {
       display: inline-block;
     }
     /* Açılan menüler dar ekranda ekranı aşmasın: üst şeridin altında tam genişlik. */
+    /* !important gerekli: avatar menüsü "top right pointing" sınıflı ve Semantic'in
+       `.ui.top.right.pointing.dropdown > .menu { top: 100% ... }` kuralı daha özgül.
+       !important olmadan fixed + top:100% menüyü ekranın ALTINA atıyor (avatara
+       dokununca "Betiklerim" görünmüyordu). */
     .ui.dropdown > .menu {
-      position: fixed;
-      top: 58px;
-      left: 4px;
-      right: 4px;
-      width: auto;
-      min-width: 0;
+      position: fixed !important;
+      top: 58px !important;
+      bottom: auto !important;
+      left: 4px !important;
+      right: 4px !important;
+      width: auto !important;
+      min-width: 0 !important;
+      margin: 0 !important;
     }
     .ui.pointing.dropdown > .menu:before,
     .ui.pointing.dropdown > .menu:after {
       display: none;
-    }
-    .ui.button:not(.icon) > .icon:not(.button) {
-      margin: 0;
     }
     .ui.vertical.menu .item.yalniz-dar {
       display: block;
     }
     img.author {
       margin-right: 0;
+    }
+  }
+}
+
+/* @kisa: tüm düğme yazıları gizli, düğmeler daha dar. */
+@media @kisa {
+  .full-screen > header {
+    .etiket {
+      .gorsel-gizli();
+    }
+    .ui.button {
+      padding-left: .8em;
+      padding-right: .8em;
+    }
+    .ui.button:not(.icon) > .icon:not(.button) {
+      margin: 0;
     }
   }
 }
