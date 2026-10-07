@@ -56,6 +56,7 @@
           var cfg = {};
           cfg.compilerURL = "@config.get[String]("scalafiddle.compilerURL")";
           cfg.helpURL = "@config.get[String]("scalafiddle.helpURL")";
+          cfg.motorURL = "@routes.Assets.versioned("javascript/motor-cm.js")"; @* ?motor=cm ile yüklenir (kojojs-editor#75) *@
           cfg.scalaVersions = @Html(config.get[Seq[String]]("scalafiddle.scalaVersions").mkString("[\"","\",\"","\"]"));
           window.ScalaFiddleConfig = cfg;
           window.ScalaFiddleData = @Html(fiddleData);

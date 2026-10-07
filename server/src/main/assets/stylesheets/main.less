@@ -191,6 +191,13 @@ body {
               display: none;
             }
           }
+
+          // CodeMirror motoru (?motor=cm, kojojs-editor#75): oluğu Ace'inki gibi dar ekranda gizli
+          .cm-gutters {
+            @media @mobile {
+              display: none;
+            }
+          }
         }
       }
 

@@ -14,7 +14,7 @@
 // Ölçülen sonuç (2026-10, Ace 1.2.4, Chromium 141):
 //   A session.setValue                geri alma geçmişi SİLİNİYOR: Ctrl+Z hiçbir şey yapmıyor
 //   B editor.setValue(t, -1)          tek Ctrl+Z çeviri öncesi metne döner; ikincisi öncekine
-//   C session.getDocument().setValue  aynısı  <- Cevir.yaz bunu kullanıyor
+//   C session.getDocument().setValue  aynısı  <- AceMotor.yazGeriAlinabilir bunu kullanıyor
 //   D session.replace(tam aralık)     aynısı
 const { chromium } = require('playwright-core');
 
