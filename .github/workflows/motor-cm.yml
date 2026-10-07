@@ -1,0 +1,39 @@
+# CodeMirror 6 motoru (motor-cm/, kojojs-editor#75): üretilmiş paket taze mi, Türkçe anahtar
+# sözcük listesi Ace'inkiyle aynı mı, cephe sözleşmesi başsız Chrome'da tutuyor mu.
+#
+# Editörün kendi derlemesi CI'da koşmuyor (sbt 0.13, bkz. denetimler.yml); bu iş yalnız npm +
+# esbuild + Playwright. server/src/main/assets/javascript/motor-cm.js COMMIT'Lİ bir üretilmiş
+# dosya: burada yeniden üretilip bayt bayt karşılaştırılır (uretecler.yml'deki "üretilenler
+# ağaçtakiyle aynı mı" ile aynı ilke). Elle düzenlenen ya da yeniden üretilmeden commit'lenen
+# bir paket burada kırmızı yanar.
+name: motor-cm
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  motor-cm:
+    name: "CodeMirror motoru: paket taze, liste aynı, sözleşme tutuyor"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: motor-cm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: motor-cm/package-lock.json
+      - name: bağımlılıklar (kilit dosyasından)
+        run: npm ci --no-audit --no-fund
+      - name: üretilmiş paket ve anahtar sözcük listesi
+        run: npm run denetle
+      - name: cephe sözleşmesi (başsız Chrome)
+        run: KOJO_CHROME="$(command -v google-chrome)" npm run sina
