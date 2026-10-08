@@ -13,7 +13,8 @@ import scalafiddle.client.{JsVal, ScalaFiddleConfig}
  *
  * İki uygulama: `AceMotor` (bugünkü kod, davranışı değişmeden buraya taşındı) ve `CmMotor`
  * (CodeMirror 6; `window.KocoMotor` cephesine ince çağrılar, motor-cm/cephe.js). Seçim
- * adresle: `?motor=cm`. Öntanımlı Ace; 3. dilimde çevrilecek.
+ * adresle, bir kez: `?motor=cm` tarayıcıda (localStorage) kalır, `?motor=ace` geri alır
+ * (`bayrağıOku`). Öntanımlı Ace; 3. dilimde çevrilecek.
  *
  * Satır ve sütun 0 tabanlı, Ace gibi. `setValue` geri alma geçmişini sıfırlar (Ace'in
  * `session.setValue`su gibi: şablon açma/kapama, betik yükleme); `yazGeriAlinabilir` tek
@@ -44,28 +45,54 @@ object Motor {
   val Cm  = "cm"
 
   private val motorParam = """[?&]motor=(cm|ace)(?:&|$)""".r
+  private val Anahtar    = "koco.motor"
+  private var seçim: Option[String] = None
 
-  /** Adresten: `?motor=cm` CodeMirror, yoksa Ace. */
-  def seçili: String =
-    motorParam.findFirstMatchIn(dom.window.location.search).map(_.group(1)).getOrElse(Ace)
+  /**
+   * Bayrağı adresten okur ve tarayıcıda saklar; AppMain.main'in İLK işi olmalı. Yönlendirici
+   * (AppRouter) `?motor=cm`i tanımadığından adresi `/`a çeviriyor (notFound -> Redirect.Replace);
+   * FiddleEditor mount olduğunda sorgu çoktan silinmiş oluyor. İlk sürüm `seçili`de
+   * `location.search`e baktığı için hep Ace açıyordu -- sahibi ölçtü ("?motor=cm sayfa yüklenince
+   * siliniyor"). Saklama localStorage'da: bayrak bir kez verilir, kaydet / yeniden yükle /
+   * `/sf/...`ya geçişte kalır; `?motor=ace` geri alır. #75'in bir haftalık kullanım kapısı
+   * ancak böyle ölçülebilir. localStorage kapalıysa (gizli pencere vb.) yalnız o yükleme için geçerli.
+   */
+  def bayrağıOku(): Unit = {
+    val adresten = motorParam.findFirstMatchIn(dom.window.location.search).map(_.group(1))
+    adresten.foreach(m => try dom.window.localStorage.setItem(Anahtar, m) catch { case _: Throwable => () })
+    val saklı = try Option(dom.window.localStorage.getItem(Anahtar)) catch { case _: Throwable => None }
+    seçim = adresten.orElse(saklı).filter(m => m == Cm || m == Ace)
+  }
+
+  /** Seçili motor: `bayrağıOku` ne bulduysa; bulamadıysa (ya da hiç çağrılmadıysa) Ace. */
+  def seçili: String = seçim.getOrElse(Ace)
 
   /**
    * Motoru kurar ve hazır olunca `hazır`ı çağırır. Ace: eşzamanlı. CodeMirror: paket
    * (motor-cm.js, 123 KB gzip) yalnız bayrakla ve ancak o zaman yüklenir; Ace kullanıcısına
    * binmez. Yüklenemezse Ace ile sürülür ve konsola yazılır: sayfa boş kalmasın.
    */
-  def kur(el: dom.raw.HTMLElement)(hazır: Motor => Unit): Unit = seçili match {
-    case Cm =>
-      val s = dom.document.createElement("script").asInstanceOf[dom.raw.HTMLScriptElement]
-      s.src = ScalaFiddleConfig.motorURL
-      s.onload = (_: dom.Event) => hazır(new CmMotor(global.KocoMotor.ac(el)))
-      // scala-js-dom 0.9'un HTMLScriptElement'inde onerror yok; addEventListener ile.
-      s.addEventListener("error", (_: dom.Event) => {
-        dom.console.warn("motor-cm.js yüklenemedi (" + ScalaFiddleConfig.motorURL + "); Ace ile sürülüyor")
-        hazır(new AceMotor(el))
-      })
-      dom.document.head.appendChild(s)
-    case _ => hazır(new AceMotor(el))
+  def kur(el: dom.raw.HTMLElement)(hazır: Motor => Unit): Unit = {
+    // Hangi motorun kurulduğu dışarıdan okunabilsin: sınamada
+    // document.getElementById("editor").dataset.motor ("cm" | "ace") ve konsolda bir satır.
+    def bitti(m: Motor, ad: String): Unit = {
+      el.setAttribute("data-motor", ad)
+      dom.console.info("Koco motor: " + ad)
+      hazır(m)
+    }
+    seçili match {
+      case Cm =>
+        val s = dom.document.createElement("script").asInstanceOf[dom.raw.HTMLScriptElement]
+        s.src = ScalaFiddleConfig.motorURL
+        s.onload = (_: dom.Event) => bitti(new CmMotor(global.KocoMotor.ac(el)), Cm)
+        // scala-js-dom 0.9'un HTMLScriptElement'inde onerror yok; addEventListener ile.
+        s.addEventListener("error", (_: dom.Event) => {
+          dom.console.warn("motor-cm.js yüklenemedi (" + ScalaFiddleConfig.motorURL + "); Ace ile sürülüyor")
+          bitti(new AceMotor(el), Ace)
+        })
+        dom.document.head.appendChild(s)
+      case _ => bitti(new AceMotor(el), Ace)
+    }
   }
 }
 
