@@ -88,6 +88,12 @@ export function ac(el) {
     });
   };
 
+  // defaultKeymap'in "Mod-Enter" (Windows/Linux'ta Ctrl-Enter, macOS'ta Cmd-Enter) girdisi
+  // insertBlankLine'a bağlı. FiddleEditor.scala aynı tuşu GLOBAL olarak (Mousetrap.bindGlobal)
+  // zaten Derle'ye bağlıyor; süzülmeden ikisi de tetikleniyordu -- bir Windows/Linux sınayıcı
+  // ölçtü: Ctrl+Enter hem betiği çalıştırıyor hem de boş satır ekliyordu. Mod-Enter'ın ne
+  // yapacağına kapsayan (host) karar verir; motor karışmaz.
+  const temelTuşlar = defaultKeymap.filter((b) => b.key !== "Mod-Enter");
   const uzantılar = [
     lineNumbers(), lintGutter(), history(), drawSelection(), highlightActiveLine(),
     indentUnit.of("  "), indentOnInput(), bracketMatching(), closeBrackets(), EditorView.lineWrapping,
@@ -95,7 +101,7 @@ export function ac(el) {
     autocompletion({override: [kaynak], activateOnTyping: true}),
     EditorView.updateListener.of((u) => { if (u.docChanged && girdiCb) girdiCb(); }),
     tema,
-    keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, ...completionKeymap, indentWithTab])
+    keymap.of([...closeBracketsKeymap, ...temelTuşlar, ...historyKeymap, ...completionKeymap, indentWithTab])
   ];
   const view = new EditorView({parent: el, state: EditorState.create({doc: "", extensions: uzantılar})});
 
