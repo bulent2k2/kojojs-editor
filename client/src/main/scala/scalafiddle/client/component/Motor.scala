@@ -54,15 +54,16 @@ object Motor {
    * (motor-cm.js, 123 KB gzip) yalnız bayrakla ve ancak o zaman yüklenir; Ace kullanıcısına
    * binmez. Yüklenemezse Ace ile sürülür ve konsola yazılır: sayfa boş kalmasın.
    */
-  def kur(el: dom.raw.HTMLElement, hazır: Motor => Unit): Unit = seçili match {
+  def kur(el: dom.raw.HTMLElement)(hazır: Motor => Unit): Unit = seçili match {
     case Cm =>
       val s = dom.document.createElement("script").asInstanceOf[dom.raw.HTMLScriptElement]
       s.src = ScalaFiddleConfig.motorURL
       s.onload = (_: dom.Event) => hazır(new CmMotor(global.KocoMotor.ac(el)))
-      s.onerror = (_: dom.Event) => {
+      // scala-js-dom 0.9'un HTMLScriptElement'inde onerror yok; addEventListener ile.
+      s.addEventListener("error", (_: dom.Event) => {
         dom.console.warn("motor-cm.js yüklenemedi (" + ScalaFiddleConfig.motorURL + "); Ace ile sürülüyor")
         hazır(new AceMotor(el))
-      }
+      })
       dom.document.head.appendChild(s)
     case _ => hazır(new AceMotor(el))
   }
@@ -226,8 +227,6 @@ class AceMotor(el: dom.raw.HTMLElement) extends Motor {
 
 /** CodeMirror 6: `window.KocoMotor.ac(el)`'in döndürdüğü cephe (motor-cm/cephe.js). Her ad oradakiyle aynı. */
 class CmMotor(m: Dyn) extends Motor {
-  import JsVal.jsVal2jsAny
-
   def getValue: String                          = m.getValue().asInstanceOf[String]
   def setValue(metin: String): Unit             = m.setValue(metin)
   def yazGeriAlinabilir(metin: String): Unit    = m.yazGeriAlinabilir(metin)
