@@ -169,20 +169,4 @@ object Cevir {
         case e: dom.ext.AjaxException => yanit(e.xhr.status, e.xhr.responseText)
         case _                        => Left(hataMetni(0, ""))
       }
-
-  /**
-   * Çeviriyi editöre yazar, GERİ ALINABİLİR biçimde.
-   *
-   * `session.setValue` Ace'in geri alma geçmişini SİLİYOR; Ctrl+Z hiçbir şey
-   * yapmıyordu. `session.getDocument().setValue` ise silme + ekleme olarak
-   * belgeye yazıyor ve geçmişe giriyor: tek Ctrl+Z çeviri öncesi metne döner,
-   * ikincisi önceki kullanıcı düzenlemesine gider. Ace 1.2.4'te başsız
-   * Chromium'da ölçüldü (docs/ace-geri-al-olcumu.js): session.setValue geçmişi
-   * siliyor; doc.setValue, editor.setValue(t, -1) ve session.replace korunuyor.
-   */
-  def yaz(editor: js.Dynamic, kod: String): Unit = {
-    editor.getSession().getDocument().setValue(kod)
-    editor.clearSelection()
-    editor.moveCursorTo(0, 0)
-  }
 }

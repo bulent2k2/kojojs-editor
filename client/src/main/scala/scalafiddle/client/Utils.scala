@@ -72,6 +72,7 @@ class Gunzip(data: js.Array[Byte]) extends js.Object {
 object ScalaFiddleConfig extends js.Object {
   val compilerURL: String             = js.native
   val helpURL: String                 = js.native
+  val motorURL: String                = js.native // CodeMirror motoru paketi (kojojs-editor#75)
   val scalaVersions: js.Array[String] = js.native
 }
 

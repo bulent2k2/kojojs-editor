@@ -11,8 +11,6 @@ import org.scalajs.dom.raw.{Event, HTMLIFrameElement, MessageEvent}
 import scala.concurrent.ExecutionContext.Implicits.{global => ecGlobal}
 import scala.concurrent.{Future, Promise}
 import scala.scalajs.js
-import scala.scalajs.js.Dynamic._
-import scala.scalajs.js.{Dynamic => Dyn}
 import scala.util.{Random, Success}
 import scalafiddle.client._
 import scalafiddle.shared._
@@ -93,7 +91,7 @@ object FiddleEditor {
   case class Backend($ : BackendScope[Props, State]) {
     var unsubscribe: () => Unit          = () => ()
     var unsubscribeLoginData: () => Unit = () => ()
-    var editor: Dyn                      = _
+    var editor: Motor                    = _
     def resultFrame                      = dom.document.getElementById("resultframe").asInstanceOf[HTMLIFrameElement]
     @volatile var frameReady: Boolean    = false
     var pendingMessages: List[js.Object] = Nil
@@ -487,12 +485,12 @@ object FiddleEditor {
     }
 
     // "Çevir" (kojojs-dev#183 Aşama 4). Betiği sunucudaki çevirmene gönderir,
-    // sonucu editöre GERİ ALINABİLİR yazar (Cevir.yaz) ve raporu çıktı panosuna basar.
+    // sonucu editöre GERİ ALINABİLİR yazar (Motor.yazGeriAlinabilir) ve raporu çıktı panosuna basar.
     //
     // İstek sürerken kullanıcı yazmaya devam edebilir: o zaman çeviri uygulanmıyor,
     // yoksa yeni yazdıkları sessizce silinirdi.
     def cevir(yon: Option[String]): Callback = Callback {
-      val gonderilen = editor.getSession().getValue().asInstanceOf[String]
+      val gonderilen = editor.getValue
       // clearResult + kısa gecikme: outputDataUpdated'daki kalıpla aynı (DOM güncellensin).
       def bildir(html: String): Unit = {
         clearResult()
@@ -505,20 +503,14 @@ object FiddleEditor {
         Cevir.cevir(ScalaFiddleConfig.compilerURL, gonderilen, yon).foreach {
           case Left(ileti) => hata(ileti)
           case Right(sonuc) =>
-            if (editor.getSession().getValue().asInstanceOf[String] != gonderilen)
+            if (editor.getValue != gonderilen)
               hata("Betik çeviri sürerken değişti, çeviri uygulanmadı. Yine deneyin.")
             else {
               val degisti = sonuc.kod != gonderilen
-              if (degisti) Cevir.yaz(editor, sonuc.kod)
+              if (degisti) editor.yazGeriAlinabilir(sonuc.kod)
               bildir(s"<pre>${htmlKacir(Cevir.rapor(sonuc, degisti))}</pre>")
             }
         }
-    }
-
-    def complete(): Unit = {
-      editor.completer.showPopup(editor)
-      // needed for firefox on mac
-      editor.completer.cancelContextMenu()
     }
 
     def beginCompilation(): Future[Unit] = {
@@ -538,7 +530,7 @@ object FiddleEditor {
     }
 
     def reconstructSource(state: State): String = {
-      val editorContent = editor.getSession().getValue().asInstanceOf[String]
+      val editorContent = editor.getValue
       val source = if (state.showTemplate) {
         editorContent
       } else {
@@ -618,207 +610,124 @@ object FiddleEditor {
     }
 
     def mounted(props: Props): Callback = {
-      import JsVal.jsVal2jsAny
-
       Callback {
-        // create the Ace editor and configure it
-        val Autocomplete = global.require("ace/autocomplete").Autocomplete
-        val completer    = Dyn.newInstance(Autocomplete)()
-        editor = global.ace.edit(editorRef)
+        // Motoru kur (Ace ya da ?motor=cm ile CodeMirror, kojojs-editor#75). CodeMirror paketi
+        // asenkron yüklendiği için motora dokunan her şey `hazır` içinde; Ace'te çağrı eşzamanlı,
+        // sıra eskisiyle aynı.
+        Motor.kur(editorRef) { motor =>
+          editor = motor
 
-        editor.setTheme("ace/theme/eclipse")
-        editor.getSession().setMode("ace/mode/scala")
-        editor.getSession().setTabSize(2)
-        editor.setShowPrintMargin(false)
-        editor.getSession().setOption("useWorker", false)
-        editor.updateDynamic("completer")(completer) // because of SI-7420
-        editor.updateDynamic("$blockScrolling")(Double.PositiveInfinity)
-        editor.setFontSize("16px") // default is 14
-
-        val globalBindings = Seq(
-          EditorBinding("Compile",
-                        "enter",
-                        () =>
-                          beginCompilation().foreach(_ => {
-                            buildFullSource
-                              .flatMap { source =>
-                                props.dispatch(compile(source, FastOpt))
-                              }
-                              .runNow()
-                          })),
-          EditorBinding("FullOptimize",
-                        "shift+enter",
-                        () =>
-                          beginCompilation().foreach(_ => {
-                            buildFullSource
-                              .flatMap { source =>
-                                props.dispatch(compile(source, FullOpt))
-                              }
-                              .runNow()
-                          })),
-          EditorBinding("Show JavaScript", "j", () => $.state.map(state => showJSCode(state)).runNow()),
-          EditorBinding(
-            "Save",
-            "s",
-            () =>
-              $.state
-                .flatMap { state =>
-                  // select between save/update/fork
-                  val action =
-                    if (props.fiddleId.isEmpty)
-                      SaveFiddle(reconstructSource(state))
-                    else if (props
-                               .data()
-                               .author
-                               .isEmpty || props.loginData().userInfo.exists(_.id == props.data().author.get.id))
-                      UpdateFiddle(reconstructSource(state))
-                    else
-                      ForkFiddle(reconstructSource(state))
-                  props.dispatch(action)
-                }
-                .runNow()
-          )
-        )
-        for (EditorBinding(name, key, func) <- globalBindings) {
-          val binding = js.Array(s"ctrl+$key", s"command+$key")
-          Mousetrap.bindGlobal(binding, (e: dom.KeyboardEvent) => { func(); false })
-        }
-
-        val editorBindings = Seq(
-          EditorBinding("Complete", "Space", () => complete())
-        )
-        for (EditorBinding(name, key, func) <- editorBindings) {
-          val binding = s"Ctrl-$key|Cmd-$key"
-          editor.commands.addCommand(
-            JsVal.obj(
-              "name" -> name,
-              "bindKey" -> JsVal.obj(
-                "win"    -> binding,
-                "mac"    -> binding,
-                "sender" -> "editor|cli"
-              ),
-              "exec" -> func
-            ))
-        }
-
-        // register auto complete
-        editor.completers = js.Array(
-          JsVal
-          .obj(
-            "getCompletions" -> { (editor: Dyn, session: Dyn, pos: Dyn, prefix: Dyn, callback: Dyn) =>
-              {
-                def applyResults(results: Seq[(String, String)]): Unit = {
-                  def params(signature: String): String = {
-                    val parts = signature.split(Array('(', ')'))
-                    if (parts.length > 2 && parts(0).length == 0) {
-                      val paramStr = parts(1)
-                      val params = paramStr.split(',')
-                      val pnames = params.map { p =>
-                        p.split(':')(0)
-                      }
-                      pnames.mkString("(", ", ", ")")
-                    }
-                    else {
-                      ""
-                    }
-                  }
-
-                  val aceVersion = results.map {
-                    case (name, value) =>
-                      val completionParams = params(name)
-                      JsVal
-                        .obj(
-                          "value" -> (value + completionParams),
-                          "caption" -> (value + name),
-                          "completer" -> JsVal.obj(
-                            "insertMatch" -> { (editor: Dyn, data: Dyn) =>
-                              val text = data.value.asInstanceOf[String]
-                              editor.removeWordLeft()
-                              val completionStartPos = editor.getCursorPosition()
-                              editor.session.insert(completionStartPos, text)
-                              val completionStartCol = completionStartPos.column.asInstanceOf[Int]
-                              val bracketOpenIndex = text.indexOf('(')
-                              val bracketCloseIndex = text.indexOf(')')
-                              val delta = if (bracketOpenIndex != -1) {
-                                if (bracketCloseIndex == bracketOpenIndex + 1) bracketOpenIndex + 2 else bracketOpenIndex + 1
-                              }
-                              else {
-                                text.length
-                              }
-                              editor.moveCursorTo(completionStartPos.row, completionStartCol + delta)
-                              val paramsStrLen = completionParams.length
-                              if (paramsStrLen != 0 && paramsStrLen != 2) {
-                                // avoid no params and empty brackets
-                                editor.getSelection().selectWordRight()
-                              }
-                            }
-                          ).value
-                        )
-                        .value
-                  }
-                  callback(null, js.Array(aceVersion: _*))
-                }
-                val (row, col) = coordinatesFrom(pos.row.asInstanceOf[Int], pos.column.asInstanceOf[Int])
-                // build full source
-                buildFullSource
-                  .flatMap { source =>
-                    // dispatch an action to fetch completion results
-                    props.dispatch(AutoCompleteFiddle(source, row, col, applyResults))
+          val globalBindings = Seq(
+            EditorBinding("Compile",
+                          "enter",
+                          () =>
+                            beginCompilation().foreach(_ => {
+                              buildFullSource
+                                .flatMap { source =>
+                                  props.dispatch(compile(source, FastOpt))
+                                }
+                                .runNow()
+                            })),
+            EditorBinding("FullOptimize",
+                          "shift+enter",
+                          () =>
+                            beginCompilation().foreach(_ => {
+                              buildFullSource
+                                .flatMap { source =>
+                                  props.dispatch(compile(source, FullOpt))
+                                }
+                                .runNow()
+                            })),
+            EditorBinding("Show JavaScript", "j", () => $.state.map(state => showJSCode(state)).runNow()),
+            EditorBinding(
+              "Save",
+              "s",
+              () =>
+                $.state
+                  .flatMap { state =>
+                    // select between save/update/fork
+                    val action =
+                      if (props.fiddleId.isEmpty)
+                        SaveFiddle(reconstructSource(state))
+                      else if (props
+                                 .data()
+                                 .author
+                                 .isEmpty || props.loginData().userInfo.exists(_.id == props.data().author.get.id))
+                        UpdateFiddle(reconstructSource(state))
+                      else
+                        ForkFiddle(reconstructSource(state))
+                    props.dispatch(action)
                   }
                   .runNow()
+            )
+          )
+          for (EditorBinding(name, key, func) <- globalBindings) {
+            val binding = js.Array(s"ctrl+$key", s"command+$key")
+            Mousetrap.bindGlobal(binding, (e: dom.KeyboardEvent) => { func(); false })
+          }
+
+          // Tamamlama adayları sunucudan; motor önek süzmesini ve eklemeyi kendi yapar
+          // (Ace: insertMatch, CodeMirror: cephe). Satır/sütun şablonsuz görünümden tam kaynağa.
+          editor.setCompleter { (row, col, _prefix, geriÇağır) =>
+            val (tamRow, tamCol) = coordinatesFrom(row, col)
+            buildFullSource
+              .flatMap { source =>
+                props.dispatch(AutoCompleteFiddle(source, tamRow, tamCol, geriÇağır))
+              }
+              .runNow()
+          }
+
+          // listen for changes in source code
+          editor.onInput { () =>
+            $.state
+              .flatMap { state =>
+                props.dispatch(UpdateSource(reconstructSource(state)))
+              }
+              .runNow()
+          }
+          // focus to the editor
+          editor.focus()
+
+          // listen to messages from the iframe -- yalnız sonuç çerçevesinden
+          // (#45): sayfaya başka bir pencerenin yolladığı ileti yok sayılıyor.
+          dom.window.addEventListener("message", (e: MessageEvent) => {
+            val frame = resultFrame
+            if (frame != null && (e.source.asInstanceOf[js.Any] eq frame.contentWindow.asInstanceOf[js.Any])) {
+              e.data match {
+                case "evalCompleted" =>
+                  $.modState(s => s.copy(status = CompilerStatus.Result)).runNow()
+                case "klavyeOdagi" =>
+                  // Tuş dinleyen program odak istiyor (kojojs-dev#168): odak
+                  // "Çalıştır"dan sonra kod düzenleyicide kalıyordu ve tuşlar,
+                  // tuvale bir kez tıklanana dek programa ulaşmıyordu. Opak
+                  // kökenli çerçevenin kendi odak alması tarayıcıya bağlı
+                  // (Chromium'da alabiliyor); üst pencerenin verdiği odak
+                  // kısıtlanmıyor (ölçüldü: iki çağrıdan biri de yetiyor). Tuş
+                  // kullanmayan program bu iletiyi yollamıyor, düzenleyicide
+                  // yazmaya devam edilebiliyor.
+                  if (!klavyeOdağıVerildi) {
+                    klavyeOdağıVerildi = true
+                    frame.focus()
+                    frame.contentWindow.focus()
+                  }
+                case _ =>
               }
             }
-          )
-          .value
-        )
+          })
 
-        // listen for changes in source code
-        editor.on("input",
-                  () =>
-                    $.state
-                      .flatMap { state =>
-                        props.dispatch(UpdateSource(reconstructSource(state)))
-                      }
-                      .runNow())
-        // focus to the editor
-        editor.focus()
+          // subscribe to changes in compiler data
+          unsubscribe = AppCircuit.subscribe(props.outputData)(outputDataUpdated)
+          unsubscribeLoginData = AppCircuit.subscribe(props.loginData)(_ => $.forceUpdate.runNow())
 
-        // listen to messages from the iframe -- yalnız sonuç çerçevesinden
-        // (#45): sayfaya başka bir pencerenin yolladığı ileti yok sayılıyor.
-        dom.window.addEventListener("message", (e: MessageEvent) => {
-          val frame = resultFrame
-          if (frame != null && (e.source.asInstanceOf[js.Any] eq frame.contentWindow.asInstanceOf[js.Any])) {
-            e.data match {
-              case "evalCompleted" =>
-                $.modState(s => s.copy(status = CompilerStatus.Result)).runNow()
-              case "klavyeOdagi" =>
-                // Tuş dinleyen program odak istiyor (kojojs-dev#168): odak
-                // "Çalıştır"dan sonra kod düzenleyicide kalıyordu ve tuşlar,
-                // tuvale bir kez tıklanana dek programa ulaşmıyordu. Opak
-                // kökenli çerçevenin kendi odak alması tarayıcıya bağlı
-                // (Chromium'da alabiliyor); üst pencerenin verdiği odak
-                // kısıtlanmıyor (ölçüldü: iki çağrıdan biri de yetiyor). Tuş
-                // kullanmayan program bu iletiyi yollamıyor, düzenleyicide
-                // yazmaya devam edilebiliyor.
-                if (!klavyeOdağıVerildi) {
-                  klavyeOdağıVerildi = true
-                  frame.focus()
-                  frame.contentWindow.focus()
-                }
-              case _ =>
-            }
-          }
-        })
-
-        // subscribe to changes in compiler data
-        unsubscribe = AppCircuit.subscribe(props.outputData)(outputDataUpdated)
-        unsubscribeLoginData = AppCircuit.subscribe(props.loginData)(_ => $.forceUpdate.runNow())
-      } >>
-        props.dispatch(UpdateLoginInfo) >>
-        updateFiddle(props.data()) >>
-        Callback.when(props.fiddleId.isDefined)(
-          props.dispatch(
-            compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))
+          // updateFiddle motora yazıyor: motor hazır olmadan çağrılamaz, bu yüzden mounted'ın
+          // `>>` zincirinde değil burada.
+          (props.dispatch(UpdateLoginInfo) >>
+            updateFiddle(props.data()) >>
+            Callback.when(props.fiddleId.isDefined)(
+              props.dispatch(
+                compile(addDeps(props.data().sourceCode, props.data().libraries, props.data().scalaVersion), FastOpt)))).runNow()
+        } // Motor.kur
+      }
     }
 
     val fiddleStart = """\s*// \$FiddleStart\s*$""".r
@@ -847,12 +756,12 @@ object FiddleEditor {
       val (pre, main, post) = extractCode(fiddle.sourceCode)
       $.state.flatMap { state =>
         if (state.showTemplate) {
-          editor.getSession().setValue((pre ++ main ++ post).mkString("\n"))
+          editor.setValue((pre ++ main ++ post).mkString("\n"))
           $.setState(state.copy(preCode = pre, mainCode = main, postCode = post, indent = 0))
         } else {
           // figure out indentation
           val indent = main.filter(_.nonEmpty).map(_.takeWhile(_ == ' ').length).min
-          editor.getSession().setValue(main.map(_.drop(indent)).mkString("\n"))
+          editor.setValue(main.map(_.drop(indent)).mkString("\n"))
           $.setState(state.copy(preCode = pre, mainCode = main, postCode = post, indent = indent))
         }
       }
@@ -868,18 +777,17 @@ object FiddleEditor {
 
     def switchTemplate: Callback = {
       $.modState { s =>
-        val row               = editor.getCursorPosition().row.asInstanceOf[Int]
-        val col               = editor.getCursorPosition().column.asInstanceOf[Int]
+        val (row, col)        = editor.getCursorPosition
         val source            = reconstructSource(s)
         val (pre, main, post) = extractCode(source)
         if (!s.showTemplate) {
-          editor.getSession().setValue((pre ++ main ++ post).mkString("\n"))
+          editor.setValue((pre ++ main ++ post).mkString("\n"))
           editor.moveCursorTo(row + pre.size, col + s.indent)
           s.copy(preCode = pre, mainCode = main, postCode = post, indent = 0, showTemplate = !s.showTemplate)
         } else {
           // figure out indentation
           val indent = main.filter(_.nonEmpty).map(_.takeWhile(_ == ' ').length).min
-          editor.getSession().setValue(main.map(_.drop(indent)).mkString("\n"))
+          editor.setValue(main.map(_.drop(indent)).mkString("\n"))
           editor.moveCursorTo(math.max(0, row - pre.size), math.max(0, col - indent))
           s.copy(preCode = pre, mainCode = main, postCode = post, indent = indent, showTemplate = !s.showTemplate)
         }
@@ -891,25 +799,16 @@ object FiddleEditor {
     def outputDataUpdated(data: ModelRO[OutputData]): Unit = {
       data() match {
         case compilerData: CompilerData =>
-          import scala.scalajs.js.JSConverters._
           clearResult()
 
           // show error messages, if any
-          editor.getSession().clearAnnotations()
+          editor.clearAnnotations()
           if (compilerData.annotations.nonEmpty) {
-            val aceAnnotations = compilerData.annotations.map { ann =>
+            editor.setAnnotations(compilerData.annotations.map { ann =>
               // adjust coordinates
               val (row, col) = coordinatesTo(ann.row, ann.col)
-              JsVal
-                .obj(
-                  "row"  -> row,
-                  "col"  -> col,
-                  "text" -> ann.text.mkString("\n"),
-                  "type" -> ann.tpe
-                )
-                .value
-            }.toJSArray
-            editor.getSession().setAnnotations(aceAnnotations)
+              Motor.Tanı(row, col, ann.text.mkString("\n"), ann.tpe)
+            })
 
             // show compiler errors in output
             val allErrors = compilerData.annotations
