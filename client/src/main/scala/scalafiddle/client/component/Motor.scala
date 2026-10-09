@@ -15,6 +15,8 @@ import scalafiddle.client.{JsVal, ScalaFiddleConfig}
  * (CodeMirror 6; `window.KocoMotor` cephesine ince çağrılar, motor-cm/cephe.js). Seçim
  * adresle, bir kez: `?motor=ace` tarayıcıda (localStorage) kalır, `?motor=cm` geri alır
  * (`bayrağıOku`). Öntanımlı CodeMirror (kojojs-editor#75'in 3. dilimi); Ace `?motor=ace` ile kalıyor.
+ * Aynı yerde, aynı mekanizmayla: `?wrap=off` uzun satırların sarılmasını kapatır (CodeMirror
+ * öntanımlı sarar, Ace sarmaz -- `satırKaydır`), `?wrap=on` tersini yapar.
  *
  * Satır ve sütun 0 tabanlı, Ace gibi. `setValue` geri alma geçmişini sıfırlar (Ace'in
  * `session.setValue`su gibi: şablon açma/kapama, betik yükleme); `yazGeriAlinabilir` tek
@@ -48,24 +50,41 @@ object Motor {
   private val Anahtar    = "koco.motor"
   private var seçim: Option[String] = None
 
+  // Satır kaydırma: aynı adres+localStorage deseni (`?wrap=off|on`, anahtar koco.wrap).
+  // Bayrak verilmezse her motor bugünkü öntanımlısında kalır (CodeMirror sarar, Ace sarmaz --
+  // kojojs-editor#76/#77'nin bildiği fark); `?wrap=off` CodeMirror'da sarmayı kapatır,
+  // `?wrap=on` Ace'te açar.
+  private val wrapParam     = """[?&]wrap=(on|off)(?:&|$)""".r
+  private val WrapAnahtar   = "koco.wrap"
+  private var kaydırSeçim: Option[String] = None
+
   /**
-   * Bayrağı adresten okur ve tarayıcıda saklar; AppMain.main'in İLK işi olmalı. Yönlendirici
+   * Bayrakları adresten okur ve tarayıcıda saklar; AppMain.main'in İLK işi olmalı. Yönlendirici
    * (AppRouter) `?motor=cm`i tanımadığından adresi `/`a çeviriyor (notFound -> Redirect.Replace);
    * FiddleEditor mount olduğunda sorgu çoktan silinmiş oluyor. İlk sürüm `seçili`de
    * `location.search`e baktığı için hep Ace açıyordu -- sahibi ölçtü ("?motor=cm sayfa yüklenince
    * siliniyor"). Saklama localStorage'da: bayrak bir kez verilir, kaydet / yeniden yükle /
    * `/sf/...`ya geçişte kalır; `?motor=ace` geri alır. #75'in bir haftalık kullanım kapısı
    * ancak böyle ölçülebilir. localStorage kapalıysa (gizli pencere vb.) yalnız o yükleme için geçerli.
+   * `?wrap=` aynı mekanizmayla, aynı anda okunur.
    */
   def bayrağıOku(): Unit = {
     val adresten = motorParam.findFirstMatchIn(dom.window.location.search).map(_.group(1))
     adresten.foreach(m => try dom.window.localStorage.setItem(Anahtar, m) catch { case _: Throwable => () })
     val saklı = try Option(dom.window.localStorage.getItem(Anahtar)) catch { case _: Throwable => None }
     seçim = adresten.orElse(saklı).filter(m => m == Cm || m == Ace)
+
+    val kaydırAdresten = wrapParam.findFirstMatchIn(dom.window.location.search).map(_.group(1))
+    kaydırAdresten.foreach(m => try dom.window.localStorage.setItem(WrapAnahtar, m) catch { case _: Throwable => () })
+    val kaydırSaklı = try Option(dom.window.localStorage.getItem(WrapAnahtar)) catch { case _: Throwable => None }
+    kaydırSeçim = kaydırAdresten.orElse(kaydırSaklı).filter(m => m == "on" || m == "off")
   }
 
   /** Seçili motor: `bayrağıOku` ne bulduysa; bulamadıysa (ya da hiç çağrılmadıysa) CodeMirror. */
   def seçili: String = seçim.getOrElse(Cm)
+
+  /** `?wrap=` ne bulduysa (`on`/`off`); verilmediyse `None` -- motor kendi öntanımlısında kalır. */
+  def satırKaydır: Option[Boolean] = kaydırSeçim.map(_ == "on")
 
   /**
    * Motoru kurar ve hazır olunca `hazır`ı çağırır. CodeMirror öntanımlı: paket (motor-cm.js,
@@ -85,20 +104,25 @@ object Motor {
       case Cm =>
         val s = dom.document.createElement("script").asInstanceOf[dom.raw.HTMLScriptElement]
         s.src = ScalaFiddleConfig.motorURL
-        s.onload = (_: dom.Event) => bitti(new CmMotor(global.KocoMotor.ac(el)), Cm)
+        val kaydır: Boolean = satırKaydır.getOrElse(true)
+        val seçenekler = JsVal.obj("kaydır" -> kaydır).value
+        s.onload = (_: dom.Event) => bitti(new CmMotor(global.KocoMotor.ac(el, seçenekler)), Cm)
         // scala-js-dom 0.9'un HTMLScriptElement'inde onerror yok; addEventListener ile.
         s.addEventListener("error", (_: dom.Event) => {
           dom.console.warn("motor-cm.js yüklenemedi (" + ScalaFiddleConfig.motorURL + "); Ace ile sürülüyor")
           bitti(new AceMotor(el), Ace)
         })
         dom.document.head.appendChild(s)
-      case _ => bitti(new AceMotor(el), Ace)
+      case _ => bitti(new AceMotor(el, satırKaydır), Ace)
     }
   }
 }
 
-/** Ace 1.2.4 (bugünkü motor). Kurulum, Ctrl-Space ve tamamlayıcı FiddleEditor.mounted'dan olduğu gibi taşındı. */
-class AceMotor(el: dom.raw.HTMLElement) extends Motor {
+/**
+ * Ace 1.2.4 (bugünkü motor). Kurulum, Ctrl-Space ve tamamlayıcı FiddleEditor.mounted'dan olduğu
+ * gibi taşındı. `satırKaydır`: `?wrap=` verilmediyse (None) Ace'in öntanımlısı (sarmaz) dokunulmadan kalır.
+ */
+class AceMotor(el: dom.raw.HTMLElement, satırKaydır: Option[Boolean] = None) extends Motor {
   import JsVal.jsVal2jsAny
 
   private var tamamlayıcı: Option[Motor.Tamamlayıcı] = None
@@ -112,6 +136,7 @@ class AceMotor(el: dom.raw.HTMLElement) extends Motor {
   editor.getSession().setTabSize(2)
   editor.setShowPrintMargin(false)
   editor.getSession().setOption("useWorker", false)
+  satırKaydır.foreach(k => editor.getSession().setUseWrapMode(k))
   editor.updateDynamic("completer")(completer) // because of SI-7420
   editor.updateDynamic("$blockScrolling")(Double.PositiveInfinity)
   editor.setFontSize("16px") // default is 14

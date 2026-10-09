@@ -2,7 +2,7 @@
 // yüzeyi tek bir cepheye indirir (window.KocoMotor). Sözleşme: kojojs-editor#75.
 // Scala tarafı yalnız buradaki adları çağırır; CodeMirror'ın kendi API'si bu dosyanın dışına çıkmaz.
 import {EditorView, keymap, lineNumbers, drawSelection, highlightActiveLine, Decoration, ViewPlugin, MatchDecorator} from "@codemirror/view";
-import {EditorState} from "@codemirror/state";
+import {EditorState, Compartment} from "@codemirror/state";
 import {defaultKeymap, history, historyKeymap, indentWithTab, undo} from "@codemirror/commands";
 import {StreamLanguage, syntaxHighlighting, defaultHighlightStyle, bracketMatching, indentOnInput, indentUnit} from "@codemirror/language";
 import {scala} from "@codemirror/legacy-modes/mode/clike";
@@ -46,9 +46,13 @@ const tema = EditorView.theme({
   ".tr-anahtar": {color: "#7f0055", fontWeight: "bold"}
 });
 
-export function ac(el) {
+// seçenekler.kaydır: satırlar sarılsın mı (öntanımlı true, bugünkü davranış). false ise
+// uzun satırlar sarılmadan yatay kaydırmayla gösterilir (Motor.scala: ?wrap=off).
+export function ac(el, seçenekler) {
   let girdiCb = null;
   let tamamlayıcı = null;
+  const kaydırBölmesi = new Compartment();
+  const kaydır = !seçenekler || seçenekler.kaydır !== false;
 
   // Sunucu adaylarını Scala'dan alan tamamlama kaynağı; süzgeç ve ekleme burada.
   const kaynak = (ctx) => {
@@ -96,7 +100,8 @@ export function ac(el) {
   const temelTuşlar = defaultKeymap.filter((b) => b.key !== "Mod-Enter");
   const uzantılar = [
     lineNumbers(), lintGutter(), history(), drawSelection(), highlightActiveLine(),
-    indentUnit.of("  "), indentOnInput(), bracketMatching(), closeBrackets(), EditorView.lineWrapping,
+    indentUnit.of("  "), indentOnInput(), bracketMatching(), closeBrackets(),
+    kaydırBölmesi.of(kaydır ? EditorView.lineWrapping : []),
     StreamLanguage.define(scala), trAnahtar, syntaxHighlighting(defaultHighlightStyle),
     autocompletion({override: [kaynak], activateOnTyping: true}),
     EditorView.updateListener.of((u) => { if (u.docChanged && girdiCb) girdiCb(); }),
