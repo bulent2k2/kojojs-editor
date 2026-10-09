@@ -64,6 +64,13 @@ function sav(ad, koşul, ayrıntı) { sayı++; if (koşul) console.log("  ok  " 
   sav("klavyeyle yazılan Türkçe harfler belgede", (await p.evaluate(() => window.m.getValue())).endsWith("\nçşğıİöü"));
   sav("onInput yazarken ateşlenir", (await p.evaluate(() => window.girdi)) > g0);
 
+  // Ctrl+Enter: defaultKeymap'in "Mod-Enter" -> insertBlankLine'ı FiddleEditor.scala'nın
+  // global Derle kısayoluyla çakışıyordu (bir Windows/Linux sınayıcı ölçtü: hem çalıştırıyor
+  // hem boş satır ekliyordu). Motor bu tuşa karışmamalı: metin değişmemeli.
+  const öncekiDeğer = await p.evaluate(() => window.m.getValue());
+  await p.keyboard.press("Control+Enter"); await p.waitForTimeout(50);
+  sav("Ctrl+Enter metni değiştirmez (Mod-Enter süzüldü)", (await p.evaluate(() => window.m.getValue())) === öncekiDeğer);
+
   // tamamlama: Türkçe süzgeç
   async function öneriler(önek) {
     await p.keyboard.type("\n" + önek, {delay: 20}); await p.waitForTimeout(350);
