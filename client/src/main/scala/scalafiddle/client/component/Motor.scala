@@ -13,8 +13,8 @@ import scalafiddle.client.{JsVal, ScalaFiddleConfig}
  *
  * İki uygulama: `AceMotor` (bugünkü kod, davranışı değişmeden buraya taşındı) ve `CmMotor`
  * (CodeMirror 6; `window.KocoMotor` cephesine ince çağrılar, motor-cm/cephe.js). Seçim
- * adresle, bir kez: `?motor=cm` tarayıcıda (localStorage) kalır, `?motor=ace` geri alır
- * (`bayrağıOku`). Öntanımlı Ace; 3. dilimde çevrilecek.
+ * adresle, bir kez: `?motor=ace` tarayıcıda (localStorage) kalır, `?motor=cm` geri alır
+ * (`bayrağıOku`). Öntanımlı CodeMirror (kojojs-editor#75'in 3. dilimi); Ace `?motor=ace` ile kalıyor.
  *
  * Satır ve sütun 0 tabanlı, Ace gibi. `setValue` geri alma geçmişini sıfırlar (Ace'in
  * `session.setValue`su gibi: şablon açma/kapama, betik yükleme); `yazGeriAlinabilir` tek
@@ -64,13 +64,14 @@ object Motor {
     seçim = adresten.orElse(saklı).filter(m => m == Cm || m == Ace)
   }
 
-  /** Seçili motor: `bayrağıOku` ne bulduysa; bulamadıysa (ya da hiç çağrılmadıysa) Ace. */
-  def seçili: String = seçim.getOrElse(Ace)
+  /** Seçili motor: `bayrağıOku` ne bulduysa; bulamadıysa (ya da hiç çağrılmadıysa) CodeMirror. */
+  def seçili: String = seçim.getOrElse(Cm)
 
   /**
-   * Motoru kurar ve hazır olunca `hazır`ı çağırır. Ace: eşzamanlı. CodeMirror: paket
-   * (motor-cm.js, 123 KB gzip) yalnız bayrakla ve ancak o zaman yüklenir; Ace kullanıcısına
-   * binmez. Yüklenemezse Ace ile sürülür ve konsola yazılır: sayfa boş kalmasın.
+   * Motoru kurar ve hazır olunca `hazır`ı çağırır. CodeMirror öntanımlı: paket (motor-cm.js,
+   * 123 KB gzip) her yüklemede gelir. `?motor=ace` ile Ace seçilirse paket hiç yüklenmez.
+   * CodeMirror paketi yüklenemezse (ağ hatası vb.) Ace ile sürülür ve konsola yazılır: sayfa
+   * boş kalmasın.
    */
   def kur(el: dom.raw.HTMLElement)(hazır: Motor => Unit): Unit = {
     // Hangi motorun kurulduğu dışarıdan okunabilsin: sınamada

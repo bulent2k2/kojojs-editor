@@ -56,7 +56,7 @@
           var cfg = {};
           cfg.compilerURL = "@config.get[String]("scalafiddle.compilerURL")";
           cfg.helpURL = "@config.get[String]("scalafiddle.helpURL")";
-          cfg.motorURL = "@routes.Assets.versioned("javascript/motor-cm.js")"; @* bir kez ?motor=cm ile yüklenir, localStorage'da kalır; ?motor=ace geri alır (kojojs-editor#75) *@
+          cfg.motorURL = "@routes.Assets.versioned("javascript/motor-cm.js")"; @* CodeMirror öntanımlı; bir kez ?motor=ace ile Ace'e dönülür, localStorage'da kalır (kojojs-editor#75, 3. dilim) *@
           cfg.scalaVersions = @Html(config.get[Seq[String]]("scalafiddle.scalaVersions").mkString("[\"","\",\"","\"]"));
           window.ScalaFiddleConfig = cfg;
           window.ScalaFiddleData = @Html(fiddleData);
