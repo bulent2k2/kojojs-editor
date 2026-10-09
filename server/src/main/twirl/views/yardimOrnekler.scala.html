@@ -38,9 +38,22 @@
         .kahraman h1 { margin: 0 0 8px; font-size: 30px; font-weight: 700; }
         .kahraman h1 .vurgu { color: var(--kirmizi); }
         .kahraman p { margin: 0; font-size: 17px; color: #404551; max-width: 64ch; }
+        .icindekiler { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 36px; }
+        .icindekiler .etiket { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+            color: var(--soluk); margin-right: 4px; }
+        .icindekiler a { display: inline-flex; align-items: center; gap: 8px; background: #fff;
+            border: 1px solid var(--cizgi); border-radius: 20px; padding: 5px 12px 5px 9px;
+            font-size: 14px; font-weight: 500; color: var(--metin); }
+        .icindekiler a:hover { border-color: var(--kirmizi); color: var(--kirmizi); text-decoration: none; }
+        .icindekiler .im { width: 8px; height: 16px; border-radius: 2px; display: inline-block; }
+        .icindekiler .sayi { color: var(--soluk); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+        /* yapışkan üst şerit başlığı örtmesin: çipten gelince başlık şeridin altında dursun */
+        section, .icindekiler { scroll-margin-top: 76px; }
         section { margin-bottom: 40px; }
         h2 { font-size: 21px; font-weight: 700; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; }
         h2 .im { width: 10px; height: 22px; border-radius: 3px; display: inline-block; }
+        h2 .yukari { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--soluk); white-space: nowrap; }
+        h2 .yukari:hover { color: var(--kirmizi); }
         section > .alt { color: var(--soluk); margin: 0 0 14px; font-size: 15px; }
         ul.liste { list-style: none; margin: 0; padding: 0; background: #fff;
             border: 1px solid var(--cizgi); border-radius: 10px; overflow: hidden; }
@@ -71,6 +84,9 @@
             border-top: 1px solid var(--cizgi); padding-top: 24px; }
         @@media (max-width: 640px) {
             .ust-bar .geri { display: none; }
+            section, .icindekiler { scroll-margin-top: 112px; }  /* şerit iki satıra sarılıyor */
+            .icindekiler { gap: 6px; }
+            .icindekiler a { font-size: 13px; padding: 4px 10px 4px 8px; gap: 6px; }
             ul.liste li { flex-direction: column; align-items: flex-start; gap: 6px; }
             ul.liste .sag { width: 100%; }
             .kahraman { padding: 24px; } .kahraman h1 { font-size: 25px; }
@@ -98,8 +114,29 @@
             <p>Masaüstü Koco'nun bütün Türkçe örnekleri burada. Bir başlığa tıkla,
                betik düzenleme penceresinde açılsın; sonra <b>Çalıştır</b>'a bas.</p>
         </div>
-<section>
-<h2><span class="im" style="background:var(--yesil)"></span><a href="https://github.com/bulent2k2/kojojs-dev/tree/master/ornekler">Başlangıç</a></h2>
+<nav class="icindekiler" id="icindekiler" aria-label="İçindekiler">
+  <span class="etiket">İçindekiler</span>
+  <a href="#baslangic"><span class="im" style="background:var(--yesil)"></span>Başlangıç<span class="sayi">18</span></a>
+  <a href="#sergi"><span class="im" style="background:var(--kirmizi)"></span>Sergi<span class="sayi">18</span></a>
+  <a href="#yeni-baslayanlar-icin"><span class="im" style="background:var(--mavi)"></span>Yeni Başlayanlar İçin<span class="sayi">3</span></a>
+  <a href="#ileri-adimlar"><span class="im" style="background:var(--turuncu)"></span>İleri Adımlar<span class="sayi">4</span></a>
+  <a href="#cogul-kaplumbaga"><span class="im" style="background:var(--sari)"></span>Çoğul Kaplumbağa<span class="sayi">8</span></a>
+  <a href="#kesirli-boyutsallar"><span class="im" style="background:var(--yesil)"></span>Kesirli-Boyutsallar<span class="sayi">8</span></a>
+  <a href="#imge-duzenlemesi"><span class="im" style="background:var(--kirmizi)"></span>İmge Düzenlemesi<span class="sayi">2</span></a>
+  <a href="#sayilar"><span class="im" style="background:var(--mavi)"></span>Sayılar<span class="sayi">3</span></a>
+  <a href="#fizik"><span class="im" style="background:var(--turuncu)"></span>Fizik<span class="sayi">2</span></a>
+  <a href="#benzetim"><span class="im" style="background:var(--sari)"></span>Benzetim<span class="sayi">12</span></a>
+  <a href="#uretken-sanat"><span class="im" style="background:var(--yesil)"></span>Üretken Sanat<span class="sayi">7</span></a>
+  <a href="#canlandirma-ve-oyunlar"><span class="im" style="background:var(--kirmizi)"></span>Canlandırma ve Oyunlar<span class="sayi">17</span></a>
+  <a href="#robot-benzesmesi"><span class="im" style="background:var(--mavi)"></span>Robot Benzeşmesi<span class="sayi">2</span></a>
+  <a href="#arayuz-araclari"><span class="im" style="background:var(--turuncu)"></span>Arayüz Araçları<span class="sayi">1</span></a>
+  <a href="#muzik"><span class="im" style="background:var(--sari)"></span>Müzik<span class="sayi">3</span></a>
+  <a href="#genel-programlama"><span class="im" style="background:var(--yesil)"></span>Genel Programlama<span class="sayi">3</span></a>
+  <a href="#matematik-ogrenme-birimleri"><span class="im" style="background:var(--kirmizi)"></span>Matematik Öğrenme Birimleri<span class="sayi">9</span></a>
+  <a href="#oteki-betikler"><span class="im" style="background:var(--soluk)"></span>Öteki betikler<span class="sayi">30</span></a>
+</nav>
+<section id="baslangic">
+<h2><span class="im" style="background:var(--yesil)"></span><a href="https://github.com/bulent2k2/kojojs-dev/tree/master/ornekler">Başlangıç</a><a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">iKoco için yazılmış örnekler; sırayla ilerlemek için. Kaynakları <a href="https://github.com/bulent2k2/kojojs-dev/tree/master/ornekler">ornekler/</a> dizininde.</p>
 <ul class="liste">
   <li><a href="/ornek/01-ilk-adimlar.kojo"><span class="ad">İlk adımlar</span><div class="ac"><code>ileri</code>, <code>sağ</code>, <code>yinele</code>, <code>ev</code> — kaplumbağanın temeli</div></a><span class="sag"><span class="rozet calisir" title="iKojo için yazıldı">çalışır</span><code>01-ilk-adimlar.kojo</code></span></li>
@@ -123,8 +160,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--kirmizi)"></span>Sergi</h2>
+<section id="sergi">
+<h2><span class="im" style="background:var(--kirmizi)"></span>Sergi<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Koco'nun Sergi menüsündeki gösteri programları.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/eye.kojo"><span class="ad">İç Göz</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>eye.kojo</code></span></li>
@@ -148,8 +185,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--mavi)"></span>Yeni Başlayanlar İçin</h2>
+<section id="yeni-baslayanlar-icin">
+<h2><span class="im" style="background:var(--mavi)"></span>Yeni Başlayanlar İçin<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/square.kojo"><span class="ad">Kare</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>square.kojo</code></span></li>
@@ -158,8 +195,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--turuncu)"></span>İleri Adımlar</h2>
+<section id="ileri-adimlar">
+<h2><span class="im" style="background:var(--turuncu)"></span>İleri Adımlar<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/penta-pattern.kojo"><span class="ad">Beşgen Desenler</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>penta-pattern.kojo</code></span></li>
@@ -169,8 +206,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--sari)"></span>Çoğul Kaplumbağa</h2>
+<section id="cogul-kaplumbaga">
+<h2><span class="im" style="background:var(--sari)"></span>Çoğul Kaplumbağa<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/synchronized-squares.kojo"><span class="ad">Eşzamanlı Kareler</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>synchronized-squares.kojo</code></span></li>
@@ -184,8 +221,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--yesil)"></span>Kesirli-Boyutsallar</h2>
+<section id="kesirli-boyutsallar">
+<h2><span class="im" style="background:var(--yesil)"></span>Kesirli-Boyutsallar<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/tree0.kojo"><span class="ad">Ağaç</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>tree0.kojo</code></span></li>
@@ -199,8 +236,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--kirmizi)"></span>İmge Düzenlemesi</h2>
+<section id="imge-duzenlemesi">
+<h2><span class="im" style="background:var(--kirmizi)"></span>İmge Düzenlemesi<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/image-collage.kojo"><span class="ad">Kolaj</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>image-collage.kojo</code></span></li>
@@ -208,8 +245,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--mavi)"></span>Sayılar</h2>
+<section id="sayilar">
+<h2><span class="im" style="background:var(--mavi)"></span>Sayılar<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/primes.kojo"><span class="ad">Asal Sayılar</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>primes.kojo</code></span></li>
@@ -218,8 +255,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--turuncu)"></span>Fizik</h2>
+<section id="fizik">
+<h2><span class="im" style="background:var(--turuncu)"></span>Fizik<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/physics-uvats.kojo"><span class="ad">Fiziksel Davranım</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>physics-uvats.kojo</code></span></li>
@@ -227,8 +264,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--sari)"></span>Benzetim</h2>
+<section id="benzetim">
+<h2><span class="im" style="background:var(--sari)"></span>Benzetim<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/bounce-start.kojo"><span class="ad">1. Başla</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>bounce-start.kojo</code></span></li>
@@ -246,8 +283,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--yesil)"></span>Üretken Sanat</h2>
+<section id="uretken-sanat">
+<h2><span class="im" style="background:var(--yesil)"></span>Üretken Sanat<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/genart-tiled-lines.kojo"><span class="ad">Doğrularla Döşeme</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>genart-tiled-lines.kojo</code></span></li>
@@ -260,8 +297,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--kirmizi)"></span>Canlandırma ve Oyunlar</h2>
+<section id="canlandirma-ve-oyunlar">
+<h2><span class="im" style="background:var(--kirmizi)"></span>Canlandırma ve Oyunlar<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/lunar-lander.kojo"><span class="ad">Aya İniş Modülü</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>lunar-lander.kojo</code></span></li>
@@ -284,8 +321,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--mavi)"></span>Robot Benzeşmesi</h2>
+<section id="robot-benzesmesi">
+<h2><span class="im" style="background:var(--mavi)"></span>Robot Benzeşmesi<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/robosim/tr/obstacle-greedy.kojo"><span class="ad">Nesne Algılama 1</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: başka dosya içe alıyor">masaüstü</span><code>obstacle-greedy.kojo</code></span></li>
@@ -293,16 +330,16 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--turuncu)"></span>Arayüz Araçları</h2>
+<section id="arayuz-araclari">
+<h2><span class="im" style="background:var(--turuncu)"></span>Arayüz Araçları<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/widgets-canvas.kojo"><span class="ad">Tuval İçi Araçlar</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: Swing arayüzü">masaüstü</span><code>widgets-canvas.kojo</code></span></li>
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--sari)"></span>Müzik</h2>
+<section id="muzik">
+<h2><span class="im" style="background:var(--sari)"></span>Müzik<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/some-notes.kojo"><span class="ad">Bazı Notalar</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: MIDI müzik">masaüstü</span><code>some-notes.kojo</code></span></li>
@@ -311,8 +348,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--yesil)"></span>Genel Programlama</h2>
+<section id="genel-programlama">
+<h2><span class="im" style="background:var(--yesil)"></span>Genel Programlama<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/read-vector-mean.kojo"><span class="ad">Girdi/Çıktı</span></a><span class="sag"><span class="rozet calisir" title="gerçek derlemeden geçti">çalışır</span><code>read-vector-mean.kojo</code></span></li>
@@ -321,8 +358,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--kirmizi)"></span>Matematik Öğrenme Birimleri</h2>
+<section id="matematik-ogrenme-birimleri">
+<h2><span class="im" style="background:var(--kirmizi)"></span>Matematik Öğrenme Birimleri<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Masaüstü Örnekler menüsündeki grup.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/src/main/resources/samples/tr/addition-game.kojo"><span class="ad">Toplama Oyunu</span></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: Swing arayüzü">masaüstü</span><code>addition-game.kojo</code></span></li>
@@ -337,8 +374,8 @@
 </ul>
 </section>
 @("")
-<section>
-<h2><span class="im" style="background:var(--soluk)"></span>Öteki betikler</h2>
+<section id="oteki-betikler">
+<h2><span class="im" style="background:var(--soluk)"></span>Öteki betikler<a class="yukari" href="#icindekiler">↑ içindekiler</a></h2>
 <p class="alt">Menülerde geçmeyen dosyalar: kılavuz bölümleri, oyun modülleri, başka betiklerin içe aldığı parçalar.</p>
 <ul class="liste">
   <li><a href="/ornek/masaustu/installer/examples/anagram/tr/sozcuk-dizinini-yukle.kojo"><span class="ad">sozcuk-dizinini-yukle.kojo</span><div class="ac"><code>installer/examples/anagram/tr</code></div></a><span class="sag"><span class="rozet masaustu" title="masaüstüne özgü: dosya/klavye girdisi">masaüstü</span><code>sozcuk-dizinini-yukle.kojo</code></span></li>
