@@ -107,6 +107,17 @@ function sav(ad, koşul, ayrıntı) { sayı++; if (koşul) console.log("  ok  " 
   sav("yazGeriAlinabilir metni değiştirir, imleç 0,0", y.yeni === "dez a = 1\n" && y.k.row === 0 && y.k.column === 0, y.k);
   sav("tek undo önceki metnin tamamını geri getirir", y.geri === önce);
 
+  // satır kaydırma seçeneği (Motor.scala: ?wrap=): öntanımlı sarılı, {kaydır:false} kapatır.
+  sav("öntanımlı: satırlar sarılı (cm-lineWrapping sınıfı var)", await p.evaluate(() => document.querySelector(".cm-content").classList.contains("cm-lineWrapping")));
+  const sarmaKapalı = await p.evaluate(() => {
+    const d = document.createElement("div");
+    d.style.cssText = "position:absolute;inset:0";
+    document.body.appendChild(d);
+    const m2 = KocoMotor.ac(d, {kaydır: false});
+    return d.querySelector(".cm-content").classList.contains("cm-lineWrapping");
+  });
+  sav("kaydır:false ile satırlar sarılmaz", !sarmaKapalı);
+
   sav("sayfa hatası yok", hatalar.length === 0, hatalar);
   await b.close();
   console.log(sayı + " sav, " + kalan + " kaldı");
