@@ -118,6 +118,29 @@ function sav(ad, koşul, ayrıntı) { sayı++; if (koşul) console.log("  ok  " 
   });
   sav("kaydır:false ile satırlar sarılmaz", !sarmaKapalı);
 
+  // Enter girintisi Ace gibi (önceki satırı kopyala, açıcıdan sonra +1 birim, kapatan açıcıya hizalanır).
+  // Öntanımlı CodeMirror girintiyi derinlik x 2 hesaplıyordu: 4'lü betikte `val` satırından Enter 6'ya iniyordu.
+  const dört = "def a() = {\n    while (true) {\n        val x = 5\n    }    \n}";
+  async function enterSonrası(metin, satır, sütun, sonra) {
+    await p.evaluate(([t, r, c]) => { window.m.setValue(t); const s = t.split("\n")[r]; window.m.moveCursorTo(r, c === null ? s.length : c); window.m.focus(); }, [metin, satır, sütun === undefined ? null : sütun]);
+    await p.keyboard.press("Enter");
+    if (sonra) await p.keyboard.type(sonra);
+    return p.evaluate(() => window.m.getValue().split("\n"));
+  }
+  const g = (l) => l.match(/^ */)[0].length;
+  let l1 = await enterSonrası(dört, 2, undefined);
+  sav("4'lü betik: val satırından Enter -> 8 boşluk (önceki satırla hizalı)", g(l1[3]) === 8, l1[3]);
+  l1 = await enterSonrası(dört, 1, undefined);
+  sav("{ ile biten satırdan Enter -> önceki girinti + 1 birim (4 + 2)", g(l1[2]) === 6, l1[2]);
+  l1 = await enterSonrası(dört, 3, undefined);
+  sav("} satırından Enter -> önceki satırla hizalı (4)", g(l1[4]) === 4, l1[4]);
+  l1 = await enterSonrası("def a() = {\n    while (true) {", 1, undefined, "}");
+  sav("{ satırından Enter, sonra } yazınca eşleşen { satırının girintisine (4) iner", l1[2] === "    }", l1[2]);
+  l1 = await enterSonrası("    f {}", 0, 7);
+  sav("{|} arasında Enter: orta satır +1 birim, kapatan açıcının girintisinde", l1.length === 3 && g(l1[1]) === 6 && l1[2] === "    }", l1);
+  l1 = await enterSonrası("def a() = {\n    // not {\n}", 1, undefined);
+  sav("yorumda biten { girintiyi artırmaz", g(l1[2]) === 4, l1[2]);
+
   sav("sayfa hatası yok", hatalar.length === 0, hatalar);
   await b.close();
   console.log(sayı + " sav, " + kalan + " kaldı");

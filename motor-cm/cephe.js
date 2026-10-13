@@ -2,9 +2,9 @@
 // yüzeyi tek bir cepheye indirir (window.KocoMotor). Sözleşme: kojojs-editor#75.
 // Scala tarafı yalnız buradaki adları çağırır; CodeMirror'ın kendi API'si bu dosyanın dışına çıkmaz.
 import {EditorView, keymap, lineNumbers, drawSelection, highlightActiveLine, Decoration, ViewPlugin, MatchDecorator} from "@codemirror/view";
-import {EditorState, Compartment} from "@codemirror/state";
+import {EditorState, Compartment, Prec, countColumn} from "@codemirror/state";
 import {defaultKeymap, history, historyKeymap, indentWithTab, undo} from "@codemirror/commands";
-import {StreamLanguage, syntaxHighlighting, defaultHighlightStyle, bracketMatching, indentOnInput, indentUnit} from "@codemirror/language";
+import {StreamLanguage, syntaxHighlighting, defaultHighlightStyle, bracketMatching, matchBrackets, indentOnInput, indentUnit, getIndentUnit, indentService, syntaxTree} from "@codemirror/language";
 import {scala} from "@codemirror/legacy-modes/mode/clike";
 import {autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap, startCompletion} from "@codemirror/autocomplete";
 import {setDiagnostics, lintGutter} from "@codemirror/lint";
@@ -45,6 +45,41 @@ const tema = EditorView.theme({
   ".cm-activeLine": {backgroundColor: "#e8f2fe55"},
   ".tr-anahtar": {color: "#7f0055", fontWeight: "bold"}
 });
+
+// Satır başı girintisi Ace gibi: önceki satırınkini kopyala, satır `{`, `(`, `[` ya da `case ...:` ile
+// bitiyorsa bir birim ekle; `}` `)` `]` ile başlayan satır eşleşen açıcının satırına hizalanır.
+// CodeMirror'ın öntanımlısı (Scala akış kipi) girintiyi iç içelik derinliği x birim diye HESAPLIYOR
+// ve dosyanın gerçek girintisine bakmıyor: 4'lü girintili bir betikte Enter 8 yerine 6'ya iniyordu
+// (ölçüldü). Prec.high: dilin kendi girinti hizmetinden önce sorulsun.
+const açıcıSatır = /^.*(?:\bcase\b.*:|[{(\[])\s*$/;
+const girintiSütunu = (state, metin) => countColumn(metin, state.tabSize, metin.search(/\S|$/));
+const aceGirintisi = Prec.high(indentService.of((cx, pos) => {
+  const state = cx.state, doc = state.doc;
+  const yeni = cx.lineAt(pos, 1);
+  const kapatan = /^\s*[}\])]/.exec(yeni.text);
+  if (kapatan) {
+    const eş = matchBrackets(state, yeni.from + kapatan[0].length, -1);
+    // matchBrackets: start = sorduğumuz kapatan, end = eşi (açıcı)
+    if (eş && eş.matched && eş.end) return girintiSütunu(state, doc.lineAt(eş.end.from).text);
+  }
+  let önce;
+  const kır = cx.options.simulateBreak;
+  if (kır != null) {
+    // Enter: kırılmadan önceki metin. cx.lineAt çift kırılmada ({|} arası) boş satır döndürüyor.
+    const satır = doc.lineAt(kır);
+    önce = {text: satır.text.slice(0, kır - satır.from), from: satır.from};
+  } else {
+    const no = doc.lineAt(pos).number;
+    if (no === 1) return 0;
+    önce = doc.line(no - 1);
+  }
+  let girinti = girintiSütunu(state, önce.text);
+  if (açıcıSatır.test(önce.text)) {
+    const bitiş = önce.from + önce.text.replace(/\s+$/, "").length;
+    if (!/comment/i.test(syntaxTree(state).resolveInner(bitiş, -1).name)) girinti += getIndentUnit(state);
+  }
+  return girinti;
+}));
 
 // seçenekler.kaydır: satırlar sarılsın mı (öntanımlı true, bugünkü davranış). false ise
 // uzun satırlar sarılmadan yatay kaydırmayla gösterilir (Motor.scala: ?wrap=off).
@@ -100,7 +135,7 @@ export function ac(el, seçenekler) {
   const temelTuşlar = defaultKeymap.filter((b) => b.key !== "Mod-Enter");
   const uzantılar = [
     lineNumbers(), lintGutter(), history(), drawSelection(), highlightActiveLine(),
-    indentUnit.of("  "), indentOnInput(), bracketMatching(), closeBrackets(),
+    indentUnit.of("  "), aceGirintisi, EditorState.languageData.of(() => [{indentOnInput: /^\s*\}$/}]), indentOnInput(), bracketMatching(), closeBrackets(),
     kaydırBölmesi.of(kaydır ? EditorView.lineWrapping : []),
     StreamLanguage.define(scala), trAnahtar, syntaxHighlighting(defaultHighlightStyle),
     autocompletion({override: [kaynak], activateOnTyping: true}),
