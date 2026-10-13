@@ -141,6 +141,24 @@ function sav(ad, koşul, ayrıntı) { sayı++; if (koşul) console.log("  ok  " 
   l1 = await enterSonrası("def a() = {\n    // not {\n}", 1, undefined);
   sav("yorumda biten { girintiyi artırmaz", g(l1[2]) === 4, l1[2]);
 
+  // girinti seçeneği (Motor.scala: ?indent=): öntanımlı 2, {girinti: 4} Tab ve açıcı sonrası Enter'ı 4 yapar.
+  async function ikinci(sec, metin, satır, tuşlar) {
+    return p.evaluate(([sec, t, r]) => {
+      const d = document.createElement("div"); d.style.cssText = "position:absolute;inset:0;background:#fff"; document.body.appendChild(d);
+      window.m3 = KocoMotor.ac(d, sec); window.m3.setValue(t); const s = t.split("\n")[r]; window.m3.moveCursorTo(r, s.length); window.m3.focus();
+    }, [sec, metin, satır]).then(async () => { for (const k of tuşlar) await p.keyboard.press(k); return p.evaluate(() => window.m3.getValue().split("\n")); });
+  }
+  let gl = await ikinci({girinti: 4}, "def a() = {", 0, ["Enter"]);
+  sav("girinti:4 -> { sonrası Enter 4 boşluk", g(gl[1]) === 4, gl[1]);
+  gl = await ikinci({girinti: 4}, "def a() = {\n    while (true) {", 1, ["Enter"]);
+  sav("girinti:4, 4'lü betik -> { sonrası Enter 4 + 4 = 8", g(gl[2]) === 8, gl[2]);
+  gl = await ikinci({girinti: 4}, "x", 0, ["Home", "Tab"]);
+  sav("girinti:4 -> Tab satır başına 4 boşluk koyar", g(gl[0]) === 4, gl[0]);
+  gl = await ikinci(undefined, "x", 0, ["Home", "Tab"]);
+  sav("öntanımlı -> Tab 2 boşluk", g(gl[0]) === 2, gl[0]);
+  gl = await ikinci({girinti: 99}, "x", 0, ["Home", "Tab"]);
+  sav("geçersiz girinti (99) -> 2'ye döner", g(gl[0]) === 2, gl[0]);
+
   sav("sayfa hatası yok", hatalar.length === 0, hatalar);
   await b.close();
   console.log(sayı + " sav, " + kalan + " kaldı");
