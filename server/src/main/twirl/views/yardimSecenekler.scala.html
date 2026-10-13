@@ -1,0 +1,188 @@
+@()
+@*
+  Düzenleyici seçenekleri -- /yardim/secenekler. ELLE YAZILMIŞ sayfa (yardim, yardimFarklar gibi;
+  biçem yardimFarklar.scala.html'den). Seçeneklerin kaynağı: client/.../component/Motor.scala
+  (?motor=, ?wrap=, ?indent=; hepsi bayrağıOku'da okunur ve localStorage'a yazılır:
+  koco.motor, koco.wrap, koco.indent), FiddleEditor.scala (resultFrameSrc: localStorage kojoDolgu
+  = "libtess"), controllers/Application.scala (zrc, source). Yeni bir seçenek eklenince BURAYA da
+  satır eklenmeli; gezinti şeridi araclar/gezinti-denetle.py (kojojs-dev) tarafından denetlenir.
+*@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>iKoco — Düzenleyici seçenekleri</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700&display=swap" rel="stylesheet">
+    <style>
+        :root { --kirmizi:#E95065; --mavi:#46BDDF; --yesil:#52D273; --sari:#E5C453; --turuncu:#E57255;
+                --metin:#2d2f33; --soluk:#6b7078; --cizgi:#e5e7eb; --zemin:#f7f7f8; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--metin);
+               background: var(--zemin); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        a { color: var(--kirmizi); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code, pre { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
+        .ust-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 24px;
+                   background: #fff; border-bottom: 1px solid var(--cizgi); position: sticky; top: 0; z-index: 10; }
+        .ust-bar img { height: 34px; display: block; }
+        .ust-bar .geri { font-weight: 500; font-size: 14px; color: var(--metin); border: 1px solid var(--cizgi);
+                         border-radius: 6px; padding: 7px 14px; background: #fff; white-space: nowrap; }
+        .ust-bar .geri:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti { display: flex; gap: 4px; flex-wrap: wrap; }
+        .gezinti a { font-size: 14px; font-weight: 500; color: var(--metin); padding: 6px 12px; border-radius: 6px; }
+        .gezinti a:hover { background: var(--zemin); text-decoration: none; }
+        .gezinti a.secili { background: var(--kirmizi); color: #fff; }
+        .kapsayici { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+        .kahraman { background: linear-gradient(135deg, #fff 0%, #fdf3f4 100%); border: 1px solid var(--cizgi);
+                    border-radius: 14px; padding: 32px 32px 28px; margin-bottom: 40px; }
+        .kahraman h1 { margin: 0 0 8px; font-size: 30px; font-weight: 700; }
+        .kahraman h1 .vurgu { color: var(--kirmizi); }
+        .kahraman p { margin: 0; font-size: 17px; color: #404551; max-width: 62ch; }
+        section { margin-bottom: 36px; background: #fff; border: 1px solid var(--cizgi); border-radius: 12px; padding: 22px 26px; }
+        h2 { font-size: 20px; font-weight: 700; margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+        h2 .im { width: 10px; height: 22px; border-radius: 3px; display: inline-block; flex: none; }
+        section p { margin: 0 0 10px; }
+        section p.ikojo { background: #f2fbf4; border-left: 4px solid var(--yesil); border-radius: 8px; padding: 8px 12px; }
+        section p.ikojo b { color: #2c8a48; }
+        section p.alt { color: var(--soluk); }
+        code { background: var(--zemin); border-radius: 4px; padding: 1px 6px; font-size: 13.5px; overflow-wrap: anywhere; }
+        pre { background: var(--zemin); border: 1px solid var(--cizgi); border-radius: 8px; padding: 10px 14px; overflow-x: auto; margin: 8px 0 10px; }
+        pre code { background: none; padding: 0; overflow-wrap: normal; }
+        .tablo-kap { overflow-x: auto; border: 1px solid var(--cizgi); border-radius: 10px; margin: 8px 0 4px; }
+        table { width: 100%; min-width: 560px; border-collapse: collapse; background: #fff; }
+        th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--cizgi); vertical-align: top; font-size: 14.5px; }
+        tr:last-child td { border-bottom: none; }
+        th { background: #fafbfc; font-weight: 600; font-size: 13px; color: var(--soluk); text-transform: uppercase; letter-spacing: .03em; }
+        td.ad { white-space: nowrap; font-weight: 600; }
+        td.dene { white-space: nowrap; }
+        footer { text-align: center; color: var(--soluk); font-size: 13px; border-top: 1px solid var(--cizgi); padding-top: 24px; }
+        @@media (max-width: 640px) {
+            .tablo-kap { border: none; overflow: visible; }
+            table { min-width: 0; background: none; }
+            thead { display: none; }
+            tr { display: block; background: #fff; border: 1px solid var(--cizgi); border-radius: 10px; margin-bottom: 10px; padding: 6px 0; }
+            td { display: block; border: none; padding: 4px 12px; }
+            td.ad { white-space: normal; }
+            td::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 700; color: var(--soluk);
+                         text-transform: uppercase; letter-spacing: .03em; }
+            td.ad::before { display: none; }
+        }
+        @@media (max-width: 640px) { .kahraman { padding: 24px; } .kahraman h1 { font-size: 25px; } section { padding: 18px 16px; }
+                                     .ust-bar .geri { display: none; } .ust-bar { padding: 10px 14px; } }
+    </style>
+</head>
+<body>
+    <div class="ust-bar">
+        <a href="/"><img src="/assets/images/scalafiddle-logo.png" alt="iKoco"></a>
+        <nav class="gezinti">
+            <a href="/yardim">Yardım</a>
+            <a href="/yardim/ornekler">Örnekler</a>
+            <a href="/yardim/kitapcik">Kitapçık</a>
+            <a href="/yardim/komutlar">Komutlar</a>
+            <a href="/yardim/sozluk">Sözlük</a>
+            <a href="/yardim/skala">Skala</a>
+            <a href="/yardim/farklar">Farklar</a>
+            <a href="/yardim/secenekler" class="secili">Seçenekler</a>
+        </nav>
+        <a href="/" class="geri">← Düzenleme penceresine dön</a>
+    </div>
+
+    <div class="kapsayici">
+        <div class="kahraman">
+            <h1><span class="vurgu">Düzenleyici</span> seçenekleri</h1>
+            <p>
+                Kod düzenleyicisinin birkaç ayarı, adrese yazılan küçük bir seçenekle (biri de tarayıcı konsoluyla) değişir.
+                Çoğu bir kez verilir ve bu tarayıcıda kalır. Burada hepsi var: ne işe yarıyor, öntanımlısı ne,
+                nasıl geri alınır.
+            </p>
+        </div>
+
+        <section>
+            <h2><span class="im" style="background:var(--mavi)"></span>Nasıl çalışır</h2>
+            <p>Düzenleyicinin adresinin sonuna <code>?seçenek=değer</code> ekle, örneğin <code>/?indent=4</code>. Birden çok seçenek <code>&amp;</code> ile birleşir: <code>/?indent=4&amp;wrap=off</code>.</p>
+            <p class="ikojo"><b>Bir kez ver, kalır:</b> seçenek bu tarayıcıda saklanır. Sayfayı yenilesen, bir betiği kaydetsen ya da başka bir betiğe geçsen de geçerli kalır. Başka bir tarayıcıda ya da cihazda yeniden vermen gerekir. Gizli pencerede (ya da site verisi kapalıyken) yalnız o yükleme için geçerlidir.</p>
+            <p>Seçenekler yalnız <b>düzenleyici adreslerinde</b> işe yarar (<code>/</code>, <code>/sf/…</code>, <code>/ornek/…</code>). Bu yardım sayfalarına eklenen bir <code>?indent=4</code> bir şey yapmaz. Tanınmayan ya da aralık dışı bir değer yok sayılır; önceki ayar (varsa) kalır.</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--yesil)"></span>Adres seçenekleri</h2>
+            <p class="alt">"Dene" bağlantıları düzenleyiciyi o seçenekle açar ve seçeneği bu tarayıcıda saklar.</p>
+            <div class="tablo-kap">
+                <table>
+                    <thead><tr><th>Seçenek</th><th>Değerler</th><th>Öntanımlı</th><th>Ne yapar</th><th>Dene</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td class="ad" data-label="Seçenek"><code>motor</code></td>
+                            <td data-label="Değerler"><code>cm</code>, <code>ace</code></td>
+                            <td data-label="Öntanımlı"><code>cm</code></td>
+                            <td data-label="Ne yapar">Kod düzenleyici motoru: CodeMirror ya da eski Ace. <code>ace</code> seçilirse CodeMirror paketi hiç yüklenmez. CodeMirror paketi yüklenemezse (ağ hatası gibi) düzenleyici Ace ile açılır.</td>
+                            <td class="dene" data-label="Dene"><a href="/?motor=ace">ace</a> · <a href="/?motor=cm">cm</a></td>
+                        </tr>
+                        <tr>
+                            <td class="ad" data-label="Seçenek"><code>wrap</code></td>
+                            <td data-label="Değerler"><code>on</code>, <code>off</code></td>
+                            <td data-label="Öntanımlı">motorun kendi davranışı: CodeMirror sarar, Ace sarmaz</td>
+                            <td data-label="Ne yapar">Uzun satırlar alt satıra sarılsın mı. <code>off</code>: sarılmaz, yatay kaydırılır. <code>on</code>: Ace'te de sarılır.</td>
+                            <td class="dene" data-label="Dene"><a href="/?wrap=off">off</a> · <a href="/?wrap=on">on</a></td>
+                        </tr>
+                        <tr>
+                            <td class="ad" data-label="Seçenek"><code>indent</code></td>
+                            <td data-label="Değerler"><code>1</code> ile <code>8</code> arası tam sayı</td>
+                            <td data-label="Öntanımlı"><code>2</code></td>
+                            <td data-label="Ne yapar">Girinti birimi: <b>Tab</b>'ın koyduğu boşluk sayısı ve <code>&#123;</code>, <code>(</code>, <code>[</code> ya da <code>case …:</code> ile biten satırdan sonra <b>Enter</b>'ın eklediği girinti. Yalnız <b>yeni</b> girintiyi etkiler; var olan metne dokunmaz. İki motorda da çalışır.</td>
+                            <td class="dene" data-label="Dene"><a href="/?indent=4">4</a> · <a href="/?indent=2">2</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--turuncu)"></span>Yalnız konsolla: dolgu yolu</h2>
+            <p>Bir seçenek daha var, ama adresle verilmiyor: tarayıcı konsolunda (<code>F12</code>) şunu yaz, sonra sayfayı yenile.</p>
+            <pre><code>localStorage.kojoDolgu = "libtess"</code></pre>
+            <p>Kendini kesen şekillerin dolgusunu <b>eski yolla</b> (libtess) çizer. Normalde gerekmez; <a href="/ornek/14-agir-dolgu.kojo">Ağır dolgu</a> örneği eski yolun maliyetini gösterir. Öntanımlı: yok (yeni yol).</p>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--kirmizi)"></span>Bir ayarı geri almak</h2>
+            <div class="tablo-kap">
+                <table>
+                    <thead><tr><th>Ayar</th><th>Nasıl geri alınır</th></tr></thead>
+                    <tbody>
+                        <tr><td class="ad" data-label="Ayar"><code>motor</code></td><td data-label="Nasıl geri alınır"><code>/?motor=cm</code> (CodeMirror öntanımlı)</td></tr>
+                        <tr><td class="ad" data-label="Ayar"><code>indent</code></td><td data-label="Nasıl geri alınır"><code>/?indent=2</code></td></tr>
+                        <tr><td class="ad" data-label="Ayar"><code>wrap</code></td><td data-label="Nasıl geri alınır"><code>on</code> ve <code>off</code> var, "motorun kendi davranışı" diye bir değer yok. Öntanımlıya dönmek için konsolda <code>localStorage.removeItem("koco.wrap")</code> yaz ve sayfayı yenile.</td></tr>
+                        <tr><td class="ad" data-label="Ayar"><code>kojoDolgu</code></td><td data-label="Nasıl geri alınır">Konsolda <code>localStorage.removeItem("kojoDolgu")</code>, sonra sayfayı yenile.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top:12px">Hepsini bir arada silmek için konsolda:</p>
+            <pre><code>["koco.motor", "koco.wrap", "koco.indent", "kojoDolgu"].forEach(k =&gt; localStorage.removeItem(k))</code></pre>
+        </section>
+
+        <section>
+            <h2><span class="im" style="background:var(--sari)"></span>Betik açan adresler</h2>
+            <p class="alt">Bunlar ayar değil; düzenleyiciyi hazır bir betikle açar.</p>
+            <div class="tablo-kap">
+                <table>
+                    <thead><tr><th>Adres</th><th>Ne yapar</th></tr></thead>
+                    <tbody>
+                        <tr><td class="ad" data-label="Adres"><code>/ornek/&lt;yol&gt;</code></td><td data-label="Ne yapar">kojojs-dev'deki <code>ornekler</code> dizininden bir betiği, <code>#yükle</code> satırları açılmış hâliyle, kaydedilmemiş yeni bir yazılımcık olarak açar. <a href="/yardim/ornekler">Örnekler</a> sayfasındaki her başlık böyle bir adrese gider.</td></tr>
+                        <tr><td class="ad" data-label="Adres"><code>/?zrc=…</code></td><td data-label="Ne yapar">Betiği adrese gömer: tam yazılımcık kaynağı sıkıştırılıp (gzip) <code>base64url</code> olarak yazılmış. Kılavuzlardaki <b>Editörde aç</b> bağlantıları böyle.</td></tr>
+                        <tr><td class="ad" data-label="Adres"><code>/?source=…</code></td><td data-label="Ne yapar">Aynı iş, sıkıştırmasız: kaynak olduğu gibi (adres kodlu) verilir.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top:12px"><code>zrc</code> ve <code>source</code> <b>tam</b> kaynak ister (<code>object ScalaFiddle { … }</code> sarmalı ve <code>$FiddleStart</code> / <code>$FiddleEnd</code> işaretleriyle); salt gövde verilirse derlenmez.</p>
+        </section>
+
+        <footer>
+            Koco · Kojo'nun Türkçesi · <a href="/yardim">Yardım</a> · <a href="/">Düzenleme penceresine dön</a>
+        </footer>
+    </div>
+</body>
+</html>

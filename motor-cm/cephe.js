@@ -83,11 +83,14 @@ const aceGirintisi = Prec.high(indentService.of((cx, pos) => {
 
 // seçenekler.kaydır: satırlar sarılsın mı (öntanımlı true, bugünkü davranış). false ise
 // uzun satırlar sarılmadan yatay kaydırmayla gösterilir (Motor.scala: ?wrap=off).
+// seçenekler.girinti: girinti birimi, boşluk sayısı (1-8 tam sayı; öntanımlı 2; Motor.scala: ?indent=4).
 export function ac(el, seçenekler) {
   let girdiCb = null;
   let tamamlayıcı = null;
   const kaydırBölmesi = new Compartment();
   const kaydır = !seçenekler || seçenekler.kaydır !== false;
+  const g = seçenekler && seçenekler.girinti;
+  const girinti = Number.isInteger(g) && g >= 1 && g <= 8 ? g : 2;
 
   // Sunucu adaylarını Scala'dan alan tamamlama kaynağı; süzgeç ve ekleme burada.
   const kaynak = (ctx) => {
@@ -135,7 +138,7 @@ export function ac(el, seçenekler) {
   const temelTuşlar = defaultKeymap.filter((b) => b.key !== "Mod-Enter");
   const uzantılar = [
     lineNumbers(), lintGutter(), history(), drawSelection(), highlightActiveLine(),
-    indentUnit.of("  "), aceGirintisi, EditorState.languageData.of(() => [{indentOnInput: /^\s*\}$/}]), indentOnInput(), bracketMatching(), closeBrackets(),
+    indentUnit.of(" ".repeat(girinti)), aceGirintisi, EditorState.languageData.of(() => [{indentOnInput: /^\s*\}$/}]), indentOnInput(), bracketMatching(), closeBrackets(),
     kaydırBölmesi.of(kaydır ? EditorView.lineWrapping : []),
     StreamLanguage.define(scala), trAnahtar, syntaxHighlighting(defaultHighlightStyle),
     autocompletion({override: [kaynak], activateOnTyping: true}),
