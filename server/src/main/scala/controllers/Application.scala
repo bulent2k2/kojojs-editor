@@ -281,6 +281,9 @@ class Application @Inject()(
   def yardimFarklar = Action {
     Ok(views.html.yardimFarklar()).withHeaders(CACHE_CONTROL -> "no-cache")
   }
+  def yardimSecenekler = Action {
+    Ok(views.html.yardimSecenekler()).withHeaders(CACHE_CONTROL -> "no-cache")
+  }
 
   val loginProviders = config.get[Seq[String]]("scalafiddle.loginProviders").map(AllLoginProviders.providers)
 

@@ -22,6 +22,7 @@ GET     /yardim/ornekler                  controllers.Application.yardimOrnekler
 GET     /yardim/kitapcik                  controllers.Application.yardimKitapcik
 GET     /yardim/sozluk                    controllers.Application.yardimSozluk
 GET     /yardim/farklar                   controllers.Application.yardimFarklar
+GET     /yardim/secenekler                controllers.Application.yardimSecenekler
 GET     /libraries/:scalaVersion          controllers.Application.libraryListing(scalaVersion)
 GET     /oembed.json                      controllers.Application.oembed(url, maxwidth: Option[Int], maxheight: Option[Int], format: Option[String])
 GET     /oembedstatic.json                controllers.Application.oembedStatic(url, maxwidth: Option[Int], maxheight: Option[Int], format: Option[String])
