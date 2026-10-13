@@ -156,6 +156,12 @@ function sav(ad, koşul, ayrıntı) { sayı++; if (koşul) console.log("  ok  " 
   sav("girinti:4 -> Tab satır başına 4 boşluk koyar", g(gl[0]) === 4, gl[0]);
   gl = await ikinci(undefined, "x", 0, ["Home", "Tab"]);
   sav("öntanımlı -> Tab 2 boşluk", g(gl[0]) === 2, gl[0]);
+  for (const n of [1, 3, 5, 8]) {
+    gl = await ikinci({girinti: n}, "x", 0, ["Home", "Tab"]);
+    sav("girinti:" + n + " -> Tab " + n + " boşluk koyar", g(gl[0]) === n, gl[0]);
+  }
+  gl = await ikinci({girinti: 3}, "def a() = {\n  if (x) {", 1, ["Enter"]);
+  sav("girinti:3 -> { sonrası Enter 2 + 3 = 5", g(gl[2]) === 5, gl[2]);
   gl = await ikinci({girinti: 99}, "x", 0, ["Home", "Tab"]);
   sav("geçersiz girinti (99) -> 2'ye döner", g(gl[0]) === 2, gl[0]);
 

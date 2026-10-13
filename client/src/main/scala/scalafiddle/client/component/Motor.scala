@@ -16,7 +16,7 @@ import scalafiddle.client.{JsVal, ScalaFiddleConfig}
  * adresle, bir kez: `?motor=ace` tarayıcıda (localStorage) kalır, `?motor=cm` geri alır
  * (`bayrağıOku`). Öntanımlı CodeMirror (kojojs-editor#75'in 3. dilimi); Ace `?motor=ace` ile kalıyor.
  * Aynı yerde, aynı mekanizmayla: `?wrap=off` uzun satırların sarılmasını kapatır (CodeMirror
- * öntanımlı sarar, Ace sarmaz -- `satırKaydır`), `?wrap=on` tersini yapar. `?indent=2|4` girinti
+ * öntanımlı sarar, Ace sarmaz -- `satırKaydır`), `?wrap=on` tersini yapar. `?indent=N` (1-8) girinti
  * birimini (Tab, `{` sonrası Enter) ayarlar; öntanımlı 2, iki motorda da.
  *
  * Satır ve sütun 0 tabanlı, Ace gibi. `setValue` geri alma geçmişini sıfırlar (Ace'in
@@ -59,9 +59,9 @@ object Motor {
   private val WrapAnahtar   = "koco.wrap"
   private var kaydırSeçim: Option[String] = None
 
-  // Girinti birimi: aynı desen (`?indent=2|4`, anahtar koco.indent). Öntanımlı 2; örnekler 2'li yazılı.
+  // Girinti birimi: aynı desen (`?indent=N`, N = 1-8, anahtar koco.indent). Öntanımlı 2; örnekler 2'li yazılı.
   // Yalnız YENİ girintiyi etkiler (Tab, `{`/`(` sonrası Enter); var olan metne dokunmaz.
-  private val indentParam   = """[?&]indent=(2|4)(?:&|$)""".r
+  private val indentParam   = """[?&]indent=([1-8])(?:&|$)""".r
   private val GirintiAnahtar = "koco.indent"
   private var girintiSeçim: Option[String] = None
 
@@ -89,7 +89,7 @@ object Motor {
     val girintiAdresten = indentParam.findFirstMatchIn(dom.window.location.search).map(_.group(1))
     girintiAdresten.foreach(m => try dom.window.localStorage.setItem(GirintiAnahtar, m) catch { case _: Throwable => () })
     val girintiSaklı = try Option(dom.window.localStorage.getItem(GirintiAnahtar)) catch { case _: Throwable => None }
-    girintiSeçim = girintiAdresten.orElse(girintiSaklı).filter(m => m == "2" || m == "4")
+    girintiSeçim = girintiAdresten.orElse(girintiSaklı).filter(m => m.length == 1 && m.head >= '1' && m.head <= '8')
   }
 
   /** Seçili motor: `bayrağıOku` ne bulduysa; bulamadıysa (ya da hiç çağrılmadıysa) CodeMirror. */
@@ -98,7 +98,7 @@ object Motor {
   /** `?wrap=` ne bulduysa (`on`/`off`); verilmediyse `None` -- motor kendi öntanımlısında kalır. */
   def satırKaydır: Option[Boolean] = kaydırSeçim.map(_ == "on")
 
-  /** `?indent=` ne bulduysa (2 ya da 4); verilmediyse 2. */
+  /** `?indent=` ne bulduysa (1-8); verilmediyse 2. */
   def girinti: Int = girintiSeçim.map(_.toInt).getOrElse(2)
 
   /**
