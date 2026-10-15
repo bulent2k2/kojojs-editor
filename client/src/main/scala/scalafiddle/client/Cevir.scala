@@ -9,19 +9,20 @@ import scala.util.Try
 /**
  * Editördeki "Çevir" düğmesinin istemci mantığı (kojojs-dev#183, Aşama 4).
  *
- * Betiği sunucuya (`POST /cevir`, kojojs-core router) gönderir, masaüstü
+ * Betiği sunucuya (`POST /translate`, kojojs-core router) gönderir, masaüstü
  * çevirmeninin sonucunu alır ve editöre yazar. Bu dosya BİLEREK yalnız
  * scalajs-dom ve js.Dynamic'e dayanıyor (ne React, ne diode, ne upickle):
  * editörün kendi derlemesi bu ortamda koşturulamıyor, bu dosya ise ayrı, güncel
  * bir Scala.js derlemesinde derlenip Node'da sınanabiliyor (CevirTest).
  *
- * Yanıtın biçimi (kojojs-core router/Cevir.scala):
+ * Yanıtın biçimi (kojojs-core router/Translate.scala, İngilizce alan adları; bu sınıfın
+ * kendi adları Türkçe kalıyor, `oku` ikisini eşliyor):
  * {{{
- * { "yon": "tr2en", "kod": "...",
- *   "rapor": { "cevrilen": 7,
- *              "kalanlar": [ { "ad": "halka", "sayi": 3 } ],
- *              "belirsiz": [ { "ad": "al", "secilen": "take", "digerleri": ["get"], "satir": 4 } ] },
- *   "kalanAnahtarSozcukler": [] }
+ * { "direction": "tr2en", "code": "...",
+ *   "report": { "translated": 7,
+ *               "leftovers": [ { "name": "halka", "count": 3 } ],
+ *               "ambiguous": [ { "name": "al", "chosen": "take", "others": ["get"], "line": 4 } ] },
+ *   "remainingKeywords": [] }
  * }}}
  */
 object Cevir {
@@ -49,7 +50,7 @@ object Cevir {
 
   /** `taban`: derleyicinin adresi (`ScalaFiddleConfig.compilerURL`), sonunda eğik çizgi yok. */
   def adres(taban: String, yon: Option[String]): String =
-    taban + "/cevir" + yon.fold("")("?yon=" + _) // yön yalnız "tr2en" / "en2tr": kaçışa gerek yok
+    taban + "/translate" + yon.fold("")("?direction=" + _) // yön yalnız "tr2en" / "en2tr": kaçışa gerek yok
 
   // Alanlar dönüştürülmeden ÖNCE türüne bakılıyor. `undefined.asInstanceOf[String]`
   // Scala.js'te sürüme ve kipe göre ya UndefinedBehaviorError atıyor (ölümcül
@@ -84,16 +85,16 @@ object Cevir {
   def oku(json: String): Sonuc = {
     val d = js.JSON.parse(json).asInstanceOf[js.Dynamic]
     if (js.typeOf(d) != "object" || d == null) bozuk("(nesne)")
-    val r = nesne(d, "rapor")
+    val r = nesne(d, "report")
     Sonuc(
-      yon = metin(d, "yon"),
-      kod = metin(d, "kod"),
-      cevrilen = sayi(r, "cevrilen"),
-      kalanlar = dizi(r, "kalanlar").map(k => (metin(k, "ad"), sayi(k, "sayi"))),
-      belirsiz = dizi(r, "belirsiz").map { b =>
-        Belirsiz(metin(b, "ad"), metin(b, "secilen"), metinler(b, "digerleri"), sayi(b, "satir"))
+      yon = metin(d, "direction"),
+      kod = metin(d, "code"),
+      cevrilen = sayi(r, "translated"),
+      kalanlar = dizi(r, "leftovers").map(k => (metin(k, "name"), sayi(k, "count"))),
+      belirsiz = dizi(r, "ambiguous").map { b =>
+        Belirsiz(metin(b, "name"), metin(b, "chosen"), metinler(b, "others"), sayi(b, "line"))
       },
-      kalanAnahtarSozcukler = metinler(d, "kalanAnahtarSozcukler")
+      kalanAnahtarSozcukler = metinler(d, "remainingKeywords")
     )
   }
 
@@ -133,7 +134,8 @@ object Cevir {
 
   /** Sunucudan ya da ağdan gelen hataların kullanıcıya gösterilen Türkçe metni. */
   def hataMetni(durum: Int, govde: String): String = durum match {
-    // 400: yönlendiricinin kendi iletisi ("geçersiz yön: ..."), zaten Türkçe.
+    // 400: yönlendiricinin kendi iletisi ("invalid direction: ..."); düğme yalnız tr2en/en2tr/boş
+    // gönderdiği için pratikte hiç görülmez.
     case 400 if govde.trim.nonEmpty => govde.trim
     // 413: nginx ya da router gövde sınırı (64 KB).
     case 413 => "Betik çeviri için çok büyük (en çok 64 KB)."
