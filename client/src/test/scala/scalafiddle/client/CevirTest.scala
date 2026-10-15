@@ -7,7 +7,7 @@ import scala.scalajs.js
 /**
  * "Çevir" düğmesinin istemci mantığı (kojojs-dev#183, Aşama 4).
  *
- * Yanıt örnekleri UYDURMA DEĞİL: kojojs-core router'ı (POST /cevir, gerçek
+ * Yanıt örnekleri UYDURMA DEĞİL: kojojs-core router'ı (POST /translate, gerçek
  * çevirmen) yerelde koşturulup curl ile alındı. Router'ın yanıt biçimi
  * değişirse bu sınamaları yeni gerçek yanıtla yenileyin.
  */
@@ -15,11 +15,11 @@ class CevirTest extends FunSuite {
 
   // Türkçe betik -> İngilizce; sözlükten gelen iki "belirsiz" ve iki "kalan" ad var.
   private val trYaniti =
-    """{"yon":"tr2en","kod":"val başlık = \"a\"\nval halka = Picture.circle(50)\ndraw(halka)\n\"istanbul\".map\nyaşlar.take(\"Ayşe\")\nrepeat(3) { forward(10) }\n","rapor":{"cevrilen":7,"kalanlar":[{"ad":"başlık","sayi":1},{"ad":"yaşlar","sayi":1}],"belirsiz":[{"ad":"daire","secilen":"Picture.circle","digerleri":["circle"],"satir":2},{"ad":"büyükHarfe","secilen":"map","digerleri":["toUpper"],"satir":4}]},"kalanAnahtarSozcukler":[]}"""
+    """{"direction":"tr2en","code":"val başlık = \"a\"\nval halka = Picture.circle(50)\ndraw(halka)\n\"istanbul\".map\nyaşlar.take(\"Ayşe\")\nrepeat(3) { forward(10) }\n","report":{"translated":7,"leftovers":[{"name":"başlık","count":1},{"name":"yaşlar","count":1}],"ambiguous":[{"name":"daire","chosen":"Picture.circle","others":["circle"],"line":2},{"name":"büyükHarfe","chosen":"map","others":["toUpper"],"line":4}]},"remainingKeywords":[]}"""
 
   // İngilizce betik -> Türkçe (yön betikten bulundu)
   private val enYaniti =
-    """{"yon":"en2tr","kod":"dez a = 1\nileri(10)\nsatıryaz(a)\n","rapor":{"cevrilen":2,"kalanlar":[],"belirsiz":[]},"kalanAnahtarSozcukler":[]}"""
+    """{"direction":"en2tr","code":"dez a = 1\nileri(10)\nsatıryaz(a)\n","report":{"translated":2,"leftovers":[],"ambiguous":[]},"remainingKeywords":[]}"""
 
   test("yanıt okunuyor: kod, yön, sayılar, kalan ve belirsiz adlar") {
     val s = Cevir.oku(trYaniti)
@@ -42,17 +42,17 @@ class CevirTest extends FunSuite {
 
   test("bozuk gövde oku'da istisna atıyor (hangisi olduğu sürüme göre değişiyor)") {
     intercept[Throwable](Cevir.oku("<html>vekil sayfası</html>"))
-    intercept[Throwable](Cevir.oku("""{"yon":"tr2en"}""")) // rapor yok
+    intercept[Throwable](Cevir.oku("""{"direction":"tr2en"}""")) // report yok
   }
 
   test("bozuk gövdelerin hepsi sıradan istisna (ölümcül UndefinedBehaviorError değil): yanit hata döndürür") {
     val bozuklar = Seq(
       "null", "123", "[]", "\"metin\"", "{}",
-      """{"yon":1,"kod":"x","rapor":{"cevrilen":0,"kalanlar":[],"belirsiz":[]},"kalanAnahtarSozcukler":[]}""", // yon sayı
-      """{"yon":"tr2en","kod":"x","rapor":{"cevrilen":"7","kalanlar":[],"belirsiz":[]},"kalanAnahtarSozcukler":[]}""", // sayı metin
-      """{"yon":"tr2en","kod":"x","rapor":{"cevrilen":0,"kalanlar":[{"ad":"a"}],"belirsiz":[]},"kalanAnahtarSozcukler":[]}""", // sayi yok
-      """{"yon":"tr2en","kod":"x","rapor":{"cevrilen":0,"kalanlar":[],"belirsiz":[{"ad":"a","secilen":"b","digerleri":[1],"satir":2}]},"kalanAnahtarSozcukler":[]}""", // öğe sayı
-      """{"yon":"tr2en","kod":"x","rapor":{"cevrilen":0,"kalanlar":[],"belirsiz":[]},"kalanAnahtarSozcukler":"yok"}""" // dizi değil
+      """{"direction":1,"code":"x","report":{"translated":0,"leftovers":[],"ambiguous":[]},"remainingKeywords":[]}""", // direction sayı
+      """{"direction":"tr2en","code":"x","report":{"translated":"7","leftovers":[],"ambiguous":[]},"remainingKeywords":[]}""", // sayı metin
+      """{"direction":"tr2en","code":"x","report":{"translated":0,"leftovers":[{"name":"a"}],"ambiguous":[]},"remainingKeywords":[]}""", // count yok
+      """{"direction":"tr2en","code":"x","report":{"translated":0,"leftovers":[],"ambiguous":[{"name":"a","chosen":"b","others":[1],"line":2}]},"remainingKeywords":[]}""", // öğe sayı
+      """{"direction":"tr2en","code":"x","report":{"translated":0,"leftovers":[],"ambiguous":[]},"remainingKeywords":"yok"}""" // dizi değil
     )
     bozuklar.foreach { g =>
       assert(Cevir.yanit(200, g) == Left("Çeviri sunucusundan beklenmeyen bir yanıt geldi."), g)
@@ -62,8 +62,8 @@ class CevirTest extends FunSuite {
   test("yanit: 200 sonuca, bozuk 200 ve hata durumları Türkçe iletiye") {
     assert(Cevir.yanit(200, enYaniti).right.get.yon == "en2tr")
     assert(Cevir.yanit(200, "<html>vekil sayfası</html>") == Left("Çeviri sunucusundan beklenmeyen bir yanıt geldi."))
-    assert(Cevir.yanit(200, """{"yon":"tr2en"}""") == Left("Çeviri sunucusundan beklenmeyen bir yanıt geldi."))
-    assert(Cevir.yanit(400, "geçersiz yön: 'xx'") == Left("geçersiz yön: 'xx'"))
+    assert(Cevir.yanit(200, """{"direction":"tr2en"}""") == Left("Çeviri sunucusundan beklenmeyen bir yanıt geldi."))
+    assert(Cevir.yanit(400, "invalid direction: 'xx'") == Left("invalid direction: 'xx'"))
     assert(Cevir.yanit(413, "").left.get.contains("64 KB"))
     assert(Cevir.yanit(429, "x").left.get.contains("yoğun"))
     assert(Cevir.yanit(0, "") == Left("Sunucuya ulaşılamadı. Bağlantınızı denetleyip yine deneyin."))
@@ -71,10 +71,10 @@ class CevirTest extends FunSuite {
     assert(Cevir.yanit(502, enYaniti).isLeft)
   }
 
-  test("adres: yön yoksa parametresiz, varsa ?yon=") {
-    assert(Cevir.adres("http://x", Cevir.Oto) == "http://x/cevir")
-    assert(Cevir.adres("http://x", Cevir.TrdenEn) == "http://x/cevir?yon=tr2en")
-    assert(Cevir.adres("", Cevir.EndenTr) == "/cevir?yon=en2tr") // boş taban: /compile ile aynı kalıp ("$compilerURL/yol")
+  test("adres: yön yoksa parametresiz, varsa ?direction=") {
+    assert(Cevir.adres("http://x", Cevir.Oto) == "http://x/translate")
+    assert(Cevir.adres("http://x", Cevir.TrdenEn) == "http://x/translate?direction=tr2en")
+    assert(Cevir.adres("", Cevir.EndenTr) == "/translate?direction=en2tr") // boş taban: /compile ile aynı kalıp ("$compilerURL/yol")
   }
 
   test("rapor: kalan ve belirsiz adlar satır numarasıyla, geri alma ipucu") {
