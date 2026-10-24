@@ -10,6 +10,7 @@ import com.mohiva.play.silhouette.impl.providers.OAuth2Info
 import com.mohiva.play.silhouette.impl.providers.OAuth2Settings
 import com.mohiva.play.silhouette.impl.providers.SocialStateHandler
 import com.mohiva.play.silhouette.impl.providers.oauth2.GitHubProvider
+import play.api.mvc.RequestHeader
 
 /**
  * Silhouette 5.0.1 (2017) fetches the GitHub profile with the token in the query
@@ -37,7 +38,26 @@ class HeaderAuthGitHubProvider(
     val oauthSettings: OAuth2Settings
 ) extends GitHubProvider(layer, handler, oauthSettings) {
 
-  override protected def buildProfile(authInfo: OAuth2Info): Future[Profile] = {
+  // GitHub girişi 24 Ekim 2026'da "TooLongFrameException: HTTP header is larger than
+  // 8192 bytes" ile düştü ve günlükten hangi çağrının düştüğü anlaşılamadı
+  // (koco-deploy docs/olaylar/2026-10-24-github-giris.md). Aşağıdaki iki kayıt yalnız
+  // hangi adımın düştüğünü ve (profil için) yanıt başlıklarının boyutunu yazar.
+  // Belirteç yanıtının başlık boyutu buradan GÖRÜLEMEZ: Silhouette okuyor ve istemci
+  // kod çözerken, yanıt elimize geçmeden düşebiliyor.
+
+  override def getAccessToken(code: String)(implicit request: RequestHeader): Future[OAuth2Info] =
+    super.getAccessToken(code).andThen {
+      case scala.util.Failure(e) =>
+        logger.error(s"[Silhouette][$id] GİRİŞ ADIMI DÜŞTÜ: belirteç değişimi (github.com/login/oauth/access_token): $e")
+    }
+
+  override protected def buildProfile(authInfo: OAuth2Info): Future[Profile] =
+    buildProfileImpl(authInfo).andThen {
+      case scala.util.Failure(e) =>
+        logger.error(s"[Silhouette][$id] GİRİŞ ADIMI DÜŞTÜ: profil (api.github.com/user): $e")
+    }
+
+  private def buildProfileImpl(authInfo: OAuth2Info): Future[Profile] = {
     httpLayer
       .url("https://api.github.com/user")
       .withHttpHeaders(
@@ -46,6 +66,9 @@ class HeaderAuthGitHubProvider(
       )
       .get()
       .flatMap { response =>
+        val headerBytes = HeaderAuthGitHubProvider.headerBytes(response.headers)
+        if (headerBytes > HeaderAuthGitHubProvider.WarnHeaderBytes)
+          logger.warn(s"[Silhouette][$id] api.github.com/user yanıt başlıkları $headerBytes bayt (AHC sınırı start.sh'ta 65536)")
         val json = response.json
         (json \ "message").asOpt[String] match {
           case Some(msg) =>
@@ -61,4 +84,13 @@ class HeaderAuthGitHubProvider(
   // Keep the override alive when Silhouette rebuilds the provider with new settings.
   override def withSettings(f: Settings => Settings) =
     new HeaderAuthGitHubProvider(layer, handler, f(oauthSettings))
+}
+
+object HeaderAuthGitHubProvider {
+  // Eski AHC sınırı 8192'ydi; yarısını geçen yanıt "yaklaşıyor" demek.
+  val WarnHeaderBytes = 4096
+
+  /** Yanıt başlıklarının ağdaki yaklaşık boyutu ("ad: değer\r\n"). */
+  def headerBytes(headers: Map[String, Seq[String]]): Int =
+    headers.iterator.map { case (name, values) => values.map(v => name.length + v.length + 4).sum }.sum
 }
